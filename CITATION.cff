@@ -9,7 +9,7 @@ authors:
 version: 0.1.0
 date-released: 2026-10-17
 license: MIT
-repository-code: "https://github.com/OWNER/twin-bench"
+repository-code: "https://github.com/CCCC-2024/twin-bench"
 keywords:
   - digital twin
   - state estimation
