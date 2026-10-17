@@ -16,6 +16,7 @@ controls, all computed in the browser.
 | [incubator](twins/incubator/) | Thermal control | Kalman filter estimates the unmeasured heater temperature, flags an opened lid, what-if on the set point | Built from the description in Feng et al. 2021; real data from Aarhus University | dtcore + page |
 | [battery](twins/battery/) | Prognostics | Particle filter on capacity fade, decides when to retire a cell | Reproduces Thelen et al. 2023 on the Severson et al. 2019 cells | dtcore + page + MQTT live demo |
 | [uav](twins/uav/) | Structural health | Bayesian filter over 25 damage states, picks 2g / 3g maneuvers | Reproduces Kapteyn, Pretorius & Willcox 2021 | dtcore + page |
+| [bikeshare](twins/bikeshare/) | Mobility operations | Learns hourly rental and return rates (Gamma–Poisson), forecasts an empty or full station, sets the overnight number of bikes; what-if on a daytime truck | Reproduces Gammelli et al. 2022 (queueing model of Raviv & Kolka 2013) on Citi Bike station data | dtcore + page |
 | [tumor](twins/tumor/) | Oncology | Calibrates a glioma reaction–diffusion model to MRI, predicts chemo doses | Reproduces TumorTwin (Kapteyn et al. 2026) | reproduction only |
 | [_template](twins/_template/) | — | A cooling mug with a heater: the smallest complete twin, copy it to start | — | dtcore |
 
@@ -46,7 +47,7 @@ python -m venv .venv && source .venv/bin/activate          # Python 3.10+
 pip install -e ".[twins,dev]"
 python twins/_template/scripts/check_dtcore.py              # TEMPLATE OK
 
-for t in incubator battery uav; do twins/$t/fetch_upstream.sh; done   # third-party code and data, pinned commits
+for t in incubator battery uav bikeshare; do twins/$t/fetch_upstream.sh; done   # third-party code and data, pinned commits
 ./run_checks.sh                                             # everything CI runs; ends with ALL CHECKS OK
 ```
 
@@ -74,7 +75,7 @@ push ([run_checks.sh](run_checks.sh)):
 - each twin run through `dtcore` gives bit-for-bit the same states and decisions as the code it wraps;
 - reproductions match the authors' published numbers (e.g. battery: retirement at cycle 542 of the example cell);
 - the page's JavaScript matches the Python reference (incubator ~1e-12 °C; battery 615/615 what-if decisions;
-  UAV 120/120 maneuvers).
+  UAV 120/120 maneuvers; bike share 72 hours of decisions and forecasts).
 
 ## Adding a twin
 

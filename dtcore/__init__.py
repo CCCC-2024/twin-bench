@@ -13,4 +13,4 @@ from .runtime import run
 from .recorder import Recorder
 
 __all__ = ["Source", "Twin", "run", "Recorder"]
-__version__ = "0.1.0"
+__version__ = "0.2.0"

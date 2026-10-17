@@ -23,6 +23,8 @@ check "DTCORE OK"           $PY twins/incubator/scripts/check_dtcore.py
 check "REPRO OK"            $PY twins/battery/scripts/check_repro.py
 check "BATTERY DTCORE OK"   $PY twins/battery/scripts/check_dtcore.py 27 4 24
 check "UAV DTCORE OK"       $PY twins/uav/scripts/check_dtcore.py
+check "BIKESHARE REPRO OK"  $PY twins/bikeshare/scripts/check_repro.py
+check "BIKESHARE DTCORE OK" $PY twins/bikeshare/scripts/check_dtcore.py
 
 if command -v node > /dev/null; then
   # the incubator replay reference is built locally from the (unlicensed, not committed) upstream data
@@ -31,6 +33,7 @@ if command -v node > /dev/null; then
   check "WEB CHECK OK"         node web/checks/check_incubator.js twins/incubator/results web
   check "BATTERY WEB CHECK OK" node web/checks/check_battery.js twins/battery/results web
   check "UAV WEB CHECK OK"     node web/checks/check_uav.js twins/uav/results web
+  check "BIKESHARE WEB CHECK OK" node web/checks/check_bikeshare.js twins/bikeshare/results web
 else
   echo "skip  web checks (node not installed)"
 fi

@@ -135,8 +135,8 @@ button, input, select { font: inherit; color: inherit; }
 @media (max-width: 980px) { .lower { grid-template-columns: minmax(0, 1fr); } }
 .log { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
 .log ol { list-style: none; margin: 0; padding: 0; max-height: 210px; overflow: auto; display: flex; flex-direction: column; gap: 4px; }
-.log li { display: grid; grid-template-columns: 10ch minmax(0, 1fr); gap: 10px; font-size: 13px; }
-.log li time { font-family: var(--f-mono); color: var(--muted); }
+.log li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; font-size: 13px; }
+.log li time { font-family: var(--f-mono); color: var(--muted); min-width: 10ch; white-space: nowrap; }
 .log li.bad { color: var(--warn); }
 .log li.cmd { color: var(--twin); }
 .about { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
@@ -155,6 +155,7 @@ button, input, select { font: inherit; color: inherit; }
         <button data-sys="incubator" aria-pressed="true" id="sysInc">Incubator</button>
         <button data-sys="battery" aria-pressed="false" id="sysBat">Battery</button>
         <button data-sys="uav" aria-pressed="false" id="sysUav">UAV</button>
+        <button data-sys="bikeshare" aria-pressed="false" id="sysBike">Bike share</button>
       </div>
       <button class="btn" id="play" aria-label="Pause">❚❚</button>
       <div class="seg" id="speedSeg" aria-label="Speed"></div>
@@ -210,8 +211,9 @@ button, input, select { font: inherit; color: inherit; }
 </div>
 
 <script>
-/* The real incubator replay ships only with the local copy (that dataset has no license for redistribution). */
-if (location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) document.write('<script src="replay_2023.js"><\/script>');
+/* Real-data replays ship only with the local copy: the incubator dataset has no license for redistribution, and
+   Citi Bike data may not be redistributed as a stand-alone dataset. */
+if (location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { document.write('<script src="replay_2023.js"><\/script>'); document.write('<script src="bikeshare_replay.js"><\/script>'); }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -220,6 +222,8 @@ if (location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.
 <script src="battery_cells.js"></script>
 <script src="uav_model.js"></script>
 <script src="uav_core.js"></script>
+<script src="bikeshare_model.js"></script>
+<script src="bikeshare_core.js"></script>
 <script>
 (function () {
 'use strict';
@@ -236,11 +240,11 @@ const SHELL = {
   en: { subtitle: 'One small skeleton, several systems: each digital twin below runs on the same loop.',
         reset: 'Reset', dragHint: 'Drag to rotate · scroll to zoom', twinTitle: 'Digital twin', logTitle: 'Event log',
         aboutTitle: 'What is real here', elTitle: 'The six elements of this twin (Kapteyn et al. 2021)',
-        skeleton: 'Same skeleton (dtcore):', sys: { incubator: 'Incubator', battery: 'Battery', uav: 'UAV' }, notSupported: 'not supported' },
+        skeleton: 'Same skeleton (dtcore):', sys: { incubator: 'Incubator', battery: 'Battery', uav: 'UAV', bikeshare: 'Bike share' }, notSupported: 'not supported' },
   zh: { subtitle: '一个小骨架，多个系统：下面每个数字孪生都跑在同一个循环上。',
         reset: '重置', dragHint: '拖动旋转 · 滚轮缩放', twinTitle: '数字孪生', logTitle: '事件记录',
         aboutTitle: '哪些是真的', elTitle: '这个孪生的六要素（Kapteyn 等 2021）',
-        skeleton: '同一个骨架（dtcore）：', sys: { incubator: '培养箱', battery: '电池', uav: '无人机' }, notSupported: '不支持' }
+        skeleton: '同一个骨架（dtcore）：', sys: { incubator: '培养箱', battery: '电池', uav: '无人机', bikeshare: '共享单车' }, notSupported: '不支持' }
 };
 const SH = { lang: store.get('twb-lang') || ((navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en'),
              key: null, dom: null, running: !matchMedia('(prefers-reduced-motion: reduce)').matches, speedIdx: 1,
@@ -1076,7 +1080,273 @@ const Uav = (function () {
            links: '<a href="https://www.nature.com/articles/s43588-021-00069-0" target="_blank" rel="noopener">Kapteyn, Pretorius & Willcox 2021</a> · <a href="https://github.com/michaelkapteyn/UAV-Digital-Twin" target="_blank" rel="noopener">authors’ code and data (BSD 3-Clause)</a>' };
 })();
 
-const DOMAINS = { incubator: Inc, battery: Bat, uav: Uav };
+// ======================= BIKE SHARE =======================
+const Bike = (function () {
+  const TXT = {
+    en: { subtitle: 'One Citi Bike station in New York (West St & Chambers St, 30 docks): the queueing twin of Gammelli et al. 2022.',
+      modeSim: 'Simulated station', modeReplay: 'Recorded days (Nov–Dec 2018)', worldTitle: 'Things that happen at the physical station',
+      demand: 'Demand', dem: { 0.5: 'quiet ×0.5', 1: 'as in Nov–Dec', 1.5: 'busy ×1.5' },
+      twinSees: 'Sees only the bike count and each hour’s rentals and returns',
+      roBikes: 'Bikes in the station', roRates: 'Next hour: rentals / returns (twin)', roRisk: 'Next 3 hours: time empty / full', roLost: 'Lost today',
+      lastNight: s => `twin set ${s} at midnight`, trueSim: 'true (sim only)', learned: n => `learned from ${n} days`, perH: '/h',
+      expLost: 'expected lost', rent: 'rentals', ret: 'returns', rented: 'rented', returned: 'returned', emptyW: 'empty', fullW: 'full',
+      lgBikes: 'bikes in the station', lgFc: 'twin forecast as is, 10–90 %', lgTry: 'what-if', lgLost: 'hours with lost rentals / returns',
+      wiTitle: 'What-if: send a truck now', wiSlider: 'Truck sets the station to', send: 'Send truck', bikes: 'bikes',
+      wiNote: 'Expected over the next 12 hours, from the bikes now and the rates the twin has learned. Nothing changes at the station until you send the truck. Every night at 23:00 the twin sets the next day’s bikes on its own.',
+      mHead: ['', 'as is', 'what-if'], mRent: 'lost rentals (empty)', mRet: 'lost returns (full)', mTot: 'total lost', mMove: 'bikes moved',
+      physical: 'Station', physicalSim: 'Station · simulated', physicalRec: 'Station · recorded', twin: 'Digital twin',
+      obsFlow: 'rentals and returns each hour →', cmdFlow: '← truck', in3h: 'in 3 h', thisHour: 'this hour', est: 'est.', lostTag: 'lost',
+      ev: { start: s => `The twin learned from the real record up to 31 Oct and set the station to ${s} bikes for 1 Nov.`,
+        night: (s, e) => `23:00 — the twin sets tomorrow’s start to ${s} bikes (expects ${e} lost tomorrow).`,
+        truck: (s, m) => `Truck sent: station set to ${s} bikes (${m >= 0 ? '+' : ''}${m}).`,
+        lost: (a, b) => `Lost this hour: ${a} rental${a === 1 ? '' : 's'} (empty), ${b} return${b === 1 ? '' : 's'} (full).`,
+        demand: v => `Demand at the station is now ${v}; the twin is not told.`,
+        replayStart: 'Replaying the recorded rentals and returns of Nov–Dec 2018. Demand is fixed by the record; the number of bikes follows the twin and your trucks.',
+        replayEnd: 'End of the recorded days.', noReplay: 'Recorded days are only in the local copy (Citi Bike data may not be redistributed as a stand-alone dataset).' },
+      about: 'The queueing model and the nightly decision reproduce Gammelli et al. 2022 (the station model of Raviv & Kolka 2013) on Citi Bike station 426: 365 of 366 decisions match the authors’ code, the other is a numerical tie. The twin learned its rental and return rates from the real 2018 record up to 31 Oct; this page holds only their totals per hour and day type. In “Simulated station” the demand is the Nov–Dec 2018 average, about half of what the twin learned (its all-history average includes busier months), so the twin over-predicts lost rentals and returns: one of the problems we record. “Recorded days” replays the real rentals and returns (local copy only): demand is fixed by the record, the number of bikes follows the twin and your trucks. The page’s numbers match the Python code to about 1e-11.',
+      els: [['S', 'Physical state', 'Bikes in the station (0–30). The true hourly demand for rentals and returns is not observed.'],
+            ['O', 'Observations', 'Each hour: rentals and returns recorded at the docks, and the bike count.'],
+            ['D', 'Digital state', 'For every hour of a weekday or weekend day, a Gamma posterior over the rental and return rates.'],
+            ['Q', 'Predictions', 'Bikes over the next hours (10–90 %), time empty or full, expected lost rentals and returns.'],
+            ['U', 'Actions', 'Every night the twin sets the next day’s bikes on its own; during the day you can send a truck (what-if first).'],
+            ['R', 'Objective', 'Fewest expected lost rentals + lost returns (as in the paper).']] },
+    zh: { subtitle: '纽约的一个 Citi Bike 站点（West St & Chambers St，30 个车位）：Gammelli 等 2022 的排队孪生。',
+      modeSim: '模拟的站点', modeReplay: '真实记录（2018 年 11–12 月）', worldTitle: '发生在物理站点上的事',
+      demand: '需求', dem: { 0.5: '冷清 ×0.5', 1: '同 11–12 月', 1.5: '繁忙 ×1.5' },
+      twinSees: '只看得到车数和每小时的借车、还车数',
+      roBikes: '站里的车数', roRates: '下一小时：借 / 还（孪生）', roRisk: '未来 3 小时：空站 / 满站的时间', roLost: '今天的损失',
+      lastNight: s => `孪生半夜调到 ${s} 辆`, trueSim: '真值（仅模拟）', learned: n => `从 ${n} 天学到`, perH: '/时',
+      expLost: '预计损失', rent: '借不到', ret: '还不了', rented: '借出', returned: '还入', emptyW: '空站', fullW: '满站',
+      lgBikes: '站里的车数', lgFc: '孪生预测（维持现状），10–90 %', lgTry: 'what-if', lgLost: '有人借不到或还不了的小时',
+      wiTitle: 'What-if：现在派一辆卡车', wiSlider: '卡车把站里调到', send: '派车', bikes: '辆',
+      wiNote: '从现在的车数和孪生学到的速度出发，预测未来 12 小时。按“派车”之前，站点不会有任何变化。每天 23 点，孪生自动决定第二天的车数。',
+      mHead: ['', '维持现状', 'what-if'], mRent: '借不到（站空）', mRet: '还不了（站满）', mTot: '合计损失', mMove: '搬动的车',
+      physical: '站点', physicalSim: '站点 · 模拟', physicalRec: '站点 · 真实记录', twin: '数字孪生',
+      obsFlow: '每小时的借车和还车 →', cmdFlow: '← 卡车', in3h: '3 小时后', thisHour: '这一小时', est: '估计', lostTag: '损失',
+      ev: { start: s => `孪生从 10 月 31 日前的真实记录学习，把 11 月 1 日的车数定为 ${s} 辆。`,
+        night: (s, e) => `23:00 — 孪生把明天的起始车数定为 ${s} 辆（预计明天损失 ${e} 人）。`,
+        truck: (s, m) => `已派车：站里调到 ${s} 辆（${m >= 0 ? '+' : ''}${m}）。`,
+        lost: (a, b) => `这一小时：站空借不到 ${a} 次，站满还不了 ${b} 次。`,
+        demand: v => `站点的需求改为 ${v}，孪生不知道。`,
+        replayStart: '回放 2018 年 11–12 月真实的借车和还车。需求由记录决定，站里的车数跟着孪生和你派的车走。',
+        replayEnd: '真实记录播放完毕。', noReplay: '真实记录只在本地版本里有（Citi Bike 数据不允许单独再发布）。' },
+      about: '排队模型和每晚的决策复现 Gammelli 等 2022（站点模型来自 Raviv & Kolka 2013），用的是 Citi Bike 426 号站：366 个决定里 365 个和作者代码相同，另 1 个是数值上的平手。孪生的借车、还车速度是从 2018 年到 10 月 31 日的真实记录学来的；页面里只有按小时和日类型汇总的总数。“模拟的站点”里，需求取 2018 年 11–12 月的平均，大约是孪生学到的一半（全部历史平均包含更忙的月份），所以孪生会高估借不到和还不了的人数：这是记录下来的问题之一。“真实记录”回放真实的借车和还车（仅本地版本）：需求由记录决定，站里的车数跟着孪生和你派的车走。页面的数字和 Python 相差约 1e-11。',
+      els: [['S', '物理状态', '站里的车数（0–30）。每小时真实的借车、还车需求看不到。'],
+            ['O', '观测', '每小时车位记录的借车数、还车数，以及当前车数。'],
+            ['D', '数字状态', '工作日和周末的每个小时各一个伽马后验，估计借车、还车的速度。'],
+            ['Q', '预测量', '未来几小时的车数（10–90 %）、空站或满站的时间、预计借不到和还不了的人数。'],
+            ['U', '动作', '每晚孪生自动决定第二天的车数；白天你可以先 what-if，再派车。'],
+            ['R', '目标', '预计借不到 + 还不了的人数最少（论文设定）。']] }
+  };
+  const t = k => TXT[SH.lang][k];
+  const M = window.BIKESHARE_MODEL, CAP = M ? M.C : 30, HZ = 12;
+  const replayData = () => window.BIKESHARE_REPLAY || null;
+  const S = { mode: 'sim', demand: 1, st: null, tw: null, hist: [], last: null, est: null, night: null, known: null,
+              lostDay: [0, 0], tryS: 15, fcNow: null, fcTry: null, stale: true, shown: 0, ghost: 0 };
+  const WD = { en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], zh: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'] };
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function stamp(day, hr) {                            // day index from 1 Jan 2018 (a Monday); hr may be 24
+    if (hr >= 24) { day += 1; hr -= 24; }
+    const d = new Date(Date.UTC(2018, 0, 1 + day)), hh = String(hr).padStart(2, '0') + ':00', w = day % 7, dd = String(d.getUTCDate()).padStart(2, '\u2007');
+    return SH.lang === 'zh' ? `${d.getUTCMonth() + 1}月${dd}日 ${WD.zh[w]} ${hh}` : `${WD.en[w]} ${dd} ${MON[d.getUTCMonth()]} ${hh}`;
+  }
+  const truth = (day, hr) => M.truth[BIKE.weekday(day) ? 'weekday' : 'weekend'][hr];
+  const sum = a => a.reduce((x, y) => x + y, 0);
+  const pct = v => Math.round(v * 100) + ' %';
+  const twinBikes = () => S.known !== null ? S.known : S.tw.bikes;   // the twin knows the bikes its own trucks set
+
+  function init() {
+    const rep = S.mode === 'replay' && !!replayData();
+    S.tw = new BIKE.Twin(CAP, M.base);
+    S.st = new BIKE.Station({ C: CAP, day0: M.day0, bikes: M.start_bikes, seed: 7,
+                              rates: rep ? null : truth, events: rep ? (k => replayData().hours[k]) : null });
+    S.st.surge = rep ? 1 : S.demand;
+    Object.assign(S, { hist: [], last: null, est: null, night: { set_bikes: M.start_bikes }, known: null, lostDay: [0, 0], shown: M.start_bikes });
+    addLog('', t('ev').start(M.start_bikes));
+    if (rep) addLog('', t('ev').replayStart);
+    for (let i = 0; i < 6; i++) step();
+    S.tryS = Math.min(CAP, S.st.bikes + 10);
+    forecast();
+  }
+  function step() {
+    const o = S.st.observe();
+    if (!o) { addLog('', t('ev').replayEnd); return false; }
+    if (o.hour === 0) S.lostDay = [0, 0];
+    S.known = null;
+    const e = S.tw.update(o), a = S.tw.decide();
+    S.last = o; S.est = e;
+    S.lostDay[0] += o.lost_rent; S.lostDay[1] += o.lost_return;
+    if (o.lost_rent + o.lost_return) addLog('bad', t('ev').lost(o.lost_rent, o.lost_return));
+    const h = { k: o.t, bikes: o.bikes, after: o.bikes, lr: o.lost_rent, lt: o.lost_return };
+    if (a) { S.st.act(a); S.night = a; S.known = a.set_bikes; h.after = a.set_bikes; SH.cmdPulse = 1;
+             addLog('cmd', t('ev').night(a.set_bikes, Math.round(a.expected_lost))); }
+    S.hist.push(h); if (S.hist.length > 400) S.hist.splice(0, S.hist.length - 400);
+    S.st.advance(); S.stale = true;
+    return true;
+  }
+  function forecast() { if (!S.tw || !S.last) return; S.fcNow = S.tw.predict(HZ, S.known); S.fcTry = S.tw.predict(HZ, S.tryS); S.stale = false; }
+  const fresh = () => { if (S.stale) forecast(); };   // the shell re-forecasts every 0.7 s, but several hours can pass in that time
+  // ---------- world controls ----------
+  function renderWorld(el) {
+    const sim = S.mode === 'sim', hasRep = !!replayData();
+    el.innerHTML =
+      `<div class="seg" id="bkMode"><button data-m="sim" aria-pressed="${sim}">${t('modeSim')}</button><button data-m="replay" aria-pressed="${!sim}" ${hasRep ? '' : 'disabled title="' + t('ev').noReplay + '"'}>${t('modeReplay')}</button></div>` +
+      `<span class="ctl"><span class="meta">${t('demand')}</span><span class="seg" id="bkDem">` +
+      [0.5, 1, 1.5].map(v => `<button data-v="${v}" aria-pressed="${S.demand === v}" ${sim ? '' : 'disabled'}>${t('dem')[v]}</button>`).join('') + '</span></span>';
+    el.querySelectorAll('#bkMode button').forEach(b => b.onclick = () => { if (b.dataset.m !== S.mode) { S.mode = b.dataset.m; SH.log = []; SH.running = true; init(); SH.refreshAll(); } });
+    el.querySelectorAll('#bkDem button').forEach(b => b.onclick = () => { const v = Number(b.dataset.v); if (v === S.demand) return;
+      S.demand = v; S.st.surge = v; addLog('', t('ev').demand(t('dem')[v])); renderWorld(el); });
+  }
+  // ---------- panel ----------
+  function readouts() {
+    fresh(); const o = S.last, e = S.est, fc = S.fcNow; if (!o || !e) return [];
+    const sim = S.mode === 'sim', nd = o.hour < 23 ? [o.day, o.hour + 1] : [o.day + 1, 0], tr = sim ? truth(...nd) : null;
+    const small = s => `<span style="font-size:13px;color:var(--muted)">${s}</span>`;
+    const pE = fc ? sum(fc.p_empty.slice(0, 3)) / 3 : NaN, pF = fc ? sum(fc.p_full.slice(0, 3)) / 3 : NaN;
+    const risk = (v, w) => `<span class="pill ${v > 0.25 ? 'bad' : v > 0.05 ? 'heat' : 'ok'}">${w} ${pct(v)}</span>`;
+    return [
+      { k: t('roBikes'), v: `${S.st.bikes} ${small('/ ' + CAP)}`, s: S.night ? t('lastNight')(S.night.set_bikes) : '' },
+      { k: t('roRates'), v: `${f1(e.next_rent_rate)} / ${f1(e.next_return_rate)} ${small(t('perH'))}`,
+        s: sim ? `${t('trueSim')} ${f1(tr[0] * S.demand)} / ${f1(tr[1] * S.demand)}` : t('learned')(e.days_seen) },
+      { k: t('roRisk'), v: fc ? `${risk(pE, t('emptyW'))} ${risk(pF, t('fullW'))}` : '–', s: fc ? `${t('expLost')} ${f1(sum(fc.lost_rent.slice(0, 3)) + sum(fc.lost_return.slice(0, 3)))}` : '' },
+      { k: t('roLost'), v: String(S.lostDay[0] + S.lostDay[1]), s: `${t('rent')} ${S.lostDay[0]} · ${t('ret')} ${S.lostDay[1]}` }];
+  }
+  function legend() {
+    return `<span><i style="border-color:var(--ink)"></i>${t('lgBikes')}</span>` +
+      `<span><i class="box" style="background:var(--twin-soft)"></i><i class="dash" style="border-color:var(--muted)"></i>${t('lgFc')}</span>` +
+      `<span><i class="dash" style="border-color:var(--twin)"></i>${t('lgTry')}</span><span><i class="box" style="background:var(--warn)"></i>${t('lgLost')}</span>`;
+  }
+  function drawChart() {
+    fresh(); const fr = chartFrame(); if (!fr || !S.last) return; const { r, C: K } = fr;
+    const now = S.last.t + 1, x0 = now - 24, x1 = now + HZ;
+    const L = 30, Rm = 8, Top = 8, strip = 8, Bot = 22 + strip + 4, W = r.width - L - Rm, Hh = r.height - Top - Bot;
+    const x = v => L + (v - x0) / (x1 - x0) * W, y = v => Top + (CAP - v) / CAP * Hh;
+    ctx.strokeStyle = K.line; ctx.lineWidth = 1; ctx.fillStyle = K.muted; ctx.textAlign = 'right';
+    for (let v = 0; v <= CAP; v += 10) { ctx.beginPath(); ctx.moveTo(L, y(v) + .5); ctx.lineTo(L + W, y(v) + .5); ctx.stroke(); ctx.fillText(String(v), L - 6, y(v)); }
+    ctx.textAlign = 'center'; const every = W < 380 ? 12 : 6;
+    for (let k = Math.ceil(x0 / every) * every; k <= x1; k += every) {
+      const hh = ((k % 24) + 24) % 24;
+      if (hh === 0) { ctx.strokeStyle = K.line; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(x(k) + .5, Top); ctx.lineTo(x(k) + .5, Top + Hh); ctx.stroke(); ctx.setLineDash([]); }
+      ctx.fillStyle = K.muted; ctx.fillText(String(hh).padStart(2, '0') + ':00', Math.min(Math.max(x(k), L + 16), L + W - 16), r.height - 8);
+    }
+    const fc = S.fcNow, c0 = twinBikes();
+    if (fc) { ctx.fillStyle = K['twin-soft']; ctx.globalAlpha = 0.75; ctx.beginPath(); ctx.moveTo(x(now), y(c0));
+      fc.p90.forEach((v, i) => ctx.lineTo(x(now + i + 1), y(v))); for (let i = HZ - 1; i >= 0; i--) ctx.lineTo(x(now + i + 1), y(fc.p10[i]));
+      ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; }
+    const sy = Top + Hh + 6;
+    S.hist.forEach(h => { const n = h.lr + h.lt; if (n && h.k >= x0) { ctx.fillStyle = K.warn; ctx.globalAlpha = 0.35 + 0.65 * Math.min(1, n / 8);
+      ctx.fillRect(x(h.k), sy, Math.max(1, x(h.k + 1) - x(h.k) - 1), strip); } });
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = K.muted; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(x(now) + .5, Top); ctx.lineTo(x(now) + .5, Top + Hh + strip + 6); ctx.stroke(); ctx.setLineDash([]);
+    const pts = []; S.hist.forEach(h => { if (h.k + 1 >= x0) { pts.push([h.k + 1, h.bikes]); if (h.after !== h.bikes) pts.push([h.k + 1, h.after]); } });
+    lineXY(pts, x, y, K.ink, 1.8);
+    if (fc) lineXY([[now, c0]].concat(fc.mean_bikes.map((v, i) => [now + i + 1, v])), x, y, K.muted, 1.2, [4, 3]);
+    if (S.fcTry) lineXY([[now, S.tryS]].concat(S.fcTry.mean_bikes.map((v, i) => [now + i + 1, v])), x, y, K.twin, 1.8, [6, 3]);
+    ctx.fillStyle = K.ink; ctx.beginPath(); ctx.arc(x(now), y(S.st.bikes), 3, 0, Math.PI * 2); ctx.fill();
+  }
+  const whatif = {
+    cfg: () => ({ min: 0, max: CAP, step: 1, value: S.tryS }),
+    fmt: v => `${Math.round(v)} ${t('bikes')}`,
+    onTry(v) { S.tryS = Math.round(v); forecast(); },
+    metrics() {
+      fresh(); if (!S.fcNow || !S.fcTry) return '';
+      const a = S.fcNow, b = S.fcTry, h = t('mHead'), cur = twinBikes(), mv = S.tryS - cur;
+      const row = (k, p, q) => `<span>${k}</span><span class="num">${p}</span><span class="num">${q}</span>`;
+      return `<span class="h">${h[0]}</span><span class="h num">${h[1]} · ${cur}</span><span class="h num" style="color:var(--twin)">${h[2]} · ${S.tryS}</span>` +
+        row(t('mRent'), f1(sum(a.lost_rent)), f1(sum(b.lost_rent))) + row(t('mRet'), f1(sum(a.lost_return)), f1(sum(b.lost_return))) +
+        row(`<b>${t('mTot')}</b>`, `<b>${f1(a.expected_lost)}</b>`, `<b>${f1(b.expected_lost)}</b>`) + row(t('mMove'), '0', (mv >= 0 ? '+' : '') + mv);
+    },
+    canSend: () => !!S.last,
+    send() { const before = S.st.bikes; S.st.act({ set_bikes: S.tryS }); S.known = S.tryS;
+             const h = S.hist[S.hist.length - 1]; if (h) h.after = S.tryS;
+             SH.cmdPulse = 1; addLog('cmd', t('ev').truck(S.tryS, S.tryS - before)); forecast(); },
+    note: () => t('wiNote')
+  };
+  // ---------- 3D ----------
+  const sc = {}, GAP = 0.34, NCOL = 15, DX = 0.052, ROWZ = 0.058;
+  const dockXZ = i => [((NCOL - 1) / 2 - Math.floor(i / 2)) * DX, i % 2 ? -ROWZ : ROWZ];   // fills both rows evenly, from the end nearest the viewer
+  function buildScene(group) {
+    function station(cx, twin) {
+      const g = new THREE.Group(); g.position.x = cx; g.rotation.y = -Math.PI / 2; group.add(g);   // the row of docks runs toward the camera
+      const baseMat = twin ? new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.07, depthWrite: false })
+                           : new THREE.MeshStandardMaterial({ roughness: 0.85 });
+      const edgeMat = new THREE.LineBasicMaterial({ transparent: true, opacity: twin ? 0.9 : 0.45 });
+      const add = (geo, pos) => { const m = new THREE.Mesh(geo, baseMat); m.position.set(...pos); g.add(m);
+        const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat); e.position.copy(m.position); g.add(e); return m; };
+      const len = NCOL * DX;
+      add(new THREE.BoxGeometry(len + 0.05, 0.012, 0.26), [0, 0.006, 0]);                        // platform
+      add(new THREE.BoxGeometry(len, 0.026, 0.014), [0, 0.025, 0]);                               // spine between the two rows of docks
+      add(new THREE.BoxGeometry(0.045, 0.13, 0.055), [-(len / 2 + 0.05), 0.071, 0]);   // kiosk at the far end
+      const postGeo = new THREE.BoxGeometry(0.008, 0.034, 0.01);
+      for (let i = 0; i < CAP; i++) { const [px, pz] = dockXZ(i), m = new THREE.Mesh(postGeo, baseMat); m.position.set(px, 0.029, pz * 0.42); g.add(m); }
+      const bikeMat = twin ? new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.5, depthWrite: false })
+                           : new THREE.MeshStandardMaterial({ roughness: 0.5, metalness: 0.25 });
+      const wheel = new THREE.TorusGeometry(0.0175, 0.0038, 6, 18), bar = new THREE.BoxGeometry(0.006, 0.006, 0.046), stem = new THREE.BoxGeometry(0.005, 0.022, 0.005);
+      const bikes = [];
+      for (let i = 0; i < CAP; i++) {
+        const [px, pz] = dockXZ(i), b = new THREE.Group(), dir = pz > 0 ? 1 : -1;
+        b.position.set(px, 0.012, pz + dir * 0.012);
+        [-0.024, 0.024].forEach(dz => { const w = new THREE.Mesh(wheel, bikeMat); w.rotation.y = Math.PI / 2; w.position.set(0, 0.0165, dz); b.add(w); });
+        const f = new THREE.Mesh(bar, bikeMat); f.position.set(0, 0.031, 0); b.add(f);
+        const s1 = new THREE.Mesh(stem, bikeMat); s1.position.set(0, 0.038, dir * 0.012); b.add(s1);        // seat post (away from the dock)
+        const s2 = new THREE.Mesh(stem, bikeMat); s2.position.set(0, 0.04, -dir * 0.02); b.add(s2);         // handlebar (at the dock)
+        b.visible = false; g.add(b); bikes.push(b);
+      }
+      return { g, baseMat, edgeMat, bikeMat, bikes };
+    }
+    sc.phys = station(-GAP, false); sc.twin = station(GAP, true);
+    sc.links = makeLinks(group, -GAP + 0.16, GAP - 0.16, 0.15, 0.09, 0.1);
+    const V = (a, b, c) => new THREE.Vector3(a, b, c);
+    sc.anchors = { physName: V(-GAP, 0.22, -0.56), twinName: V(GAP, 0.22, -0.56), pCount: V(-GAP, 0.075, 0.43), pHour: V(-GAP, 0.15, -0.2),
+      pLost: V(-GAP, 0.12, 0.26), qAhead: V(GAP, 0.075, 0.43), qRates: V(GAP, 0.15, -0.2), qRisk: V(GAP, 0.12, 0.26),
+      obs: sc.links.obs.getPoint(0.5).clone().add(V(0, 0.03, 0)), cmd: sc.links.cmd.getPoint(0.5).clone().add(V(0, -0.03, 0)) };
+    theme();
+  }
+  function theme() {
+    if (!sc.phys) return;
+    sc.phys.baseMat.color = col('--foam'); sc.phys.edgeMat.color = col('--foam-edge'); sc.phys.bikeMat.color = new THREE.Color(0x2b3640);   // dark bikes on the light platform in both themes
+    sc.twin.baseMat.color = col('--twin'); sc.twin.edgeMat.color = col('--twin'); sc.twin.bikeMat.color = col('--twin');
+    sc.links.theme();
+  }
+  let tick = 0;
+  function update3D(dt, now) {
+    fresh(); tick += dt;
+    if (S.st && tick > 28) {                 // bikes arrive and leave one at a time
+      tick = 0; const tgt = S.st.bikes, g = S.fcNow ? Math.round(S.fcNow.mean_bikes[2]) : tgt;
+      if (S.shown !== tgt) S.shown += Math.sign(tgt - S.shown);
+      if (S.ghost !== g) S.ghost += Math.sign(g - S.ghost);
+    }
+    sc.phys.bikes.forEach((b, i) => b.visible = i < S.shown);
+    sc.twin.bikes.forEach((b, i) => b.visible = i < S.ghost);
+    const fc = S.fcNow, risk = fc ? Math.max(sum(fc.p_empty.slice(0, 3)), sum(fc.p_full.slice(0, 3))) / 3 : 0;
+    sc.twin.edgeMat.color = risk > 0.25 ? col('--warn') : col('--twin');
+    sc.twin.edgeMat.opacity = risk > 0.25 ? 0.55 + 0.45 * Math.sin(now * 0.008) : 0.9;
+    sc.links.update(dt, now);
+  }
+  function tags(narrow) {
+    const o = S.last, fc = S.fcNow, e = S.est, A = sc.anchors, sim = S.mode === 'sim';
+    const L = [{ key: 'physName', pos: A.physName, cls: 'big', text: narrow ? t('physical') : (sim ? t('physicalSim') : t('physicalRec')) },
+               { key: 'twinName', pos: A.twinName, cls: 'big twin', text: t('twin') }];
+    if (o && fc && e) {
+      const pE = sum(fc.p_empty.slice(0, 3)) / 3, pF = sum(fc.p_full.slice(0, 3)) / 3;
+      L.push({ key: 'pCount', pos: A.pCount, text: `${S.st.bikes} / ${CAP}` },
+        { key: 'pHour', pos: A.pHour, text: `${t('thisHour')}: ${o.pickups} ${t('rented')} · ${o.returns} ${t('returned')}`, show: !narrow },
+        { key: 'pLost', pos: A.pLost, cls: 'warn', text: `${t('lostTag')} ${o.lost_rent + o.lost_return}`, show: o.lost_rent + o.lost_return > 0 },
+        { key: 'qAhead', pos: A.qAhead, cls: 'twin', text: `${t('in3h')} ≈ ${Math.round(fc.mean_bikes[2])} (${fc.p10[2]}–${fc.p90[2]})` },
+        { key: 'qRates', pos: A.qRates, cls: 'twin', text: `${t('est')} ${f1(e.next_rent_rate)} / ${f1(e.next_return_rate)} ${t('perH')}`, show: !narrow },
+        { key: 'qRisk', pos: A.qRisk, cls: 'warn', text: pF >= pE ? `${t('fullW')} ${pct(pF)}` : `${t('emptyW')} ${pct(pE)}`, show: Math.max(pE, pF) > 0.25 },
+        { key: 'obs', pos: A.obs, cls: 'flow', text: t('obsFlow'), show: !narrow }, { key: 'cmd', pos: A.cmd, cls: 'flow', text: t('cmdFlow'), show: !narrow });
+    }
+    return L;
+  }
+  return { key: 'bikeshare', TXT, speeds: [1, 3, 8], speedLabel: v => v + ' h/s', rate: v => v,
+           view: { target: [0, 0.03, 0], dir: [0, 1.35, 1.05], halfWidth: 0.62, minDist: 1.75 },
+           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
+           clockOf: () => S.last ? stamp(S.last.day, S.last.hour + 1) : '–', available: !!(window.BIKE && M),
+           links: '<a href="https://doi.org/10.1016/j.trc.2022.103571" target="_blank" rel="noopener">Gammelli et al. 2022</a> · <a href="https://github.com/DanieleGammelli/variational-poisson-rnn" target="_blank" rel="noopener">authors’ code and station data (MIT)</a> · <a href="https://citibikenyc.com/system-data" target="_blank" rel="noopener">Citi Bike System Data</a>' };
+})();
+
+const DOMAINS = { incubator: Inc, battery: Bat, uav: Uav, bikeshare: Bike };
 
 // ======================= shell wiring =======================
 function renderSpeeds() {
@@ -1089,7 +1359,7 @@ function renderStatic() {
   $('subtitle').textContent = T('subtitle') + ' ' + D('subtitle');
   $('reset').textContent = T('reset'); $('dragHint').textContent = T('dragHint'); $('twinTitle').textContent = T('twinTitle');
   $('logTitle').textContent = T('logTitle'); $('aboutTitle').textContent = T('aboutTitle'); $('elTitle').textContent = T('elTitle');
-  $('sysInc').textContent = T('sys').incubator; $('sysBat').textContent = T('sys').battery; $('sysUav').textContent = T('sys').uav;
+  $('sysInc').textContent = T('sys').incubator; $('sysBat').textContent = T('sys').battery; $('sysUav').textContent = T('sys').uav; $('sysBike').textContent = T('sys').bikeshare;
   document.querySelectorAll('#sysSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sys === d.key)));
   document.querySelectorAll('#langSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === SH.lang)));
   $('worldTitle').textContent = D('worldTitle'); $('twinSees').textContent = D('twinSees');
@@ -1150,7 +1420,7 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', reTheme);
 new MutationObserver(reTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 initThree();
-const startKey = ['#battery', '#incubator', '#uav'].includes(location.hash) ? location.hash.slice(1) : (store.get('twb-sys') || 'incubator');
+const startKey = ['#battery', '#incubator', '#uav', '#bikeshare'].includes(location.hash) ? location.hash.slice(1) : (store.get('twb-sys') || 'incubator');
 switchDomain(DOMAINS[startKey] ? startKey : 'incubator');
 requestAnimationFrame(frame);
 })();

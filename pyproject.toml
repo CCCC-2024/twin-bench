@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "twin-bench"
-version = "0.1.0"
+version = "0.2.0"
 description = "A thin digital-twin skeleton (dtcore) and twins from several domains built on it"
 readme = "README.md"
 license = { text = "MIT" }

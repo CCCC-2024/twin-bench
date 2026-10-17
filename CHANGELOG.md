@@ -5,6 +5,14 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-17
+
+### Added
+- `bikeshare` twin: one Citi Bike station. Reproduces the overnight inventory decision of Gammelli et al. 2022
+  (365 of 366 decisions identical to the authors' code, the other a numerical tie) and runs on dtcore with a
+  Gamma–Poisson update that recovers the paper's benchmark rates and a daytime-truck what-if; Twin Bench page module
+  (a simulated station online; the recorded Nov–Dec 2018 days in the local copy only).
+
 ## [0.1.0] - 2026-10-17
 
 First public version.

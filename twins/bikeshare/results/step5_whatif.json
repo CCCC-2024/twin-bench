@@ -1,0 +1,169 @@
+{
+"day": "2018-11-02",
+"hour": 6,
+"bikes": 14,
+"horizon": 17,
+"rows": [
+{
+"set_bikes": null,
+"predicted": 65.70458032514125,
+"replay": 99
+},
+{
+"set_bikes": 0,
+"predicted": 54.062447613183195,
+"replay": 85
+},
+{
+"set_bikes": 1,
+"predicted": 53.99166904787139,
+"replay": 86
+},
+{
+"set_bikes": 2,
+"predicted": 54.415792700995354,
+"replay": 87
+},
+{
+"set_bikes": 3,
+"predicted": 55.10395248034595,
+"replay": 88
+},
+{
+"set_bikes": 4,
+"predicted": 55.93338026955788,
+"replay": 89
+},
+{
+"set_bikes": 5,
+"predicted": 56.83873665009147,
+"replay": 90
+},
+{
+"set_bikes": 6,
+"predicted": 57.785192566088654,
+"replay": 91
+},
+{
+"set_bikes": 7,
+"predicted": 58.75413209733531,
+"replay": 92
+},
+{
+"set_bikes": 8,
+"predicted": 59.73556034475641,
+"replay": 93
+},
+{
+"set_bikes": 9,
+"predicted": 60.72407246786575,
+"replay": 94
+},
+{
+"set_bikes": 10,
+"predicted": 61.71671347043637,
+"replay": 95
+},
+{
+"set_bikes": 11,
+"predicted": 62.71184149574485,
+"replay": 96
+},
+{
+"set_bikes": 12,
+"predicted": 63.70852353907621,
+"replay": 97
+},
+{
+"set_bikes": 13,
+"predicted": 64.70621355360171,
+"replay": 98
+},
+{
+"set_bikes": 14,
+"predicted": 65.70458032514125,
+"replay": 99
+},
+{
+"set_bikes": 15,
+"predicted": 66.70341481006308,
+"replay": 100
+},
+{
+"set_bikes": 16,
+"predicted": 67.70257969201236,
+"replay": 101
+},
+{
+"set_bikes": 17,
+"predicted": 68.70198143958879,
+"replay": 102
+},
+{
+"set_bikes": 18,
+"predicted": 69.7015544290715,
+"replay": 103
+},
+{
+"set_bikes": 19,
+"predicted": 70.70125160620839,
+"replay": 104
+},
+{
+"set_bikes": 20,
+"predicted": 71.70103875492026,
+"replay": 105
+},
+{
+"set_bikes": 21,
+"predicted": 72.70089080939118,
+"replay": 106
+},
+{
+"set_bikes": 22,
+"predicted": 73.70078936765307,
+"replay": 107
+},
+{
+"set_bikes": 23,
+"predicted": 74.70072094549502,
+"replay": 108
+},
+{
+"set_bikes": 24,
+"predicted": 75.70067571103253,
+"replay": 109
+},
+{
+"set_bikes": 25,
+"predicted": 76.70064654776692,
+"replay": 110
+},
+{
+"set_bikes": 26,
+"predicted": 77.70062835222483,
+"replay": 111
+},
+{
+"set_bikes": 27,
+"predicted": 78.70061750471613,
+"replay": 112
+},
+{
+"set_bikes": 28,
+"predicted": 79.7006114706081,
+"replay": 113
+},
+{
+"set_bikes": 29,
+"predicted": 80.70060850112567,
+"replay": 114
+},
+{
+"set_bikes": 30,
+"predicted": 81.70060741033318,
+"replay": 115
+}
+],
+"consistency_max_diff": 5.115907697472721e-13
+}

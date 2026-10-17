@@ -6,7 +6,7 @@ authors:
   - family-names: Jiang
     given-names: Chengzhen
     email: czj030905@outlook.com
-version: 0.1.0
+version: 0.2.0
 date-released: 2026-10-17
 license: MIT
 repository-code: "https://github.com/CCCC-2024/twin-bench"

@@ -6,6 +6,8 @@ web/index.html
 web/dist/
 # incubator data and what reproduces it: the upstream has no license, so it is not redistributed
 web/replay_2023.js
+# recorded Citi Bike days: Citi Bike data may not be redistributed as a stand-alone dataset
+web/bikeshare_replay.js
 twins/incubator/results/ref_replay.json
 twins/*/results/*.db
 twins/*/results/*.db-journal

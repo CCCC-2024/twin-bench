@@ -27,5 +27,5 @@ jobs:
       - run: pip install -e ".[twins,dev]"
       - name: Fetch upstream (pinned commits)
         run: |
-          for t in incubator battery uav; do twins/$t/fetch_upstream.sh; done
+          for t in incubator battery uav bikeshare; do twins/$t/fetch_upstream.sh; done
       - run: ./run_checks.sh
