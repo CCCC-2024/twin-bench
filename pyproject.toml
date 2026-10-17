@@ -13,7 +13,7 @@ requires-python = ">=3.10"
 dependencies = []                      # dtcore itself needs only the standard library
 
 [project.optional-dependencies]
-twins = ["numpy", "scipy", "pandas", "matplotlib"]          # incubator, battery, uav, _template
+twins = ["numpy", "scipy", "pandas", "openpyxl", "matplotlib"]   # incubator, battery (reads .xlsx), uav, _template
 live = ["paho-mqtt", "amqtt", "streamlit"]                  # battery real-time demo (twins/battery/live)
 dev = ["pytest"]
 
