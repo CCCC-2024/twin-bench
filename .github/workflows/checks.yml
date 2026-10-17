@@ -1,0 +1,31 @@
+name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Cache upstream code and data
+        uses: actions/cache@v4
+        with:
+          path: twins/*/upstream
+          key: upstream-${{ hashFiles('twins/*/fetch_upstream.sh') }}
+      - run: pip install -e ".[twins,dev]"
+      - name: Fetch upstream (pinned commits)
+        run: |
+          for t in incubator battery uav; do twins/$t/fetch_upstream.sh; done
+      - run: ./run_checks.sh

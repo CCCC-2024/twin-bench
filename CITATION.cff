@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use Twin Bench, please cite it as below, and also cite the papers behind the twins you use."
+title: "Twin Bench: a thin digital-twin skeleton and twins from several domains"
+type: software
+authors:
+  - family-names: Jiang
+    given-names: Chengzhen
+    email: czj030905@outlook.com
+version: 0.1.0
+date-released: 2026-10-17
+license: MIT
+repository-code: "https://github.com/OWNER/twin-bench"
+keywords:
+  - digital twin
+  - state estimation
+  - decision making
+  - reproducibility

@@ -1,0 +1,43 @@
+name: pages
+
+# Publishes the Twin Bench page (web/) to GitHub Pages.
+# One-time setup on GitHub: Settings -> Pages -> Build and deployment -> Source: GitHub Actions.
+on:
+  push:
+    branches: [main]
+    paths: ["web/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build the page
+        run: |
+          python web/build.py
+          mkdir _site
+          # runtime files only; the incubator replay data (replay_2023.js) is never published
+          cp web/index.html web/*_core.js web/battery_cells.js web/uav_model.js _site/
+          cp THIRD_PARTY_NOTICES.md _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

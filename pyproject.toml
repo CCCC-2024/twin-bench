@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "twin-bench"
+version = "0.1.0"
+description = "A thin digital-twin skeleton (dtcore) and twins from several domains built on it"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Chengzhen Jiang", email = "czj030905@outlook.com" }]
+requires-python = ">=3.10"
+dependencies = []                      # dtcore itself needs only the standard library
+
+[project.optional-dependencies]
+twins = ["numpy", "scipy", "pandas", "matplotlib"]          # incubator, battery, uav, _template
+live = ["paho-mqtt", "amqtt", "streamlit"]                  # battery real-time demo (twins/battery/live)
+dev = ["pytest"]
+
+[tool.setuptools]
+packages = ["dtcore"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.sh text eol=lf
+*.png binary
+*.npz binary
+*.npy binary
+*.pdf binary
+# generated page data: keep diffs readable on GitHub
+web/battery_cells.js linguist-generated=true
+web/uav_model.js linguist-generated=true
+twins/*/results/*.json linguist-generated=true

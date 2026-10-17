@@ -1,0 +1,25 @@
+name: Bug report
+description: A check fails, a script crashes, or a result looks wrong
+labels: ["bug"]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: Twin, script or page module, e.g. twins/battery/scripts/check_repro.py
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected
+      description: Paste the command and the last lines of its output.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: OS, Python version, and `pip list | grep -Ei "numpy|scipy|pandas"`
+      render: text

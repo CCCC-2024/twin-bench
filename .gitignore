@@ -1,0 +1,30 @@
+# Third-party code and data: downloaded by twins/*/fetch_upstream.sh, never committed
+twins/*/upstream/
+
+# Built or derived locally
+web/index.html
+web/dist/
+# incubator data and what reproduces it: the upstream has no license, so it is not redistributed
+web/replay_2023.js
+twins/incubator/results/ref_replay.json
+twins/*/results/*.db
+twins/*/results/*.db-journal
+twins/battery/results/upstream_cell.pkl
+twins/tumor/results/*/sims_*.npz
+logs/
+tmp_*/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Editors and OS
+.DS_Store
+.vscode/
+.idea/
+.claude/

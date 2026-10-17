@@ -1,0 +1,1157 @@
+<title>Twin Bench</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: instrument bench. One shell (top bar, 3D bench of physical object | digital twin, twin panel,
+   six elements, log) shared by every system; a system plugs in its own scene, readouts, chart and what-if. */
+:root {
+  --bg: #EDF1F4; --panel: #FFFFFF; --ink: #13212C; --muted: #5A6B78; --line: #D3DBE1;
+  --twin: #1F5BD8; --twin-soft: #DCE6FB; --heat: #E0532A; --heat-soft: #FBE1D8;
+  --ok: #16825A; --warn: #C23A2B; --warn-soft: #F8DEDA; --foam: #E7ECF0; --foam-edge: #8A9AA6;
+  --f-display: "Barlow Semi Condensed", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0B1117; --panel: #121A22; --ink: #E3EAF0; --muted: #8C9DAA; --line: #24313C;
+  --twin: #6E9BFF; --twin-soft: #1A2A47; --heat: #FF7448; --heat-soft: #3A1E16;
+  --ok: #3DBD87; --warn: #FF6B5E; --warn-soft: #3A1A18; --foam: #C9D3DB; --foam-edge: #9FB0BD;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0B1117; --panel: #121A22; --ink: #E3EAF0; --muted: #8C9DAA; --line: #24313C;
+  --twin: #6E9BFF; --twin-soft: #1A2A47; --heat: #FF7448; --heat-soft: #3A1E16;
+  --ok: #3DBD87; --warn: #FF6B5E; --warn-soft: #3A1A18; --foam: #C9D3DB; --foam-edge: #9FB0BD;
+  color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 14px; line-height: 1.45;
+       padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+       padding-block: 14px 28px; }
+.wrap { max-width: 1320px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+h1, h2, h3 { font-family: var(--f-display); margin: 0; text-wrap: balance; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--twin); outline-offset: 2px; }
+
+.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 20px; }
+.brand h1 { font-size: 30px; font-weight: 700; letter-spacing: .01em; line-height: 1.05; }
+.brand p { margin: 4px 0 0; color: var(--muted); max-width: 66ch; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--panel); }
+.seg button { border: 0; background: transparent; padding: 6px 11px; cursor: pointer; white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
+.seg.sys button { font-family: var(--f-display); font-weight: 600; font-size: 15px; padding: 6px 14px; }
+.btn { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 6px 12px; cursor: pointer; white-space: nowrap; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--twin); border-color: var(--twin); color: #fff; font-weight: 600; }
+.btn:disabled, .seg button:disabled { opacity: .45; cursor: not-allowed; }
+.clock { font-family: var(--f-mono); color: var(--muted); padding: 0 4px; min-width: 10ch; text-align: right; }
+
+.main { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 980px) { .main { grid-template-columns: minmax(0, 1fr); } .main > .leftcol { display: contents; }
+  .scenecard { order: 1; } .twinp { order: 2; } .elements { order: 3; } }
+.leftcol { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); min-width: 0; }
+.label { font-family: var(--f-display); font-weight: 600; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+.scene { position: relative; height: clamp(260px, min(52vh, 72vw), 520px); border-bottom: 1px solid var(--line); overflow: hidden;
+         border-radius: var(--r) var(--r) 0 0; touch-action: none; }
+.scene canvas { display: block; width: 100%; height: 100%; }
+.tag { position: absolute; transform: translate(-50%, -50%); pointer-events: none; white-space: nowrap;
+       font-family: var(--f-mono); font-size: 12px; padding: 2px 6px; border-radius: 5px;
+       background: var(--panel); border: 1px solid var(--line); color: var(--ink); }
+.tag.big { font-family: var(--f-display); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; border: 0; background: transparent; }
+.tag.twin { border-color: var(--twin); color: var(--twin); }
+.tag.heat { border-color: var(--heat); color: var(--heat); }
+.tag.flow { border: 0; background: transparent; color: var(--muted); font-size: 11px; }
+.tag.warn { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
+.scene .hint { position: absolute; left: 12px; bottom: 10px; color: var(--muted); font-size: 12px; pointer-events: none; }
+.scene .nogl { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; color: var(--muted); }
+
+.world { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding: 12px 14px; }
+.world .label { width: 100%; }
+.ctl { display: flex; align-items: center; gap: 8px; }
+.ctl input[type="range"] { width: 140px; accent-color: var(--twin); }
+.check { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.check input { accent-color: var(--twin); }
+.world .meta { color: var(--muted); font-size: 13px; }
+.world .seg { flex-wrap: wrap; }
+
+.twinp { display: flex; flex-direction: column; }
+.twinp header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 12px 14px 0; flex-wrap: wrap; }
+.twinp header h2 { font-size: 20px; font-weight: 700; color: var(--twin); }
+.readouts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line);
+            margin: 10px 14px 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.ro { background: var(--panel); padding: 9px 11px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ro .k { font-size: 12px; color: var(--muted); }
+.ro .v { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 500; min-height: 1.45em; }
+.ro .s { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.pill { display: inline-block; font-family: var(--f-body); font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; }
+.pill.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+.pill.bad { color: var(--warn); background: var(--warn-soft); }
+.pill.heat { color: var(--heat); background: var(--heat-soft); }
+.pill.off { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+.pill.twin { color: var(--twin); background: var(--twin-soft); }
+
+.chartbox { padding: 12px 14px 4px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.legend i { display: inline-block; width: 16px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 5px; }
+.legend i.dash { border-top-style: dashed; }
+.legend i.dot { width: 6px; height: 6px; border: 0; border-radius: 50%; }
+.legend i.box { width: 12px; height: 8px; border: 0; }
+.chart { position: relative; height: 230px; }
+.chart canvas { width: 100%; height: 100%; display: block; }
+
+.whatif { margin: 8px 14px 14px; border: 1px solid var(--twin); border-radius: 8px; padding: 11px 12px; display: flex; flex-direction: column; gap: 9px;
+          background: color-mix(in srgb, var(--twin-soft) 55%, var(--panel)); }
+.whatif .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.whatif .slab { font-size: 13px; width: 100%; }
+.whatif input[type="range"] { flex: 1 1 160px; min-width: 120px; accent-color: var(--twin); }
+.whatif .val { font-family: var(--f-mono); font-size: 18px; font-weight: 500; color: var(--twin); min-width: 7ch; }
+.metrics { display: grid; grid-template-columns: auto repeat(2, minmax(0, 1fr)); gap: 3px 12px; font-size: 13px; }
+.metrics .h { color: var(--muted); font-size: 12px; }
+.metrics .num { text-align: right; }
+.whatif .note { font-size: 12px; color: var(--muted); }
+
+.elements { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.el-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; }
+@media (max-width: 640px) { .el-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.el { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.el b { font-family: var(--f-display); font-size: 15px; }
+.el b span { font-family: var(--f-mono); color: var(--twin); margin-right: 6px; }
+.el p { margin: 0; color: var(--muted); font-size: 13px; }
+.pgrid { display: grid; grid-template-columns: repeat(5, 18px); gap: 2px; }
+.pgrid .pc { width: 18px; height: 18px; border-radius: 3px; display: grid; place-items: center; }
+.pgrid .pc.p3 { background: var(--heat-soft); outline: 1px solid var(--heat); outline-offset: -1px; }
+.pgrid .pc.p2 { background: var(--line); }
+.pgrid .pc i { width: 10px; height: 10px; border-radius: 50%; background: var(--ink); }
+.skeleton { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
+.skeleton code { font-family: var(--f-mono); font-size: 12px; padding: 1px 6px; border-radius: 5px; background: var(--twin-soft); color: var(--twin); }
+.skeleton code.no { background: transparent; color: var(--muted); text-decoration: line-through; border: 1px dashed var(--line); }
+
+.lower { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 980px) { .lower { grid-template-columns: minmax(0, 1fr); } }
+.log { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.log ol { list-style: none; margin: 0; padding: 0; max-height: 210px; overflow: auto; display: flex; flex-direction: column; gap: 4px; }
+.log li { display: grid; grid-template-columns: 10ch minmax(0, 1fr); gap: 10px; font-size: 13px; }
+.log li time { font-family: var(--f-mono); color: var(--muted); }
+.log li.bad { color: var(--warn); }
+.log li.cmd { color: var(--twin); }
+.about { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+.about p { margin: 0; max-width: 72ch; }
+.about a { color: var(--twin); }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Twin Bench</h1>
+      <p id="subtitle">One small skeleton, several systems: each digital twin below runs on the same loop.</p>
+    </div>
+    <div class="bar" role="toolbar" aria-label="Run controls">
+      <div class="seg sys" id="sysSeg" aria-label="System">
+        <button data-sys="incubator" aria-pressed="true" id="sysInc">Incubator</button>
+        <button data-sys="battery" aria-pressed="false" id="sysBat">Battery</button>
+        <button data-sys="uav" aria-pressed="false" id="sysUav">UAV</button>
+      </div>
+      <button class="btn" id="play" aria-label="Pause">❚❚</button>
+      <div class="seg" id="speedSeg" aria-label="Speed"></div>
+      <span class="clock" id="clock">–</span>
+      <button class="btn" id="reset">Reset</button>
+      <div class="seg" id="langSeg"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="zh" aria-pressed="false">中文</button></div>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card scenecard" aria-label="Physical object and digital twin">
+        <div class="scene" id="scene"><div class="hint" id="dragHint">Drag to rotate · scroll to zoom</div></div>
+        <div class="world"><span class="label" id="worldTitle">Physical side</span><div id="world" style="display:contents"></div></div>
+      </section>
+      <section class="card elements" aria-label="Six elements">
+        <span class="label" id="elTitle">The six elements of this twin</span>
+        <div class="el-grid" id="elGrid"></div>
+        <div class="skeleton" id="skeleton"></div>
+      </section>
+    </div>
+
+    <aside class="card twinp" aria-label="Digital twin">
+      <header><h2 id="twinTitle">Digital twin</h2><span class="label" id="twinSees"></span></header>
+      <div class="readouts">
+        <div class="ro"><span class="k" id="ro0k"></span><span class="v" id="ro0v"></span><span class="s" id="ro0s"></span></div>
+        <div class="ro"><span class="k" id="ro1k"></span><span class="v" id="ro1v"></span><span class="s" id="ro1s"></span></div>
+        <div class="ro"><span class="k" id="ro2k"></span><span class="v" id="ro2v"></span><span class="s" id="ro2s"></span></div>
+        <div class="ro"><span class="k" id="ro3k"></span><span class="v" id="ro3v"></span><span class="s" id="ro3s"></span></div>
+      </div>
+      <div class="chartbox">
+        <div class="legend" id="legend"></div>
+        <div class="chart"><canvas id="chart"></canvas></div>
+      </div>
+      <div class="whatif">
+        <span class="label" style="color:var(--twin)" id="wiTitle"></span>
+        <div class="row">
+          <label class="slab" for="try" id="wiSlider"></label>
+          <input type="range" id="try">
+          <span class="val" id="tryV"></span>
+          <button class="btn primary" id="send"></button>
+        </div>
+        <div class="metrics" id="metrics"></div>
+        <div class="note" id="wiNote"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card log"><span class="label" id="logTitle">Event log</span><ol id="log"></ol></section>
+    <section class="card about"><span class="label" id="aboutTitle">What is real here</span><p id="aboutText"></p><p id="aboutLinks"></p></section>
+  </div>
+</div>
+
+<script>
+/* The real incubator replay ships only with the local copy (that dataset has no license for redistribution). */
+if (location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) document.write('<script src="replay_2023.js"><\/script>');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="incubator_core.js"></script>
+<script src="battery_core.js"></script>
+<script src="battery_cells.js"></script>
+<script src="uav_model.js"></script>
+<script src="uav_core.js"></script>
+<script>
+(function () {
+'use strict';
+const $ = id => document.getElementById(id);
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const f1 = v => (v === undefined || v === null || !isFinite(v)) ? '–' : v.toFixed(1);
+const f2s = v => (v === undefined || v === null || !isFinite(v)) ? '–' : (v >= 0 ? '+' : '') + v.toFixed(2);
+const fint = v => (v === undefined || v === null || !isFinite(v)) ? '–' : Math.round(v).toLocaleString('en-US');
+
+// ======================= shell text =======================
+const SHELL = {
+  en: { subtitle: 'One small skeleton, several systems: each digital twin below runs on the same loop.',
+        reset: 'Reset', dragHint: 'Drag to rotate · scroll to zoom', twinTitle: 'Digital twin', logTitle: 'Event log',
+        aboutTitle: 'What is real here', elTitle: 'The six elements of this twin (Kapteyn et al. 2021)',
+        skeleton: 'Same skeleton (dtcore):', sys: { incubator: 'Incubator', battery: 'Battery', uav: 'UAV' }, notSupported: 'not supported' },
+  zh: { subtitle: '一个小骨架，多个系统：下面每个数字孪生都跑在同一个循环上。',
+        reset: '重置', dragHint: '拖动旋转 · 滚轮缩放', twinTitle: '数字孪生', logTitle: '事件记录',
+        aboutTitle: '哪些是真的', elTitle: '这个孪生的六要素（Kapteyn 等 2021）',
+        skeleton: '同一个骨架（dtcore）：', sys: { incubator: '培养箱', battery: '电池', uav: '无人机' }, notSupported: '不支持' }
+};
+const SH = { lang: store.get('twb-lang') || ((navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en'),
+             key: null, dom: null, running: !matchMedia('(prefers-reduced-motion: reduce)').matches, speedIdx: 1,
+             log: [], acc: 0, cmdPulse: 0 };
+const T = k => SHELL[SH.lang][k];
+const D = k => SH.dom.TXT[SH.lang][k];
+function addLog(kind, text) { SH.log.unshift({ t: SH.dom.clockOf ? SH.dom.clockOf() : '', kind, text }); if (SH.log.length > 80) SH.log.pop(); renderLog(); }
+function renderLog() { $('log').innerHTML = SH.log.map(e => `<li class="${e.kind}"><time>${e.t}</time><span>${e.text}</span></li>`).join(''); }
+
+// ======================= 3D shell =======================
+const G = { ok: false, tags: {} };
+function tempColor(v, lo, hi, stops) {
+  stops = stops || [[0, [0.55, 0.70, 0.88]], [0.5, [0.95, 0.76, 0.31]], [1, [0.88, 0.33, 0.16]]];
+  const f = Math.min(1, Math.max(0, (v - lo) / (hi - lo)));
+  for (let i = 1; i < stops.length; i++) if (f <= stops[i][0]) { const [a, ca] = stops[i - 1], [b, cb] = stops[i], u = (f - a) / (b - a);
+    return new THREE.Color(ca[0] + (cb[0] - ca[0]) * u, ca[1] + (cb[1] - ca[1]) * u, ca[2] + (cb[2] - ca[2]) * u); }
+  return new THREE.Color(...stops[stops.length - 1][1]);
+}
+const col = name => new THREE.Color(css(name) || '#888');
+function initThree() {
+  const host = $('scene');
+  if (!window.THREE || !THREE.OrbitControls) { host.insertAdjacentHTML('beforeend', '<div class="nogl">3D view unavailable (three.js did not load). The twin keeps running on the right.</div>'); return; }
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (e) { host.insertAdjacentHTML('beforeend', '<div class="nogl">3D view needs WebGL. The twin keeps running on the right.</div>'); return; }
+  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+  host.prepend(renderer.domElement);
+  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(36, 1, 0.01, 30);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.minDistance = 0.5; controls.maxPolarAngle = Math.PI * 0.49; controls.enablePan = false;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 0.85));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.55); sun.position.set(1, 2, 1.5); scene.add(sun);
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(1.8, 48), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.35 }));
+  floor.rotation.x = -Math.PI / 2; scene.add(floor);
+  Object.assign(G, { ok: true, renderer, scene, camera, controls, floor, host });
+  new ResizeObserver(fitCamera).observe(host);
+}
+function fitCamera() {
+  if (!G.ok || !SH.dom) return;
+  const r = G.host.getBoundingClientRect(), v = SH.dom.view;
+  G.renderer.setSize(r.width, r.height, false);
+  G.camera.aspect = r.width / Math.max(1, r.height); G.camera.updateProjectionMatrix();
+  const hfov = 2 * Math.atan(Math.tan(G.camera.fov * Math.PI / 360) * G.camera.aspect);
+  const dist = Math.max(v.minDist, v.halfWidth / Math.tan(hfov / 2));
+  G.controls.target.set(...v.target); G.controls.maxDistance = dist * 1.6;
+  G.camera.position.copy(new THREE.Vector3(...v.dir).normalize().multiplyScalar(dist)).add(G.controls.target);
+}
+/* links between the physical object and the twin: observation dots and a command pulse */
+function makeLinks(group, x0, x1, yObs, yCmd, lift) {
+  const arc = (y, l, z) => new THREE.QuadraticBezierCurve3(new THREE.Vector3(x0, y, z), new THREE.Vector3((x0 + x1) / 2, y + l, z), new THREE.Vector3(x1, y, z));
+  const obs = arc(yObs, lift, -0.05), cmd = arc(yCmd, lift * 0.4, 0.1);
+  const line = c => new THREE.Line(new THREE.BufferGeometry().setFromPoints(c.getPoints(40)), new THREE.LineBasicMaterial({ transparent: true, opacity: 0.6 }));
+  const lo = line(obs), lc = line(cmd); group.add(lo, lc);
+  const dots = [], cdots = [];
+  for (let i = 0; i < 6; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.008, 10, 8), new THREE.MeshBasicMaterial()); group.add(m); dots.push(m); }
+  for (let i = 0; i < 3; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.011, 10, 8), new THREE.MeshBasicMaterial()); group.add(m); cdots.push(m); }
+  return { obs, cmd, lo, lc, dots, cdots,
+    theme() { lo.material.color = col('--muted'); lc.material.color = col('--twin'); dots.forEach(d => d.material.color = col('--ink')); cdots.forEach(d => d.material.color = col('--twin')); },
+    update(dt, t) {
+      const k = SH.running ? t * 0.00035 : 0;
+      dots.forEach((d, i) => d.position.copy(obs.getPoint(((k + i / dots.length) % 1 + 1) % 1)));
+      if (SH.cmdPulse > 0) { SH.cmdPulse = Math.max(0, SH.cmdPulse - dt / 1600); const u = 1 - SH.cmdPulse;
+        cdots.forEach((d, i) => { const p = Math.min(1, Math.max(0, u * 1.3 - i * 0.12)); d.visible = p > 0 && p < 1; d.position.copy(cmd.getPoint(1 - p)); }); }
+      else cdots.forEach(d => d.visible = false);
+    } };
+}
+function placeTags(list) {
+  if (!G.ok) return;
+  const r = G.host.getBoundingClientRect(), v = new THREE.Vector3(), seen = new Set();
+  for (const tg of list) {
+    let el = G.tags[tg.key];
+    if (!el) { el = document.createElement('div'); G.host.appendChild(el); G.tags[tg.key] = el; }
+    seen.add(tg.key);
+    el.className = 'tag ' + (tg.cls || '');
+    if (tg.show === false) { el.hidden = true; continue; }
+    v.copy(tg.pos).project(G.camera);
+    el.hidden = v.z > 1; el.style.left = ((v.x + 1) / 2 * r.width) + 'px'; el.style.top = ((1 - v.y) / 2 * r.height) + 'px';
+    if (el.textContent !== tg.text) el.textContent = tg.text;
+  }
+  for (const k of Object.keys(G.tags)) if (!seen.has(k)) G.tags[k].hidden = true;
+}
+function clearTags() { for (const k of Object.keys(G.tags)) { G.tags[k].remove(); delete G.tags[k]; } }
+
+// ======================= chart shell =======================
+const cv = $('chart'), ctx = cv.getContext('2d');
+function chartFrame() {
+  const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  if (!r.width) return null;
+  if (cv.width !== Math.round(r.width * dpr) || cv.height !== Math.round(r.height * dpr)) { cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, r.width, r.height);
+  const C = {}; ['--ink', '--muted', '--line', '--twin', '--heat', '--warn', '--twin-soft', '--heat-soft', '--warn-soft', '--ok', '--panel'].forEach(n => C[n.slice(2)] = css(n));
+  ctx.font = '11px ' + css('--f-mono'); ctx.textBaseline = 'middle';
+  return { r, C };
+}
+function lineXY(pts, x, y, color, w, dash) {
+  ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.beginPath(); let first = true;
+  for (const [a, b] of pts) { if (!isFinite(b)) continue; if (first) { ctx.moveTo(x(a), y(b)); first = false; } else ctx.lineTo(x(a), y(b)); }
+  ctx.stroke(); ctx.setLineDash([]);
+}
+
+// ======================= INCUBATOR =======================
+const Inc = (function () {
+  const TXT = {
+    en: { subtitle: "Aarhus University's incubator, built from its published description (four-parameter thermal model).",
+      modeSim: 'Simulated box', modeReplay: 'Real experiment', worldTitle: 'Things that happen to the physical box',
+      lidOpen: 'Open lid', lidClose: 'Close lid', room: 'Room', mismatch: "Box differs from the twin's model",
+      twinSees: 'Sees only the three sensors and the heater signal',
+      roBox: 'Box air temperature', roHeat: 'Heatbed (not measured)', roCheck: 'Model check', roSet: 'Box set point',
+      lgMeas: 'measured', lgEst: 'twin estimate', lgHeat: 'heatbed (twin)', lgTrue: 'heatbed (true, sim only)', lgTry: 'what-if', lgNow: 'as is',
+      wiTitle: 'What-if: try a set point in the twin first', wiSlider: 'Set point to try', send: 'Send to box',
+      wiNote: "Prediction for the next 30 minutes from the twin's current estimate. Nothing changes in the box until you press Send.",
+      wiReplay: 'Replay mode: the recorded box cannot receive commands. The twin can still predict.',
+      physical: 'Physical box', physicalSim: 'Physical box · simulated', physicalRec: 'Physical box · recorded', twin: 'Digital twin',
+      obsFlow: 'observations →', cmdFlow: '← set point', heatbed: 'heatbed', est: 'est.',
+      twinSays: 'twin', notMeasured: 'unknown in the real box', trueSim: 'true (sim only)',
+      ok: 'agrees', bad: 'disagrees', innov: 'innovation', heaterOn: 'heater on', heaterOff: 'heater off',
+      mHead: ['', 'as is', 'what-if'], mBand: 'time in band', mEnergy: 'heater energy', mRange: 'range',
+      ev: { start: 'Twin started from the first sensor reading.', lidOpen: 'Lid opened (the twin is not told).', lidClose: 'Lid closed.',
+        anomaly: 'Twin: measurements keep disagreeing with the model (possible open lid or an object in the box).',
+        normal: 'Twin: measurements agree with the model again.', send: d => `Set point ${d} °C sent to the box.`,
+        room: v => `Room temperature changed to ${v} °C.`, mm1: "Box now behaves differently from the twin's model (another parameter set that fits the real data equally well).",
+        mm0: "Box behaves like the twin's model again.", replayStart: 'Replaying the real 2023 experiment (empty box, lid closed).',
+        replayEnd: 'End of the recorded experiment.', noReplay: 'Real-data replay is only in the local copy (that dataset has no license for redistribution).' },
+      about: "Model and parameters come from the paper and the authors' repository; the twin code is our own and matches the authors' model to 0.0034 °C on their real data (RMSE 0.46 °C against the measurements). In \"Simulated box\" the physical box is a simulation with the same model, sensor noise and quantization; the lid-open heat loss is the authors' value from a 2021 lid experiment on older hardware. \"Real experiment\" replays a real 1.85-hour run (local copy only). The page's numbers match the Python code to about 1e-12 °C.",
+      els: [['S', 'Physical state', 'Air and heatbed temperature inside the box. The heatbed has no sensor.'],
+            ['O', 'Observations', 'Two sensors in the box, one in the room, every 3 s; heater on/off.'],
+            ['D', 'Digital state', 'Kalman-filter estimate of both temperatures, with uncertainty.'],
+            ['Q', 'Predictions', 'Box temperature for the next 30 minutes.'],
+            ['U', 'Actions', 'A new set point sent to the box controller (you decide, using the what-if).'],
+            ['R', 'Objective', 'Stay in the controller band with less heater energy.']] },
+    zh: { subtitle: 'Aarhus 大学的培养箱，按论文描述搭建（四参数热模型）。',
+      modeSim: '模拟的箱子', modeReplay: '真实实验回放', worldTitle: '发生在物理箱子上的事',
+      lidOpen: '打开盖子', lidClose: '关上盖子', room: '室温', mismatch: '箱子和孪生的模型不一样',
+      twinSees: '只看得到三个传感器和加热开关信号',
+      roBox: '箱内空气温度', roHeat: '加热板（没有传感器）', roCheck: '模型核对', roSet: '箱子设定温度',
+      lgMeas: '实测', lgEst: '孪生估计', lgHeat: '加热板（孪生）', lgTrue: '加热板（真值，仅模拟可见）', lgTry: 'what-if', lgNow: '维持现状',
+      wiTitle: 'What-if：先在孪生里试一个设定温度', wiSlider: '试一个设定温度', send: '发送到箱子',
+      wiNote: '从孪生当前的估计出发，预测未来 30 分钟。按“发送”之前，箱子不会有任何变化。',
+      wiReplay: '回放模式：录好的数据无法接收指令，孪生仍可以预测。',
+      physical: '物理箱子', physicalSim: '物理箱子 · 模拟', physicalRec: '物理箱子 · 真实记录', twin: '数字孪生',
+      obsFlow: '观测 →', cmdFlow: '← 设定温度', heatbed: '加热板', est: '估计',
+      twinSays: '孪生', notMeasured: '真实箱子里未知', trueSim: '真值（仅模拟）',
+      ok: '一致', bad: '不一致', innov: '偏差', heaterOn: '加热中', heaterOff: '未加热',
+      mHead: ['', '维持现状', 'what-if'], mBand: '在区间内的时间', mEnergy: '加热耗电', mRange: '温度范围',
+      ev: { start: '孪生从第一条传感器读数开始。', lidOpen: '盖子打开了（孪生不知道）。', lidClose: '盖子关上了。',
+        anomaly: '孪生：实测持续和模型对不上（可能开盖，或箱里放了东西）。',
+        normal: '孪生：实测和模型重新一致。', send: d => `设定温度 ${d} °C 已发送到箱子。`,
+        room: v => `室温改为 ${v} °C。`, mm1: '箱子现在和孪生的模型不同（另一组同样拟合真实数据的参数）。',
+        mm0: '箱子和孪生的模型重新一致。', replayStart: '回放 2023 年的真实实验（空箱，盖子关着）。',
+        replayEnd: '真实记录播放完毕。', noReplay: '真实数据回放只在本地版本里有（该数据集没有授权转发）。' },
+      about: '模型和参数来自论文和作者的仓库；孪生代码是我们自己写的，在作者的真实数据上和作者的模型最大差 0.0034 °C（和实测比 RMSE 0.46 °C）。“模拟的箱子”里，物理箱子用同一个模型加传感器噪声和量化来模拟；开盖时的散热取自作者 2021 年在旧硬件上的开盖实验。“真实实验回放”播放一段 1.85 小时的真实记录（仅本地版本）。页面里的数字和 Python 代码相差约 1e-12 °C。',
+      els: [['S', '物理状态', '箱内空气和加热板的温度；加热板没有传感器。'],
+            ['O', '观测', '箱内两个、室内一个温度传感器，每 3 秒；加热开关。'],
+            ['D', '数字状态', '卡尔曼滤波对两个温度的估计，带不确定性。'],
+            ['Q', '预测量', '未来 30 分钟的箱内温度。'],
+            ['U', '动作', '发给箱子控制器的新设定温度（由你借助 what-if 决定）。'],
+            ['R', '目标', '温度留在控制区间内，加热耗电更少。']] }
+  };
+  const HORIZON = 1800, WINDOW = 1500;
+  const replayData = () => window.REPLAY_2023 || null;
+  const S = { mode: 'sim', lid: false, mismatch: false, room: 22, tryD: 35, box: null, twin: null, hist: [], ri: 0,
+              lastObs: null, lastEst: null, fcNow: null, fcTry: null, wasAnomaly: false };
+  const t = k => TXT[SH.lang][k];
+  const fmtClock = s => { s = Math.max(0, Math.round(s)); return [Math.floor(s / 3600), Math.floor(s % 3600 / 60), s % 60].map(v => String(v).padStart(2, '0')).join(':'); };
+
+  function step() {
+    let o;
+    if (S.mode === 'sim') { S.box.lidOpen = S.lid; o = S.box.observe(); }
+    else {
+      const R = replayData(), i = S.ri;
+      if (i >= R.t.length) { addLog('', t('ev').replayEnd); return false; }
+      o = { t: R.t[i] - R.t[0], T: R.T[i], T_room: R.T_room[i], heater_on: R.heater_on[i], t1: R.t1[i], t2: R.t2[i], t3: R.T_room[i] };
+      S.ri++;
+    }
+    const s = S.twin.update(o);
+    S.hist.push({ t: o.t, T: o.T, est: s.T_est, h: s.T_heater_est, ht: o.true_T_heater, on: o.heater_on, an: s.anomaly });
+    if (S.hist.length > 4000) S.hist.splice(0, S.hist.length - 4000);
+    S.lastObs = o; S.lastEst = s;
+    if (s.anomaly && !S.wasAnomaly) addLog('bad', t('ev').anomaly);
+    if (!s.anomaly && S.wasAnomaly) addLog('', t('ev').normal);
+    S.wasAnomaly = s.anomaly;
+    if (S.mode === 'sim') S.box.advance();
+    return true;
+  }
+  function ctrlForPredict() {
+    if (S.mode === 'sim') return S.box.ctrl;
+    const c = new IDT.Controller(38, 2, 60000, 5);
+    if (S.lastObs && S.lastObs.heater_on) { c.state = 'Heating'; c.heaterOn = true; c.nextTime = S.lastObs.t + 60000; }
+    return c;
+  }
+  function forecast() {
+    if (!S.twin || !S.twin.kf) return;
+    const c = ctrlForPredict();
+    S.fcNow = Object.assign(S.twin.predict(HORIZON, c, null), { d: c.desired, lb: c.lowerBound });
+    S.fcTry = Object.assign(S.twin.predict(HORIZON, c, S.tryD), { d: S.tryD, lb: c.lowerBound });
+  }
+  function init() {
+    S.hist = []; S.ri = 0; S.wasAnomaly = false; S.lastObs = null; S.twin = new IDT.Twin();
+    if (S.mode === 'sim') {
+      S.box = new IDT.SimBox({ T0: 22, Troom: S.room, seed: 7 });
+      if (S.mismatch) S.box.setParams(IDT.PARAMS_ALT);
+      S.lid = false; step(); addLog('', t('ev').start);
+      for (let i = 0; i < 25 * 20; i++) step();
+    } else { addLog('', t('ev').replayStart); step(); }
+    forecast();
+  }
+  function bandStats(fc) {
+    const lo = fc.d - fc.lb, hi = fc.d + 0.5; let inb = 0, mn = Infinity, mx = -Infinity;
+    for (const v of fc.T) { if (v >= lo && v <= hi) inb++; mn = Math.min(mn, v); mx = Math.max(mx, v); }
+    return { band: inb / fc.T.length, mn, mx };
+  }
+  // ---------- world controls ----------
+  function renderWorld(el) {
+    const sim = S.mode === 'sim', hasRep = !!replayData();
+    el.innerHTML =
+      `<div class="seg" id="incMode"><button data-m="sim" aria-pressed="${sim}">${t('modeSim')}</button><button data-m="replay" aria-pressed="${!sim}" ${hasRep ? '' : 'disabled title="' + t('ev').noReplay + '"'}>${t('modeReplay')}</button></div>` +
+      `<button class="btn" id="lid" ${sim ? '' : 'disabled'}>${S.lid ? t('lidClose') : t('lidOpen')}</button>` +
+      `<label class="ctl"><span>${t('room')}</span><input type="range" id="room" min="15" max="30" step="0.5" value="${S.room}" ${sim ? '' : 'disabled'}><span class="num" id="roomV">${S.room.toFixed(1)} °C</span></label>` +
+      `<label class="check"><input type="checkbox" id="mismatch" ${S.mismatch ? 'checked' : ''} ${sim ? '' : 'disabled'}><span>${t('mismatch')}</span></label>`;
+    el.querySelectorAll('#incMode button').forEach(b => b.onclick = () => { if (b.dataset.m !== S.mode) { S.mode = b.dataset.m; SH.log = []; SH.running = true; init(); SH.refreshAll(); } });
+    $('lid').onclick = () => { S.lid = !S.lid; addLog('', S.lid ? t('ev').lidOpen : t('ev').lidClose); $('lid').textContent = S.lid ? t('lidClose') : t('lidOpen'); };
+    $('room').oninput = () => { S.room = Number($('room').value); $('roomV').textContent = S.room.toFixed(1) + ' °C'; if (S.box) S.box.Troom = S.room; };
+    $('room').onchange = () => { addLog('', t('ev').room(S.room.toFixed(1))); forecast(); SH.refreshPanel(); };
+    $('mismatch').onchange = () => { S.mismatch = $('mismatch').checked; S.box.setParams(S.mismatch ? IDT.PARAMS_ALT : IDT.PARAMS_2023); addLog('', S.mismatch ? t('ev').mm1 : t('ev').mm0); };
+  }
+  // ---------- panel ----------
+  function readouts() {
+    const o = S.lastObs, s = S.lastEst; if (!o || !s) return [];
+    const d = S.mode === 'sim' ? S.box.ctrl.desired : 38;
+    return [
+      { k: t('roBox'), v: f1(o.T) + ' °C', s: `${t('twinSays')} ${f1(s.T_est)} °C` },
+      { k: t('roHeat'), v: f1(s.T_heater_est) + ' °C', s: S.mode === 'sim' ? `± ${s.T_heater_sd.toFixed(2)} · ${t('trueSim')} ${f1(o.true_T_heater)}` : `± ${s.T_heater_sd.toFixed(2)} · ${t('notMeasured')}` },
+      { k: t('roCheck'), v: s.anomaly ? `<span class="pill bad">${t('bad')}</span>` : `<span class="pill ok">${t('ok')}</span>`, s: `${t('innov')} ${f2s(s.innov)} °C` },
+      { k: t('roSet'), v: f1(d) + ' °C', s: o.heater_on ? `<span class="pill heat">${t('heaterOn')}</span>` : `<span class="pill off">${t('heaterOff')}</span>` }];
+  }
+  function legend() {
+    const sim = S.mode === 'sim';
+    return `<span><i style="border-color:var(--ink)"></i>${t('lgMeas')}</span><span><i style="border-color:var(--twin)"></i>${t('lgEst')}</span>` +
+      `<span><i class="dash" style="border-color:var(--heat)"></i>${t('lgHeat')}</span>` + (sim ? `<span><i class="dash" style="border-color:var(--muted)"></i>${t('lgTrue')}</span>` : '') +
+      `<span><i class="dash" style="border-color:var(--twin)"></i>${t('lgTry')}</span><span><i class="dash" style="border-color:var(--muted)"></i>${t('lgNow')}</span>`;
+  }
+  function drawChart() {
+    const fr = chartFrame(); if (!fr) return; const { r, C } = fr;
+    const now = S.lastObs ? S.lastObs.t : 0, H = S.hist.filter(p => p.t >= now - WINDOW); if (!H.length) return;
+    const L = 38, Rm = 8, Top = 8, strip = 12, Bot = 22 + strip + 4, W = r.width - L - Rm, Hh = r.height - Top - Bot;
+    let lo = Infinity, hi = -Infinity; const take = v => { if (isFinite(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); } };
+    H.forEach(p => { take(p.T); take(p.h); if (S.mode === 'sim') take(p.ht); });
+    if (S.fcTry) S.fcTry.T.forEach(take); if (S.fcNow) S.fcNow.T.forEach(take);
+    lo = Math.floor((lo - 1) / 5) * 5; hi = Math.ceil((hi + 1) / 5) * 5;
+    const x = tt => L + (tt - (now - WINDOW)) / (WINDOW + HORIZON) * W, y = v => Top + (hi - v) / (hi - lo) * Hh;
+    const d = S.mode === 'sim' ? S.box.ctrl.desired : 38, lb = S.mode === 'sim' ? S.box.ctrl.lowerBound : 2;
+    ctx.fillStyle = C['twin-soft']; ctx.globalAlpha = 0.55; ctx.fillRect(L, y(d), W, y(d - lb) - y(d)); ctx.globalAlpha = 1;
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.fillStyle = C.muted; ctx.textAlign = 'right';
+    for (let v = lo; v <= hi + 1e-9; v += 5) { ctx.beginPath(); ctx.moveTo(L, y(v) + .5); ctx.lineTo(L + W, y(v) + .5); ctx.stroke(); ctx.fillText(v + '°', L - 6, y(v)); }
+    ctx.textAlign = 'center'; const narrow = W < 420;
+    for (let m = -20; m <= 30; m += 10) { const xx = x(now + m * 60); const lab = (m > 0 ? '+' : '') + m + (narrow ? (m === 30 ? ' min' : '') : ' min');
+      ctx.fillText(lab, Math.min(Math.max(xx, L + 14), L + W - (narrow && m === 30 ? 20 : 22)), r.height - 8); }
+    let st = null; ctx.fillStyle = C['warn-soft']; ctx.globalAlpha = .6;
+    H.forEach((p, i) => { if (p.an && st === null) st = p.t; if ((!p.an || i === H.length - 1) && st !== null) { ctx.fillRect(x(st), Top, Math.max(2, x(p.t) - x(st)), Hh); st = null; } });
+    ctx.globalAlpha = 1;
+    const sy = Top + Hh + 6; ctx.fillStyle = C.heat;
+    for (let i = 1; i < H.length; i++) if (H[i - 1].on) ctx.fillRect(x(H[i - 1].t), sy, Math.max(1, x(H[i].t) - x(H[i - 1].t)), strip);
+    if (S.fcTry) { ctx.globalAlpha = .35; S.fcTry.heater.forEach((v, i) => { if (v) ctx.fillRect(x(now + i * 3), sy, Math.max(1, x(now + 3) - x(now)), strip); }); ctx.globalAlpha = 1; }
+    ctx.strokeStyle = C.muted; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(x(now) + .5, Top); ctx.lineTo(x(now) + .5, Top + Hh + strip + 6); ctx.stroke(); ctx.setLineDash([]);
+    if (S.mode === 'sim') lineXY(H.map(p => [p.t, p.ht]), x, y, C.muted, 1, [2, 3]);
+    lineXY(H.map(p => [p.t, p.h]), x, y, C.heat, 1.4, [5, 3]);
+    lineXY(H.map(p => [p.t, p.T]), x, y, C.ink, 1.6);
+    lineXY(H.map(p => [p.t, p.est]), x, y, C.twin, 1.4);
+    if (S.fcNow) lineXY(S.fcNow.T.map((v, i) => [now + i * 3, v]), x, y, C.muted, 1.2, [4, 3]);
+    if (S.fcTry) lineXY(S.fcTry.T.map((v, i) => [now + i * 3, v]), x, y, C.twin, 1.8, [6, 3]);
+    const last = H[H.length - 1]; ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(x(last.t), y(last.T), 3, 0, Math.PI * 2); ctx.fill();
+  }
+  const whatif = {
+    cfg: () => ({ min: 25, max: 45, step: 0.5, value: S.tryD }),
+    fmt: v => f1(v) + ' °C',
+    onTry(v) { S.tryD = v; forecast(); },
+    metrics() {
+      if (!S.fcNow || !S.fcTry) return '';
+      const a = bandStats(S.fcNow), b = bandStats(S.fcTry), h = t('mHead');
+      return `<span class="h">${h[0]}</span><span class="h num">${h[1]} · ${f1(S.fcNow.d)}</span><span class="h num" style="color:var(--twin)">${h[2]} · ${f1(S.fcTry.d)}</span>` +
+        `<span>${t('mBand')}</span><span class="num">${Math.round(a.band * 100)}%</span><span class="num">${Math.round(b.band * 100)}%</span>` +
+        `<span>${t('mEnergy')}</span><span class="num">${S.fcNow.energy_Wh.toFixed(1)} Wh</span><span class="num">${S.fcTry.energy_Wh.toFixed(1)} Wh</span>` +
+        `<span>${t('mRange')}</span><span class="num">${f1(a.mn)}–${f1(a.mx)}</span><span class="num">${f1(b.mn)}–${f1(b.mx)}</span>`;
+    },
+    canSend: () => S.mode === 'sim',
+    send() { S.box.act(S.tryD); SH.cmdPulse = 1; addLog('cmd', t('ev').send(S.tryD.toFixed(1))); forecast(); },
+    note: () => S.mode === 'sim' ? t('wiNote') : t('wiReplay')
+  };
+  // ---------- 3D ----------
+  const sc = {};
+  function buildScene(group) {
+    const Wd = 0.545, Ht = 0.18, Dp = 0.35, GAP = 0.42;
+    function makeBox(cx, twin) {
+      const g = new THREE.Group(); g.position.x = cx; group.add(g);
+      const wallMat = twin ? new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.06, depthWrite: false })
+                           : new THREE.MeshStandardMaterial({ transparent: true, opacity: 0.32, roughness: 0.9, depthWrite: false });
+      const walls = new THREE.Mesh(new THREE.BoxGeometry(Wd, Ht, Dp), wallMat); walls.position.y = Ht / 2; g.add(walls);
+      const edgeMat = new THREE.LineBasicMaterial({ transparent: true, opacity: twin ? 0.95 : 0.7 });
+      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(Wd, Ht, Dp)), edgeMat); edges.position.y = Ht / 2; g.add(edges);
+      const air = new THREE.Mesh(new THREE.BoxGeometry(Wd - 0.04, Ht - 0.03, Dp - 0.04), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.22, depthWrite: false }));
+      air.position.y = Ht / 2; g.add(air);
+      const bed = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.008, 0.2), new THREE.MeshStandardMaterial({ roughness: 0.5, metalness: 0.1 }));
+      bed.position.y = 0.012; g.add(bed);
+      const lidPivot = new THREE.Group(); lidPivot.position.set(0, Ht, -Dp / 2); g.add(lidPivot);
+      const lidMat = twin ? new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.08, depthWrite: false })
+                          : new THREE.MeshStandardMaterial({ transparent: true, opacity: 0.55, roughness: 0.9, depthWrite: false });
+      const lid = new THREE.Mesh(new THREE.BoxGeometry(Wd + 0.01, 0.022, Dp + 0.01), lidMat); lid.position.set(0, 0.011, Dp / 2); lidPivot.add(lid);
+      const le = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(Wd + 0.01, 0.022, Dp + 0.01)), edgeMat); le.position.copy(lid.position); lidPivot.add(le);
+      if (!twin) [[-0.15, 0.1, 0.05], [0.15, 0.1, 0.05]].forEach(p => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.009, 16, 12), new THREE.MeshStandardMaterial({ color: 0x334455 })); m.position.set(...p); g.add(m); });
+      let grid = null;
+      if (twin) { grid = new THREE.GridHelper(0.8, 16); grid.position.y = 0.001; grid.material.transparent = true; grid.material.opacity = 0.25; g.add(grid); }
+      return { wallMat, edgeMat, air, bed, lidPivot, lidMat, grid };
+    }
+    sc.phys = makeBox(-GAP, false); sc.twin = makeBox(GAP, true);
+    const roomS = new THREE.Mesh(new THREE.SphereGeometry(0.009, 16, 12), new THREE.MeshStandardMaterial({ color: 0x334455 })); roomS.position.set(-GAP - 0.33, 0.05, 0.16); group.add(roomS);
+    const cb = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.025, 0.06), new THREE.MeshStandardMaterial({ color: 0x2b3640, roughness: 0.6 })); cb.position.set(-GAP + 0.2, 0.0125, Dp / 2 + 0.07); group.add(cb);
+    sc.led = new THREE.Mesh(new THREE.SphereGeometry(0.007, 12, 10), new THREE.MeshBasicMaterial({ color: 0x441111 })); sc.led.position.set(-GAP + 0.225, 0.028, Dp / 2 + 0.07); group.add(sc.led);
+    sc.links = makeLinks(group, -GAP + 0.18, GAP - 0.18, Ht + 0.02, Ht - 0.02, 0.18);
+    const V = (a, b, c) => new THREE.Vector3(a, b, c);
+    sc.anchors = { physName: V(-GAP, Ht + 0.2, -Dp / 2), twinName: V(GAP, Ht + 0.2, -Dp / 2), s1: V(-GAP - 0.15, 0.13, 0.05), s2: V(-GAP + 0.15, 0.13, 0.05),
+      s3: V(-GAP - 0.33, 0.085, 0.16), bed: V(-GAP, 0.03, 0.14), twinBed: V(GAP, 0.03, 0.14), twinAir: V(GAP, 0.13, 0.05),
+      obs: sc.links.obs.getPoint(0.5).clone().add(V(0, 0.03, 0)), cmd: sc.links.cmd.getPoint(0.5).clone().add(V(0, -0.03, 0)), warn: V(GAP, Ht + 0.11, 0) };
+    sc.lidAngle = 0; theme();
+  }
+  function theme() {
+    if (!sc.phys) return;
+    sc.phys.wallMat.color = col('--foam'); sc.phys.lidMat.color = col('--foam'); sc.phys.edgeMat.color = col('--foam-edge');
+    sc.twin.wallMat.color = col('--twin'); sc.twin.lidMat.color = col('--twin'); sc.twin.edgeMat.color = col('--twin'); sc.twin.grid.material.color = col('--twin');
+    sc.links.theme();
+  }
+  function update3D(dt, now) {
+    const o = S.lastObs, s = S.lastEst, sim = S.mode === 'sim';
+    if (o && s) {
+      sc.phys.air.material.color = tempColor(sim ? o.true_T : o.T, 20, 42);
+      if (sim) { const c = tempColor(o.true_T_heater, 20, 60); sc.phys.bed.material.color = c; sc.phys.bed.material.emissive = c.clone().multiplyScalar(Math.min(0.9, Math.max(0, (o.true_T_heater - 25) / 40))); }
+      else { sc.phys.bed.material.color = new THREE.Color(0.45, 0.48, 0.5); sc.phys.bed.material.emissive = new THREE.Color(0, 0, 0); }
+      sc.twin.air.material.color = tempColor(s.T_est, 20, 42);
+      const tc = tempColor(s.T_heater_est, 20, 60); sc.twin.bed.material.color = tc; sc.twin.bed.material.emissive = tc.clone().multiplyScalar(Math.min(0.9, Math.max(0, (s.T_heater_est - 25) / 40)));
+      sc.led.material.color = o.heater_on ? col('--heat') : new THREE.Color(0.25, 0.08, 0.08);
+      sc.twin.edgeMat.color = s.anomaly ? col('--warn') : col('--twin'); sc.twin.edgeMat.opacity = s.anomaly ? 0.55 + 0.45 * Math.sin(now * 0.008) : 0.95;
+    }
+    const target = (sim && S.lid) ? -1.15 : 0;
+    sc.lidAngle += (target - sc.lidAngle) * Math.min(1, dt * 0.006); sc.phys.lidPivot.rotation.x = sc.lidAngle;
+    sc.links.update(dt, now);
+  }
+  function tags(narrow) {
+    const o = S.lastObs, s = S.lastEst, A = sc.anchors, sim = S.mode === 'sim';
+    const L = [{ key: 'physName', pos: A.physName, cls: 'big', text: narrow ? t('physical') : (sim ? t('physicalSim') : t('physicalRec')) },
+               { key: 'twinName', pos: A.twinName, cls: 'big twin', text: t('twin') }];
+    if (o && s) L.push(
+      { key: 's1', pos: A.s1, text: `t1 ${f1(o.t1)}°`, show: !narrow }, { key: 's2', pos: A.s2, text: `t2 ${f1(o.t2)}°`, show: !narrow },
+      { key: 's3', pos: A.s3, text: `${t('room')} ${f1(o.t3)}°`, show: !narrow },
+      { key: 'bed', pos: A.bed, cls: 'heat', text: sim ? `${t('heatbed')} ${f1(o.true_T_heater)}°` : `${t('heatbed')} ?`, show: !narrow },
+      { key: 'twinBed', pos: A.twinBed, cls: 'twin', text: `${t('heatbed')} ${t('est')} ${f1(s.T_heater_est)}°` },
+      { key: 'twinAir', pos: A.twinAir, cls: 'twin', text: `${t('est')} ${f1(s.T_est)}°`, show: !narrow },
+      { key: 'obs', pos: A.obs, cls: 'flow', text: t('obsFlow'), show: !narrow }, { key: 'cmd', pos: A.cmd, cls: 'flow', text: t('cmdFlow'), show: sim && !narrow },
+      { key: 'warn', pos: A.warn, cls: 'warn', text: t('bad') + ' ⚠', show: !!s.anomaly });
+    return L;
+  }
+  return { key: 'incubator', TXT, speeds: [10, 30, 120], speedLabel: v => '×' + v, rate: v => v / IDT.DT,
+           view: { target: [0, 0.06, 0], dir: [0, 0.85, 1.55], halfWidth: 0.95, minDist: 1.77 },
+           caps: ['update', 'predict', 'whatif'], init, step, forecast, renderWorld, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
+           clockOf: () => fmtClock(S.lastObs ? S.lastObs.t : 0),
+           links: '<a href="https://arxiv.org/abs/2102.10390" target="_blank" rel="noopener">Feng et al. 2021, The Incubator Case Study for Digital Twin Engineering</a> · <a href="https://github.com/INTO-CPS-Association/example_digital-twin_incubator" target="_blank" rel="noopener">data and published parameters</a> · <a href="https://arxiv.org/abs/2012.05841" target="_blank" rel="noopener">Kapteyn et al. 2021</a>' };
+})();
+
+// ======================= BATTERY =======================
+const Bat = (function () {
+  const TXT = {
+    en: { subtitle: 'LFP 18650 cells cycled to failure (Severson et al. 2019); twin from Thelen et al. 2023, reproduced.',
+      worldTitle: 'The physical cell', cell: 'Cell', policy: 'Fast-charge policy', twinSees: 'Sees only the capacity measured after each cycle',
+      roCap: 'Capacity (measured)', roEol: 'Predicted end of life (50 %)', roCheck: 'Model check', roRet: 'Retirement',
+      cycle: 'cycle', notStarted: 'not started', startsAt: 'starts when capacity ≤ 98.5 %', band: '5–95 %',
+      fitOk: 'fits', outlier: 'outlier reading', resid: 'reading − twin fit', decidesAt: 'twin decides at ≤ 95 %',
+      decidedAt: c => `decided at cycle ${c}`, retired: 'retired', sentBy: 'sent by you',
+      lgMeas: 'measured', lgFit: 'twin projection', lgBand: '5–95 % band', lgRet: 'retirement plan', lgTry: 'what-if',
+      wiTitle: 'What-if: change what matters, see when to retire', wiSlider: 'Weight on total energy delivered (rest: run time per charge)',
+      send: 'Send to cell', wiNote: 'Computed from the twin’s current estimate. The cell keeps its plan until you press Send.',
+      wiWait: 'The twin starts predicting when capacity first drops to 98.5 %.',
+      mHead: ['', 'current plan', 'what-if'], mRetire: 'retire at cycle', mAh: 'energy delivered', mRun: 'mean run time per charge', mU: 'utility',
+      physical: 'Cell', physicalRec: 'Cell · recorded', twin: 'Digital twin', obsFlow: 'capacity each cycle →', cmdFlow: '← retire at cycle',
+      fit: 'fit', eol: 'EOL ≈', retiredAt: c => `retired at cycle ${c}`,
+      ev: { start: c => `Replaying ${c} (real measurements).`, twinStart: (k, q) => `Twin starts at cycle ${k}: capacity ${q} ≤ 98.5 %.`,
+        decide: (k, q, x) => `Twin decides at cycle ${k} (reading ${q} ≤ 95 %): retire at cycle ${x}. Sent to the cell.`,
+        outlierNote: 'This reading is far below the twin’s fit: likely a bad measurement triggered the decision.',
+        send: (x, w) => `Retirement at cycle ${x} sent to the cell (weight on energy ${w}).`, past: 'That cycle has already passed; nothing sent.',
+        retired: x => `Cell retired at cycle ${x}.`, end: 'End of the measured data.' },
+      about: 'Measured capacities are real (Severson et al. 2019, as packaged in Thelen’s MIT-licensed repository). The twin is our reproduction of Thelen et al. 2023 (particle filter on a power-law fade model, retirement by a two-attribute utility); it ran in Python on the same skeleton as the incubator and its states are replayed here, identical to the original code. The retirement what-if is computed in the page and matches Python exactly on 615 test cases. Only cycles that were really measured are shown; the authors’ straight-line extension to 50 % is not.',
+      els: [['S', 'Physical state', 'How much capacity the cell really has left.'],
+            ['O', 'Observations', 'Capacity measured by the cycler after each cycle.'],
+            ['D', 'Digital state', 'Two fade-model parameters, 200 particles (particle filter).'],
+            ['Q', 'Predictions', 'Capacity curve and the cycle it reaches 50 %, with a 5–95 % band.'],
+            ['U', 'Actions', 'The cycle at which to retire the cell, sent automatically by the twin.'],
+            ['R', 'Objective', 'Utility of energy delivered vs run time per charge (Thelen et al.).']] },
+    zh: { subtitle: '循环到失效的 LFP 18650 电芯（Severson 等 2019）；孪生复现自 Thelen 等 2023。',
+      worldTitle: '物理电芯', cell: '电芯', policy: '快充方案', twinSees: '只看得到每个循环后测得的容量',
+      roCap: '容量（实测）', roEol: '预测寿命终点（50 %）', roCheck: '模型核对', roRet: '退役',
+      cycle: '循环', notStarted: '未开始', startsAt: '容量 ≤ 98.5 % 时开始', band: '5–95 %',
+      fitOk: '吻合', outlier: '异常读数', resid: '读数 − 孪生拟合', decidesAt: '容量 ≤ 95 % 时决策',
+      decidedAt: c => `第 ${c} 循环决定`, retired: '已退役', sentBy: '由你发送',
+      lgMeas: '实测', lgFit: '孪生预测', lgBand: '5–95 % 区间', lgRet: '退役计划', lgTry: 'what-if',
+      wiTitle: 'What-if：改变看重什么，看何时退役', wiSlider: '对总供电量的权重（其余给每次充电的使用时长）',
+      send: '发送到电芯', wiNote: '从孪生当前的估计算出。按“发送”之前，电芯维持原计划。',
+      wiWait: '容量第一次降到 98.5 % 时，孪生才开始预测。',
+      mHead: ['', '当前计划', 'what-if'], mRetire: '退役循环', mAh: '总供电量', mRun: '每次充电平均使用时长', mU: '效用',
+      physical: '电芯', physicalRec: '电芯 · 真实记录', twin: '数字孪生', obsFlow: '每循环的容量 →', cmdFlow: '← 退役循环',
+      fit: '拟合', eol: '寿命终点 ≈', retiredAt: c => `第 ${c} 循环退役`,
+      ev: { start: c => `回放${c}（真实测量）。`, twinStart: (k, q) => `孪生在第 ${k} 循环开始：容量 ${q} ≤ 98.5 %。`,
+        decide: (k, q, x) => `孪生在第 ${k} 循环做出决定（读数 ${q} ≤ 95 %）：第 ${x} 循环退役。已发送到电芯。`,
+        outlierNote: '这个读数远低于孪生的拟合：很可能是一次坏读数触发了决定。',
+        send: (x, w) => `第 ${x} 循环退役已发送到电芯（总供电量权重 ${w}）。`, past: '那个循环已经过去，未发送。',
+        retired: x => `电芯在第 ${x} 循环退役。`, end: '实测数据播放完毕。' },
+      about: '容量测量是真实数据（Severson 等 2019，来自 Thelen 的 MIT 许可仓库）。孪生是我们对 Thelen 等 2023 的复现（幂律衰减模型 + 粒子滤波，用两个属性的效用决定退役）；它用 Python 跑在和培养箱同一个骨架上，这里回放它的状态，和原代码逐位相同。退役的 what-if 在页面里计算，在 615 个测试情形上和 Python 完全一致。只显示真正测过的循环，不显示作者外推到 50 % 的直线。',
+      els: [['S', '物理状态', '电芯实际还剩多少容量。'],
+            ['O', '观测', '每个循环后充放电设备测得的容量。'],
+            ['D', '数字状态', '衰减模型的两个参数，200 个粒子（粒子滤波）。'],
+            ['Q', '预测量', '容量曲线和降到 50 % 的循环，带 5–95 % 区间。'],
+            ['U', '动作', '在哪个循环让电芯退役，由孪生自动发送。'],
+            ['R', '目标', '总供电量与每次充电使用时长的效用（Thelen 等）。']] }
+  };
+  const CELLS = window.BATTERY_CELLS || [];
+  const S = { ci: 0, c: null, i: 0, retireAt: null, retiredAt: null, decided: null, sentByUser: false, w: 0.5, wi: null, plan: null, ended: false };
+  const t = k => TXT[SH.lang][k];
+  const cellName = c => SH.lang === 'zh' ? c.label_zh : c.label;
+  const state = () => { if (!S.c || S.i === 0) return null; const k = S.c.cycles[S.i - 1], sj = k - S.c.k_fpt; if (sj < 0) return null;
+    const st = S.c.st; return { k, la: st.log10_a[sj], b: st.b[sj], eol: st.eol_pred[sj], lo: st.rul_lo[sj], hi: st.rul_hi[sj], sj }; };
+  const cur = () => S.i ? { k: S.c.cycles[S.i - 1], q: S.c.q[S.i - 1] } : null;
+
+  function init() {
+    S.c = CELLS[S.ci]; S.i = 0; S.retireAt = null; S.retiredAt = null; S.decided = null; S.sentByUser = false; S.ended = false;
+    step(); addLog('', t('ev').start(cellName(S.c) + ' ' + S.c.barcode)); forecast();
+  }
+  function step() {
+    const c = S.c; if (S.retiredAt !== null || S.ended) return false;
+    if (S.i >= c.cycles.length) { S.ended = true; addLog('', t('ev').end); return false; }
+    const k = c.cycles[S.i];
+    if (S.retireAt !== null && k > S.retireAt) { S.retiredAt = S.retireAt; addLog('cmd', t('ev').retired(S.retireAt)); return false; }
+    S.i++;
+    const q = c.q[S.i - 1];
+    if (k === c.k_fpt) addLog('', t('ev').twinStart(k, q.toFixed(3)));
+    const s = state();
+    if (s && !S.decided && q <= BAT.DECIDE_AT) {
+      const d = BAT.decideOnline(c.q.slice(0, S.i), c.q0, s.la, s.b, s.eol, [0.5, 0.5]);
+      S.decided = { k, x: d.x }; S.retireAt = d.x; S.sentByUser = false; SH.cmdPulse = 1;
+      addLog('cmd', t('ev').decide(k, q.toFixed(3), d.x) + (Math.abs(q - BAT.powerLaw(k, s.la, s.b)) > 0.02 ? ' ' + t('ev').outlierNote : ''));
+    }
+    return true;
+  }
+  function forecast() {
+    const s = state(); if (!s) { S.wi = null; S.plan = null; return; }
+    S.wi = BAT.decideOnline(S.c.q.slice(0, S.i), S.c.q0, s.la, s.b, s.eol, [S.w, 1 - S.w]);
+    const base = BAT.decideOnline(S.c.q.slice(0, S.i), S.c.q0, s.la, s.b, s.eol, [0.5, 0.5]);
+    S.plan = base;   // same projection; used for the current plan's attributes
+  }
+  function attrs(x) {
+    if (!S.plan || !S.plan.capAh || x === null) return null;
+    if (x - 2 > S.plan.capAh.length) return null;
+    const a = BAT.attributes(S.plan.capAh, x), u = (w) => w[0] * BAT.expUtility(a.ah, 300, 1000, 200) + w[1] * BAT.expUtility(a.meanH, 0.21, 0.25, 0.015);
+    return Object.assign(a, { u: u([S.w, 1 - S.w]) });
+  }
+  // ---------- world ----------
+  function renderWorld(el) {
+    el.innerHTML = `<div class="seg" id="cellSeg">${CELLS.map((c, i) => `<button data-i="${i}" aria-pressed="${i === S.ci}">${cellName(c)}</button>`).join('')}</div>` +
+      `<span class="meta">${t('policy')}: <span class="num">${S.c ? (SH.lang === 'zh' ? S.c.policy.replace(' to ', ' 充到 ').replace(', then ', '，之后 ') : S.c.policy) : ''}</span> · ${S.c ? S.c.barcode : ''}</span>`;
+    el.querySelectorAll('#cellSeg button').forEach(b => b.onclick = () => { const i = Number(b.dataset.i); if (i !== S.ci) { S.ci = i; SH.log = []; SH.running = true; init(); SH.refreshAll(); } });
+  }
+  // ---------- panel ----------
+  function readouts() {
+    const c = cur(); if (!c) return [];
+    const s = state(), fit = s ? BAT.powerLaw(c.k, s.la, s.b) : null, res = s ? c.q - fit : null;
+    const out = Math.abs(res) > 0.02;
+    let ret;
+    if (S.retiredAt !== null) ret = { v: `${t('cycle')} ${fint(S.retiredAt)}`, s: `<span class="pill off">${t('retired')}</span>` };
+    else if (S.retireAt !== null) ret = { v: `${t('cycle')} ${fint(S.retireAt)}`, s: `<span class="pill twin">${S.sentByUser ? t('sentBy') : t('decidedAt')(S.decided.k)}</span>` };
+    else ret = { v: '–', s: `<span class="pill off">${t('decidesAt')}</span>` };
+    return [
+      { k: t('roCap'), v: (c.q * 100).toFixed(1) + ' %', s: `${t('cycle')} ${fint(c.k)} · ${(c.q * S.c.q0).toFixed(3)} Ah` },
+      s ? { k: t('roEol'), v: `${t('cycle')} ${fint(s.eol)}`, s: `${t('band')}: ${fint(s.k + s.lo)}–${fint(s.k + s.hi)}` }
+        : { k: t('roEol'), v: '–', s: t('startsAt') },
+      s ? { k: t('roCheck'), v: out ? `<span class="pill bad">${t('outlier')}</span>` : `<span class="pill ok">${t('fitOk')}</span>`, s: `${t('resid')} ${f2s(res * 100)} %` }
+        : { k: t('roCheck'), v: `<span class="pill off">${t('notStarted')}</span>`, s: '' },
+      Object.assign({ k: t('roRet') }, ret)];
+  }
+  function legend() {
+    return `<span><i class="dot" style="background:var(--ink)"></i>${t('lgMeas')}</span><span><i style="border-color:var(--twin)"></i>${t('lgFit')}</span>` +
+      `<span><i class="box" style="background:var(--twin-soft)"></i>${t('lgBand')}</span><span><i style="border-color:var(--heat)"></i>${t('lgRet')}</span>` +
+      `<span><i class="dash" style="border-color:var(--twin)"></i>${t('lgTry')}</span>`;
+  }
+  function drawChart() {
+    const fr = chartFrame(); if (!fr) return; const { r, C } = fr; const c = cur(); if (!c) return;
+    const s = state(), L = 40, Rm = 10, Top = 8, Bot = 22, W = r.width - L - Rm, Hh = r.height - Top - Bot;
+    const last = S.c.cycles[S.c.cycles.length - 1];
+    let xmax = Math.max(last + 50, s ? s.k + s.hi + 60 : 0); xmax = Math.min(2600, Math.ceil(xmax / 250) * 250);
+    const y0 = 0.45, y1 = 1.02, x = k => L + k / xmax * W, y = v => Top + (y1 - v) / (y1 - y0) * Hh;
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.fillStyle = C.muted; ctx.textAlign = 'right';
+    for (let v = 0.5; v <= 1.0001; v += 0.1) { ctx.beginPath(); ctx.moveTo(L, y(v) + .5); ctx.lineTo(L + W, y(v) + .5); ctx.stroke(); ctx.fillText(Math.round(v * 100) + '%', L - 6, y(v)); }
+    ctx.textAlign = 'center'; let stepX = xmax <= 1000 ? 250 : 500; if (W < 380) stepX *= 2;
+    for (let k = 0; k <= xmax; k += stepX) ctx.fillText(String(k), Math.min(Math.max(x(k), L + 10), L + W - 14), r.height - 8);
+    ctx.textAlign = 'left'; ctx.fillText(SH.lang === 'zh' ? '循环' : 'cycle', 2, r.height - 8);
+    // thresholds
+    ctx.setLineDash([3, 3]); ctx.strokeStyle = C.muted;
+    [[0.95, SH.lang === 'zh' ? '决策 95%' : 'decide 95%', 'right'], [0.5, SH.lang === 'zh' ? '寿命终点 50%' : 'end of life 50%', 'left']].forEach(([v, lab, al]) => {
+      ctx.beginPath(); ctx.moveTo(L, y(v) + .5); ctx.lineTo(L + W, y(v) + .5); ctx.stroke(); ctx.fillStyle = C.muted; ctx.textAlign = al; ctx.fillText(lab, al === 'right' ? L + W - 2 : L + 4, y(v) - 7); });
+    ctx.setLineDash([]);
+    if (s) {
+      // particle band (stored every 5 cycles)
+      const bk = Math.floor(s.k / 5) * 5, band = S.c.bands[String(bk)] || S.c.bands[String(bk - 5)];
+      if (band) { ctx.fillStyle = C['twin-soft']; ctx.globalAlpha = 0.9; ctx.beginPath();
+        band.c.forEach((k, i) => { const X = x(Math.min(k, xmax)), Y = y(Math.max(y0, band.hi[i])); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); });
+        for (let i = band.c.length - 1; i >= 0; i--) ctx.lineTo(x(Math.min(band.c[i], xmax)), y(Math.max(y0, band.lo[i])));
+        ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; }
+      // twin projection with the current parameters
+      const pts = []; for (let k = S.c.k_fpt; k <= Math.min(xmax, s.k + s.hi + 60); k += 5) pts.push([k, BAT.powerLaw(k, s.la, s.b)]);
+      lineXY(pts.filter(p => p[0] <= s.k), x, y, C.twin, 1.6); lineXY(pts.filter(p => p[0] >= s.k - 5), x, y, C.twin, 1.6, [5, 3]);
+      // end-of-life interval on the 50 % line
+      ctx.strokeStyle = C.twin; ctx.lineWidth = 4; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.moveTo(x(Math.min(xmax, s.k + s.lo)), y(0.5)); ctx.lineTo(x(Math.min(xmax, s.k + s.hi)), y(0.5)); ctx.stroke(); ctx.globalAlpha = 1;
+      if (s.eol <= xmax) { ctx.fillStyle = C.twin; ctx.beginPath(); ctx.arc(x(s.eol), y(0.5), 3.5, 0, Math.PI * 2); ctx.fill(); }
+    }
+    // measured points
+    ctx.fillStyle = C.ink; for (let i = 0; i < S.i; i++) { const q = S.c.q[i]; if (q < y0) continue; ctx.fillRect(x(S.c.cycles[i]) - 1, y(q) - 1, 2, 2); }
+    // retirement plan and what-if
+    const vline = (k, color, dash, lab, side, row) => { if (k === null || k > xmax) return; ctx.strokeStyle = color; ctx.lineWidth = 1.6; ctx.setLineDash(dash || []); ctx.beginPath(); ctx.moveTo(x(k) + .5, Top); ctx.lineTo(x(k) + .5, Top + Hh); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = color; const w = ctx.measureText(lab).width; let left = side === 'left';
+      if (left && x(k) - 4 - w < L) left = false; if (!left && x(k) + 4 + w > L + W) left = true;
+      ctx.textAlign = left ? 'right' : 'left'; ctx.fillText(lab, left ? x(k) - 4 : x(k) + 4, y(0.95) + 12 + row * 13); };
+    const rp = S.retiredAt !== null ? S.retiredAt : S.retireAt;
+    vline(rp, C.heat, null, (SH.lang === 'zh' ? '退役 ' : 'retire ') + (rp === null ? '' : rp), 'left', 0);
+    if (S.wi && S.wi.x !== rp) vline(S.wi.x, C.twin, [5, 3], 'what-if ' + S.wi.x, 'right', 1);
+    ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(x(c.k), y(Math.max(y0, c.q)), 3, 0, Math.PI * 2); ctx.fill();
+  }
+  const whatif = {
+    cfg: () => ({ min: 0, max: 1, step: 0.05, value: S.w }),
+    fmt: v => v.toFixed(2),
+    onTry(v) { S.w = v; forecast(); },
+    metrics() {
+      if (!S.wi) return '';
+      const h = t('mHead'), rp = S.retiredAt !== null ? S.retiredAt : S.retireAt, a = attrs(rp), b = attrs(S.wi.x);
+      const cell = (v, f) => v === null || v === undefined ? '–' : f(v);
+      return `<span class="h">${h[0]}</span><span class="h num">${h[1]}</span><span class="h num" style="color:var(--twin)">${h[2]}</span>` +
+        `<span>${t('mRetire')}</span><span class="num">${cell(rp, fint)}</span><span class="num">${fint(S.wi.x)}</span>` +
+        `<span>${t('mAh')}</span><span class="num">${a ? fint(a.ah) + ' Ah' : '–'}</span><span class="num">${b ? fint(b.ah) + ' Ah' : '–'}</span>` +
+        `<span>${t('mRun')}</span><span class="num">${a ? (a.meanH * 60).toFixed(1) + ' min' : '–'}</span><span class="num">${b ? (b.meanH * 60).toFixed(1) + ' min' : '–'}</span>` +
+        `<span>${t('mU')}</span><span class="num">${a ? a.u.toFixed(3) : '–'}</span><span class="num">${b ? b.u.toFixed(3) : '–'}</span>`;
+    },
+    canSend: () => !!S.wi && S.retiredAt === null && !S.ended,
+    send() {
+      const c = cur(); if (!S.wi || S.retiredAt !== null || S.ended) return;
+      if (S.wi.x < c.k) { addLog('', t('ev').past); return; }
+      S.retireAt = S.wi.x; S.sentByUser = true; if (!S.decided) S.decided = { k: c.k, x: S.wi.x };
+      SH.cmdPulse = 1; addLog('cmd', t('ev').send(S.wi.x, S.w.toFixed(2)));
+    },
+    note: () => S.wi ? t('wiNote') : t('wiWait')
+  };
+  // ---------- 3D ----------
+  const sc = {};
+  const R = 0.06, Hc = 0.43, GAP = 0.3, inner = Hc - 0.05;
+  function healthColor(q) { return tempColor(q, 0.6, 1.0, [[0, [0.85, 0.30, 0.20]], [0.5, [0.95, 0.70, 0.25]], [1, [0.20, 0.65, 0.45]]]); }
+  function buildScene(group) {
+    function makeCell(cx, twin) {
+      const g = new THREE.Group(); g.position.x = cx; group.add(g);
+      const sleeveMat = twin ? new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.06, depthWrite: false, side: THREE.DoubleSide })
+                             : new THREE.MeshStandardMaterial({ transparent: true, opacity: 0.35, roughness: 0.4, metalness: 0.2, depthWrite: false, side: THREE.DoubleSide });
+      const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(R, R, Hc, 48, 1, true), sleeveMat); sleeve.position.y = Hc / 2; g.add(sleeve);
+      const edgeMat = new THREE.LineBasicMaterial({ transparent: true, opacity: twin ? 0.9 : 0.5 });
+      const rings = [0, Hc].map(yy => { const l = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.Path().absarc(0, 0, R, 0, Math.PI * 2).getPoints(48).map(p => new THREE.Vector3(p.x, yy, p.y))), edgeMat); g.add(l); return l; });
+      if (twin) for (let a = 0; a < 8; a++) { const ang = a / 8 * Math.PI * 2; const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(Math.cos(ang) * R, 0, Math.sin(ang) * R), new THREE.Vector3(Math.cos(ang) * R, Hc, Math.sin(ang) * R)]), edgeMat); g.add(l); }
+      const capMat = twin ? new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.15 }) : new THREE.MeshStandardMaterial({ color: 0xb8c0c8, metalness: 0.8, roughness: 0.3 });
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(R * 0.38, R * 0.38, 0.018, 32), capMat); cap.position.y = Hc + 0.009; g.add(cap);
+      const gauge = new THREE.Mesh(new THREE.CylinderGeometry(R * 0.8, R * 0.8, 1, 40), new THREE.MeshStandardMaterial({ roughness: 0.6, transparent: twin, opacity: twin ? 0.75 : 1 }));
+      g.add(gauge);
+      const mark = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.Path().absarc(0, 0, R * 1.08, 0, Math.PI * 2).getPoints(48).map(p => new THREE.Vector3(p.x, 0, p.y))), new THREE.LineBasicMaterial({ transparent: true, opacity: 0.8 }));
+      mark.position.y = 0.025 + inner * 0.9; g.add(mark);      // 95 % decision level
+      let grid = null;
+      if (twin) { grid = new THREE.GridHelper(0.5, 10); grid.position.y = 0.001; grid.material.transparent = true; grid.material.opacity = 0.25; g.add(grid); }
+      return { sleeveMat, edgeMat, capMat, gauge, mark, grid };
+    }
+    sc.phys = makeCell(-GAP, false); sc.twin = makeCell(GAP, true);
+    const cy = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.05, 0.1), new THREE.MeshStandardMaterial({ color: 0x2b3640, roughness: 0.6 })); cy.position.set(-GAP - 0.2, 0.025, 0.12); group.add(cy);
+    sc.led = new THREE.Mesh(new THREE.SphereGeometry(0.008, 12, 10), new THREE.MeshBasicMaterial({ color: 0x114422 })); sc.led.position.set(-GAP - 0.15, 0.055, 0.12); group.add(sc.led);
+    sc.links = makeLinks(group, -GAP + 0.08, GAP - 0.08, Hc - 0.05, Hc - 0.15, 0.16);
+    const V = (a, b, c) => new THREE.Vector3(a, b, c);
+    sc.anchors = { physName: V(-GAP, Hc + 0.1, 0), twinName: V(GAP, Hc + 0.1, 0), pg: V(-GAP - 0.13, 0.2, 0.05), tg: V(GAP + 0.15, 0.2, 0.05),
+      teol: V(GAP + 0.15, 0.11, 0.05), cycler: V(-GAP - 0.2, 0.085, 0.12), obs: sc.links.obs.getPoint(0.5).clone().add(V(0, 0.03, 0)),
+      cmd: sc.links.cmd.getPoint(0.5).clone().add(V(0, -0.035, 0)), ret: V(-GAP, Hc * 0.55, 0.12) };
+    theme();
+  }
+  function theme() {
+    if (!sc.phys) return;
+    sc.phys.sleeveMat.color = col('--foam-edge'); sc.phys.edgeMat.color = col('--foam-edge');
+    sc.twin.sleeveMat.color = col('--twin'); sc.twin.edgeMat.color = col('--twin'); sc.twin.capMat.color = col('--twin'); sc.twin.grid.material.color = col('--twin');
+    sc.phys.mark.material.color = col('--muted'); sc.twin.mark.material.color = col('--twin');
+    sc.links.theme();
+  }
+  function setGauge(gm, q, color) {
+    const f = Math.min(1, Math.max(0.002, (q - 0.5) / 0.5)), h = inner * f;
+    gm.scale.y = h; gm.position.y = 0.025 + h / 2; gm.material.color = color;
+  }
+  let blink = 0;
+  function update3D(dt, now) {
+    const c = cur(), s = state();
+    if (c) {
+      const retired = S.retiredAt !== null;
+      setGauge(sc.phys.gauge, c.q, retired ? new THREE.Color(0.55, 0.58, 0.6) : healthColor(c.q));
+      if (s) setGauge(sc.twin.gauge, BAT.powerLaw(c.k, s.la, s.b), col('--twin'));
+      else setGauge(sc.twin.gauge, 1.0, col('--twin-soft'));
+    }
+    blink += dt; const on = SH.running && S.retiredAt === null && !S.ended && (blink % 400) < 200;
+    sc.led.material.color = on ? new THREE.Color(0.25, 0.85, 0.45) : new THREE.Color(0.07, 0.2, 0.12);
+    sc.links.update(dt, now);
+  }
+  function tags(narrow) {
+    const c = cur(), s = state(), A = sc.anchors;
+    const L = [{ key: 'physName', pos: A.physName, cls: 'big', text: narrow ? t('physical') : t('physicalRec') },
+               { key: 'twinName', pos: A.twinName, cls: 'big twin', text: t('twin') }];
+    if (c) L.push(
+      { key: 'pg', pos: A.pg, text: `${(c.q * 100).toFixed(1)} %` },
+      { key: 'tg', pos: A.tg, cls: 'twin', text: s ? `${t('fit')} ${(BAT.powerLaw(c.k, s.la, s.b) * 100).toFixed(1)} %` : t('notStarted') },
+      { key: 'teol', pos: A.teol, cls: 'twin', text: s ? `${t('eol')} ${fint(s.eol)}` : '', show: !!s && !narrow },
+      { key: 'cycler', pos: A.cycler, text: `${t('cycle')} ${fint(c.k)}`, show: !narrow },
+      { key: 'obs', pos: A.obs, cls: 'flow', text: t('obsFlow'), show: !narrow },
+      { key: 'cmd', pos: A.cmd, cls: 'flow', text: t('cmdFlow') + (S.retireAt !== null ? ' ' + S.retireAt : ''), show: !narrow && S.retireAt !== null },
+      { key: 'ret', pos: A.ret, cls: 'warn', text: t('retiredAt')(S.retiredAt), show: S.retiredAt !== null });
+    return L;
+  }
+  return { key: 'battery', TXT, speeds: [5, 15, 50], speedLabel: v => v + '/s', rate: v => v,
+           view: { target: [0, 0.2, 0], dir: [0, 0.55, 1.6], halfWidth: 0.62, minDist: 1.35 },
+           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
+           clockOf: () => { const c = cur(); return c ? `${SH.lang === 'zh' ? '循环' : 'cycle'} ${c.k}` : '–'; },
+           links: '<a href="https://www.nature.com/articles/s41560-019-0356-8" target="_blank" rel="noopener">Severson et al. 2019 (data)</a> · <a href="https://github.com/acthelen/battery_digital_twin" target="_blank" rel="noopener">Thelen et al. code and packaged data (MIT)</a> · <a href="https://arxiv.org/abs/2012.05841" target="_blank" rel="noopener">Kapteyn et al. 2021</a>' };
+})();
+
+// ======================= UAV =======================
+const Uav = (function () {
+  const TXT = {
+    en: { subtitle: "Kapteyn et al.'s fixed-wing UAV twin (Nature Computational Science 2021): wing damage from 24 strain gauges.",
+      worldTitle: 'Things that happen to the physical UAV', dmg1: 'Damage region 1 (+20 %)', dmg2: 'Damage region 2 (+20 %)', repair: 'Repair',
+      grows: 'Damage grows with maneuvers (faster in 3g turns)', twinSees: 'Sees only 24 strain readings and the maneuver it flew',
+      ro1: 'Region 1 damage', ro2: 'Region 2 damage', roMap: 'Most likely state', roNext: 'Next maneuver',
+      trueSim: 'true (sim only)', prob: 'probability', vote: 'policy vote for 3g', bank: 'bank',
+      t3: '3g turn', t2: '2g turn', aggressive: 'aggressive', cautious: 'cautious',
+      lgT1: 'region 1 true', lgT2: 'region 2 true', lgE1: 'region 1 twin', lgE2: 'region 2 twin', lgU: '3g / 2g turns',
+      wiTitle: 'What-if: how much is an aggressive turn worth?', wiSlider: 'Weight on maneuver performance in the planner (paper: 2.5)',
+      send: 'Send policy to UAV', wiNote: 'Expected over the next 30 turns from the twin’s current belief, if the policy acted on the true state. Grid: which damage states get a 3g turn (orange) or 2g (grey); dots: current belief.',
+      mHead: ['', 'current policy', 'what-if'], m3gStates: '3g in damage states', m3g: '3g turns, next 30', mD1: 'region 1 damage after 30', mP60: 'P(region 1 ≥ 60 %)',
+      gridR: 'rows: region 1, 0 → 80 %', gridC: 'columns: region 2, 0 → 80 %',
+      physical: 'UAV', physicalSim: 'UAV · simulated', twin: 'Digital twin', obsFlow: '24 strains each turn →', cmdFlow: '← next maneuver',
+      r1: 'region 1', r2: 'region 2', est: 'est.', turn: 'turn',
+      ev: { start: 'Undamaged UAV; the twin starts from the prior "no damage".', dmg: r => `Region ${r} damaged on purpose (+20 %); the twin is not told.`,
+        grew: (r, v, c) => `Region ${r} damage grew to ${v} % during a ${c} turn (simulation; the twin is not told).`,
+        repair: 'UAV repaired (both regions back to 0 %); the twin is not told.', sw: c => `Twin switches to ${c} turns.`,
+        send: (a, n) => `New policy sent to the UAV: weight ${a} (3g in ${n} of 25 damage states).`, grows1: 'Damage now grows with maneuvers.', grows0: 'Damage now changes only when you click.' },
+      about: 'The strain table, noise level, transition model, rewards and planner are the authors’ (BSD 3-Clause). Our twin on the shared skeleton reproduces our earlier run of their loop (same maneuvers every step, estimates within 3e-14) and their planner’s policy. In the authors’ code the true damage follows a fixed script; here the simulated UAV’s damage grows with the maneuvers at the rates the twin assumes, so its decisions have consequences. The page’s numbers match the Python code to about 1e-12. The plane’s roll is drawn smaller than the real bank angle.',
+      els: [['S', 'Physical state', 'Damage of two wing regions, each 0–80 % in 20 % steps.'],
+            ['O', 'Observations', '24 strain gauges on the wing, read during each turn.'],
+            ['D', 'Digital state', 'Probability of each of the 25 damage combinations (Bayes filter).'],
+            ['Q', 'Predictions', 'Strain under each maneuver; expected damage over the next 30 turns.'],
+            ['U', 'Actions', 'Next turn: aggressive 3g or cautious 2g, chosen automatically.'],
+            ['R', 'Objective', 'Maneuver performance vs structural health (the authors’ planner).']] },
+    zh: { subtitle: 'Kapteyn 等的固定翼无人机孪生（Nature Computational Science 2021）：用 24 个应变片估计机翼损伤。',
+      worldTitle: '发生在物理无人机上的事', dmg1: '区域 1 受损（+20 %）', dmg2: '区域 2 受损（+20 %）', repair: '修复',
+      grows: '损伤随机动增长（3g 转弯更快）', twinSees: '只看得到 24 个应变读数和自己飞的机动',
+      ro1: '区域 1 损伤', ro2: '区域 2 损伤', roMap: '最可能的状态', roNext: '下一个机动',
+      trueSim: '真值（仅模拟）', prob: '概率', vote: '策略中 3g 的票数', bank: '坡度',
+      t3: '3g 转弯', t2: '2g 转弯', aggressive: '激进', cautious: '保守',
+      lgT1: '区域 1 真值', lgT2: '区域 2 真值', lgE1: '区域 1 孪生', lgE2: '区域 2 孪生', lgU: '3g / 2g 转弯',
+      wiTitle: 'What-if：激进转弯值多少？', wiSlider: '规划器中机动性能的权重（论文：2.5）',
+      send: '把策略发送到无人机', wiNote: '从孪生当前的信念出发，按策略作用于真实状态，计算未来 30 次转弯的期望。网格：哪些损伤状态用 3g（橙）或 2g（灰）；圆点：当前信念。',
+      mHead: ['', '当前策略', 'what-if'], m3gStates: '用 3g 的损伤状态', m3g: '未来 30 次中的 3g', mD1: '30 次后区域 1 损伤', mP60: 'P(区域 1 ≥ 60 %)',
+      gridR: '行：区域 1，0 → 80 %', gridC: '列：区域 2，0 → 80 %',
+      physical: '无人机', physicalSim: '无人机 · 模拟', twin: '数字孪生', obsFlow: '每次转弯的 24 个应变 →', cmdFlow: '← 下一个机动',
+      r1: '区域 1', r2: '区域 2', est: '估计', turn: '转弯',
+      ev: { start: '无人机未受损；孪生从先验“无损伤”开始。', dmg: r => `区域 ${r} 被人为损伤（+20 %），孪生不知道。`,
+        grew: (r, v, c) => `区域 ${r} 损伤在一次 ${c} 转弯中增长到 ${v} %（模拟，孪生不知道）。`,
+        repair: '无人机已修复（两个区域回到 0 %），孪生不知道。', sw: c => `孪生改为 ${c} 转弯。`,
+        send: (a, n) => `新策略已发送到无人机：权重 ${a}（25 个损伤状态中 ${n} 个用 3g）。`, grows1: '损伤现在随机动增长。', grows0: '损伤现在只在你点击时改变。' },
+      about: '应变表、噪声大小、转移模型、奖励和规划器都来自作者（BSD 3-Clause）。我们跑在共用骨架上的孪生复现了之前对作者循环的复现（每一步机动相同，估计相差 3e-14 以内），也复现了作者规划器的策略。作者代码里真实损伤按固定剧本变化；这里模拟的无人机损伤按孪生假设的速率随机动增长，所以它的决定会有后果。页面的数字和 Python 相差约 1e-12。飞机的侧倾角画得比真实坡度小。',
+      els: [['S', '物理状态', '机翼两个区域的损伤，各 0–80 %，每档 20 %。'],
+            ['O', '观测', '机翼上 24 个应变片，每次转弯时读取。'],
+            ['D', '数字状态', '25 种损伤组合各自的概率（贝叶斯滤波）。'],
+            ['Q', '预测量', '每种机动下的应变；未来 30 次转弯的期望损伤。'],
+            ['U', '动作', '下一次转弯：激进 3g 或保守 2g，自动选择。'],
+            ['R', '目标', '机动性能与结构健康的权衡（作者的规划器）。']] }
+  };
+  const t = k => TXT[SH.lang][k];
+  const U = window.UAV && window.UAV_MODEL ? UAV.make(window.UAV_MODEL) : null;
+  const S = { asset: null, tw: null, hist: [], last: null, est: null, next: null, alphaTry: 2.5, wiNow: null, wiTry: null, grows: true };
+  const bankDeg = u => u === 1 ? 70.5 : 60.0;           // level turn: cos(bank) = 1 / load factor
+  function init() {
+    S.asset = new U.Asset({ seed: 11 }); S.asset.grows = S.grows; S.tw = new U.Twin(2.5); S.alphaTry = 2.5; S.hist = [];
+    S.next = S.tw.decide(); S.asset.act(S.next);
+    addLog('', t('ev').start);
+    for (let i = 0; i < 8; i++) step();
+    forecast();
+  }
+  function step() {
+    const o = S.asset.observe(), e = S.tw.update(o), d = S.tw.decide();
+    if (S.next && d.u !== S.next.u) addLog('cmd', t('ev').sw(d.u ? '3g' : '2g'));
+    S.asset.act(d);
+    S.last = o; S.est = e; S.next = d;
+    S.hist.push({ k: o.t, t1: o.true1, t2: o.true2, e1: e.est1, e2: e.est2, u: o.u });
+    if (S.hist.length > 2000) S.hist.splice(0, S.hist.length - 2000);
+    const grew = S.asset.advance();
+    grew.forEach(r => addLog('bad', t('ev').grew(r + 1, 20 * S.asset.g[r], o.u ? '3g' : '2g')));
+    return true;
+  }
+  function forecast() { if (!S.tw) return; S.wiNow = S.tw.predict(30); S.wiTry = S.tw.predict(30, S.alphaTry); }
+  function renderWorld(el) {
+    el.innerHTML = `<button class="btn" id="uDmg1">${t('dmg1')}</button><button class="btn" id="uDmg2">${t('dmg2')}</button><button class="btn" id="uRep">${t('repair')}</button>` +
+      `<label class="check"><input type="checkbox" id="uGrow" ${S.grows ? 'checked' : ''}><span>${t('grows')}</span></label>`;
+    $('uDmg1').onclick = () => { S.asset.damage(0); addLog('bad', t('ev').dmg(1)); };
+    $('uDmg2').onclick = () => { S.asset.damage(1); addLog('bad', t('ev').dmg(2)); };
+    $('uRep').onclick = () => { S.asset.repair(); addLog('', t('ev').repair); };
+    $('uGrow').onchange = () => { S.grows = $('uGrow').checked; S.asset.grows = S.grows; addLog('', S.grows ? t('ev').grows1 : t('ev').grows0); };
+  }
+  function readouts() {
+    const o = S.last, e = S.est, d = S.next; if (!o) return [];
+    const pill = u => u ? `<span class="pill heat">${t('t3')}</span>` : `<span class="pill ok">${t('t2')}</span>`;
+    return [
+      { k: t('ro1'), v: f1(e.est1) + ' %', s: `${t('trueSim')} ${o.true1} %` },
+      { k: t('ro2'), v: f1(e.est2) + ' %', s: `${t('trueSim')} ${o.true2} %` },
+      { k: t('roMap'), v: `(${e.map[0]}, ${e.map[1]}) %`, s: `${t('prob')} ${e.pmax.toFixed(2)}` },
+      { k: t('roNext'), v: pill(d.u), s: `${t('bank')} ${bankDeg(d.u)}° · ${t('vote')} ${d.p3g.toFixed(2)}` }];
+  }
+  function legend() {
+    return `<span><i style="border-color:var(--ink)"></i>${t('lgT1')}</span><span><i class="dash" style="border-color:var(--ink)"></i>${t('lgT2')}</span>` +
+      `<span><i style="border-color:var(--twin)"></i>${t('lgE1')}</span><span><i class="dash" style="border-color:var(--twin)"></i>${t('lgE2')}</span>` +
+      `<span><i class="box" style="background:var(--heat)"></i>${t('lgU')}</span>`;
+  }
+  function drawChart() {
+    const fr = chartFrame(); if (!fr || !S.hist.length) return; const { r, C } = fr;
+    const N = 80, H = S.hist.slice(-N), k1 = H[H.length - 1].k, k0 = Math.max(0, k1 - N + 1);
+    const L = 38, Rm = 8, Top = 8, strip = 10, Bot = 22 + strip + 4, W = r.width - L - Rm, Hh = r.height - Top - Bot;
+    const x = k => L + (k - k0) / Math.max(1, N - 1) * W, y = v => Top + (85 - v) / 90 * Hh;
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.fillStyle = C.muted; ctx.textAlign = 'right';
+    for (let v = 0; v <= 80; v += 20) { ctx.beginPath(); ctx.moveTo(L, y(v) + .5); ctx.lineTo(L + W, y(v) + .5); ctx.stroke(); ctx.fillText(v + '%', L - 6, y(v)); }
+    ctx.textAlign = 'center'; const st = W < 380 ? 40 : 20;
+    for (let k = Math.ceil(k0 / st) * st; k <= k1; k += st) ctx.fillText(String(k), x(k), r.height - 8);
+    ctx.textAlign = 'left'; ctx.fillText(t('turn'), 2, r.height - 8);
+    const sy = Top + Hh + 6, bw = Math.max(1, W / N - 1);
+    H.forEach(p => { ctx.fillStyle = p.u ? C.heat : C.line; ctx.fillRect(x(p.k) - bw / 2, sy, bw, strip); });
+    const step = (pts, color, w, dash) => { ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.beginPath();
+      pts.forEach(([a, b], i) => { if (!i) ctx.moveTo(x(a), y(b)); else { ctx.lineTo(x(a), y(pts[i - 1][1])); ctx.lineTo(x(a), y(b)); } }); ctx.stroke(); ctx.setLineDash([]); };
+    step(H.map(p => [p.k, p.t1]), C.ink, 1.8); step(H.map(p => [p.k, p.t2]), C.ink, 1.4, [4, 3]);
+    lineXY(H.map(p => [p.k, p.e1]), x, y, C.twin, 1.6); lineXY(H.map(p => [p.k, p.e2]), x, y, C.twin, 1.4, [4, 3]);
+  }
+  function policyGrid(pol, belief) {
+    let h = `<div style="grid-column:1/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px"><div class="pgrid">`;
+    for (let i = 0; i < 5; i++) for (let j = 0; j < 5; j++) { const s = i * 5 + j, b = belief ? belief[s] : 0;
+      h += `<span class="pc ${pol[s] ? 'p3' : 'p2'}" title="(${i * 20}, ${j * 20}) %">${b > 0.02 ? `<i style="transform:scale(${Math.min(1, 0.35 + b).toFixed(2)})"></i>` : ''}</span>`; }
+    return h + `</div><span class="note">${t('gridR')}<br>${t('gridC')}<br><span class="pill heat">3g</span> <span class="pill off">2g</span></span></div>`;
+  }
+  const whatif = {
+    cfg: () => ({ min: 1.8, max: 3.4, step: 0.05, value: S.alphaTry }),
+    fmt: v => v.toFixed(2),
+    onTry(v) { S.alphaTry = v; forecast(); },
+    metrics() {
+      if (!S.wiNow) return '';
+      const a = S.wiNow, b = S.wiTry, h = t('mHead'), n = p => p.reduce((x, y) => x + y, 0);
+      return `<span class="h">${h[0]}</span><span class="h num">${h[1]} · ${S.tw.alpha2.toFixed(2)}</span><span class="h num" style="color:var(--twin)">${h[2]} · ${S.alphaTry.toFixed(2)}</span>` +
+        `<span>${t('m3gStates')}</span><span class="num">${n(a.policy)} / 25</span><span class="num">${n(b.policy)} / 25</span>` +
+        `<span>${t('m3g')}</span><span class="num">${a.n3g.toFixed(1)}</span><span class="num">${b.n3g.toFixed(1)}</span>` +
+        `<span>${t('mD1')}</span><span class="num">${a.mean_d1.toFixed(1)} %</span><span class="num">${b.mean_d1.toFixed(1)} %</span>` +
+        `<span>${t('mP60')}</span><span class="num">${a.p_d1_60.toFixed(2)}</span><span class="num">${b.p_d1_60.toFixed(2)}</span>` +
+        policyGrid(b.policy, S.est ? S.est.belief : null);
+    },
+    canSend: () => !!S.tw,
+    send() { S.tw.setPolicy(S.alphaTry); SH.cmdPulse = 1; addLog('cmd', t('ev').send(S.alphaTry.toFixed(2), S.tw.pol.reduce((x, y) => x + y, 0))); },
+    note: () => t('wiNote')
+  };
+  // ---------- 3D ----------
+  const sc = {}, GAP = 0.55, SPAN = 0.9, RG = [[0.08, 0.2], [0.24, 0.36]];
+  function dmgColor(v) { return tempColor(v, 0, 80, [[0, [0.20, 0.65, 0.45]], [0.5, [0.95, 0.70, 0.25]], [1, [0.85, 0.25, 0.18]]]); }
+  function buildScene(group) {
+    function plane(cx, twin) {
+      const g = new THREE.Group(); g.position.set(cx, 0.24, 0); group.add(g);
+      const body = new THREE.Group(); g.add(body);
+      const mat = twin ? new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.08, depthWrite: false })
+                       : new THREE.MeshStandardMaterial({ roughness: 0.55, metalness: 0.1 });
+      const edgeMat = new THREE.LineBasicMaterial({ transparent: true, opacity: twin ? 0.9 : 0.35 });
+      const add = (geo, pos, rot) => { const m = new THREE.Mesh(geo, mat); m.position.set(...pos); if (rot) m.rotation.set(...rot); body.add(m);
+        const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), edgeMat); e.position.copy(m.position); e.rotation.copy(m.rotation); body.add(e); return m; };
+      add(new THREE.CylinderGeometry(0.03, 0.02, 0.56, 16), [0, 0, 0.02], [Math.PI / 2, 0, 0]);
+      add(new THREE.ConeGeometry(0.03, 0.08, 16), [0, 0, -0.3], [-Math.PI / 2, 0, 0]);
+      add(new THREE.BoxGeometry(SPAN, 0.012, 0.14), [0, 0.012, -0.06]);
+      add(new THREE.BoxGeometry(0.3, 0.008, 0.07), [0, 0.01, 0.26]);
+      add(new THREE.BoxGeometry(0.008, 0.08, 0.07), [0, 0.05, 0.26]);
+      const patches = RG.map(([a, b]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(b - a, 0.016, 0.12),
+        new THREE.MeshStandardMaterial({ roughness: 0.6, transparent: twin, opacity: twin ? 0.85 : 1 })); m.position.set((a + b) / 2, 0.013, -0.06); body.add(m); return m; });
+      if (!twin) for (let i = 0; i < 24; i++) { const side = i < 12 ? 1 : -1, j = i % 12, xx = side * (0.06 + j * 0.033), zz = -0.06 + (j % 2 ? 0.035 : -0.035);
+        const d = new THREE.Mesh(new THREE.SphereGeometry(0.0055, 8, 6), new THREE.MeshBasicMaterial({ color: 0x334455 })); d.position.set(xx, 0.022, zz); body.add(d); }
+      return { g, body, mat, edgeMat, patches, roll: 0 };
+    }
+    sc.phys = plane(-GAP, false); sc.twin = plane(GAP, true);
+    sc.links = makeLinks(group, -GAP + 0.25, GAP - 0.25, 0.42, 0.33, 0.14);
+    const V = (a, b, c) => new THREE.Vector3(a, b, c);
+    sc.anchors = { physName: V(-GAP, 0.52, -0.05), twinName: V(GAP, 0.52, -0.05), p1: V(-GAP + 0.14, 0.36, 0.1), p2: V(-GAP + 0.33, 0.29, 0.13),
+      q1: V(GAP + 0.14, 0.36, 0.1), q2: V(GAP + 0.33, 0.29, 0.13), pm: V(-GAP - 0.28, 0.16, 0.12), qm: V(GAP - 0.28, 0.16, 0.12),
+      obs: sc.links.obs.getPoint(0.5).clone().add(V(0, 0.03, 0)), cmd: sc.links.cmd.getPoint(0.5).clone().add(V(0, -0.035, 0)) };
+    theme();
+  }
+  function theme() {
+    if (!sc.phys) return;
+    sc.phys.mat.color = col('--foam'); sc.phys.edgeMat.color = col('--foam-edge');
+    sc.twin.mat.color = col('--twin'); sc.twin.edgeMat.color = col('--twin'); sc.links.theme();
+  }
+  function update3D(dt, now) {
+    const o = S.last, e = S.est, d = S.next;
+    if (o && e) {
+      sc.phys.patches[0].material.color = dmgColor(o.true1); sc.phys.patches[1].material.color = dmgColor(o.true2);
+      sc.twin.patches[0].material.color = dmgColor(e.est1); sc.twin.patches[1].material.color = dmgColor(e.est2);
+      const target = -(bankDeg(o.u) * Math.PI / 180) * 0.42, tTwin = -(bankDeg(d.u) * Math.PI / 180) * 0.42;
+      sc.phys.roll += (target - sc.phys.roll) * Math.min(1, dt * 0.004); sc.twin.roll += (tTwin - sc.twin.roll) * Math.min(1, dt * 0.004);
+      sc.phys.body.rotation.z = sc.phys.roll; sc.twin.body.rotation.z = sc.twin.roll;
+      const bob = Math.sin(now * 0.0015) * 0.006; sc.phys.g.position.y = 0.24 + bob; sc.twin.g.position.y = 0.24 + bob;
+    }
+    sc.links.update(dt, now);
+  }
+  function tags(narrow) {
+    const o = S.last, e = S.est, d = S.next, A = sc.anchors;
+    const L = [{ key: 'physName', pos: A.physName, cls: 'big', text: narrow ? t('physical') : t('physicalSim') },
+               { key: 'twinName', pos: A.twinName, cls: 'big twin', text: t('twin') }];
+    if (o && e) L.push(
+      { key: 'p1', pos: A.p1, text: `${t('r1')} ${o.true1}%`, show: !narrow }, { key: 'p2', pos: A.p2, text: `${t('r2')} ${o.true2}%`, show: !narrow },
+      { key: 'q1', pos: A.q1, cls: 'twin', text: `${t('est')} ${Math.round(e.est1)}%` }, { key: 'q2', pos: A.q2, cls: 'twin', text: `${t('est')} ${Math.round(e.est2)}%`, show: !narrow },
+      { key: 'pm', pos: A.pm, cls: o.u ? 'heat' : '', text: o.u ? t('t3') : t('t2'), show: !narrow },
+      { key: 'qm', pos: A.qm, cls: 'twin', text: `${t('cmdFlow').replace('← ', '')}: ${d.u ? '3g' : '2g'}`, show: !narrow },
+      { key: 'obs', pos: A.obs, cls: 'flow', text: t('obsFlow'), show: !narrow }, { key: 'cmd', pos: A.cmd, cls: 'flow', text: t('cmdFlow'), show: !narrow });
+    return L;
+  }
+  return { key: 'uav', TXT, speeds: [1, 2, 6], speedLabel: v => v + '/s', rate: v => v,
+           view: { target: [0, 0.22, -0.02], dir: [0, 0.95, 1.55], halfWidth: 1.25, minDist: 1.75 },
+           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
+           clockOf: () => S.last ? `${t('turn')} ${S.last.t}` : '–', available: !!U,
+           links: '<a href="https://www.nature.com/articles/s43588-021-00069-0" target="_blank" rel="noopener">Kapteyn, Pretorius & Willcox 2021</a> · <a href="https://github.com/michaelkapteyn/UAV-Digital-Twin" target="_blank" rel="noopener">authors’ code and data (BSD 3-Clause)</a>' };
+})();
+
+const DOMAINS = { incubator: Inc, battery: Bat, uav: Uav };
+
+// ======================= shell wiring =======================
+function renderSpeeds() {
+  const d = SH.dom; $('speedSeg').innerHTML = d.speeds.map((v, i) => `<button data-i="${i}" aria-pressed="${i === SH.speedIdx}">${d.speedLabel(v)}</button>`).join('');
+  $('speedSeg').querySelectorAll('button').forEach(b => b.onclick = () => { SH.speedIdx = Number(b.dataset.i); renderSpeeds(); });
+}
+function renderStatic() {
+  const d = SH.dom;
+  document.documentElement.lang = SH.lang === 'zh' ? 'zh-CN' : 'en';
+  $('subtitle').textContent = T('subtitle') + ' ' + D('subtitle');
+  $('reset').textContent = T('reset'); $('dragHint').textContent = T('dragHint'); $('twinTitle').textContent = T('twinTitle');
+  $('logTitle').textContent = T('logTitle'); $('aboutTitle').textContent = T('aboutTitle'); $('elTitle').textContent = T('elTitle');
+  $('sysInc').textContent = T('sys').incubator; $('sysBat').textContent = T('sys').battery; $('sysUav').textContent = T('sys').uav;
+  document.querySelectorAll('#sysSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sys === d.key)));
+  document.querySelectorAll('#langSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === SH.lang)));
+  $('worldTitle').textContent = D('worldTitle'); $('twinSees').textContent = D('twinSees');
+  $('wiTitle').textContent = D('wiTitle'); $('wiSlider').textContent = D('wiSlider'); $('send').textContent = D('send');
+  $('elGrid').innerHTML = D('els').map(([k, n, x]) => `<div class="el"><b><span>${k}</span>${n}</b><p>${x}</p></div>`).join('');
+  const all = ['update', 'predict', 'whatif', 'decide'];
+  $('skeleton').innerHTML = `<span>${T('skeleton')}</span>` + all.map(c => `<code class="${d.caps.includes(c) ? '' : 'no'}" title="${d.caps.includes(c) ? '' : T('notSupported')}">${c}()</code>`).join('') + '<code>observe()</code><code>act()</code>';
+  $('aboutText').textContent = D('about'); $('aboutLinks').innerHTML = d.links;
+  $('legend').innerHTML = d.legend();
+  d.renderWorld($('world'));
+  const cfg = d.whatif.cfg(), sl = $('try'); sl.min = cfg.min; sl.max = cfg.max; sl.step = cfg.step; sl.value = cfg.value;
+  syncPlay();
+}
+function refreshPanel() {
+  const d = SH.dom, ro = d.readouts();
+  for (let i = 0; i < 4; i++) { const r = ro[i] || { k: '', v: '', s: '' }; $('ro' + i + 'k').textContent = r.k; $('ro' + i + 'v').innerHTML = r.v; $('ro' + i + 's').innerHTML = r.s; }
+  $('clock').textContent = d.clockOf();
+  $('tryV').textContent = d.whatif.fmt(Number($('try').value));
+  $('metrics').innerHTML = d.whatif.metrics(); $('wiNote').textContent = d.whatif.note();
+  $('send').disabled = !d.whatif.canSend();
+  $('legend').innerHTML = d.legend();
+  d.drawChart();
+}
+function refreshAll() { renderStatic(); refreshPanel(); renderLog(); }
+SH.refreshAll = refreshAll; SH.refreshPanel = refreshPanel;
+function syncPlay() { $('play').textContent = SH.running ? '❚❚' : '▶'; $('play').setAttribute('aria-label', SH.running ? 'Pause' : 'Play'); }
+
+function switchDomain(key) {
+  SH.key = key; SH.dom = DOMAINS[key]; SH.log = []; SH.acc = 0; SH.speedIdx = 1; store.set('twb-sys', key);
+  if (G.ok) { if (G.group) G.scene.remove(G.group); clearTags(); G.group = new THREE.Group(); G.scene.add(G.group); SH.dom.buildScene(G.group); G.floor.material.color = col('--line'); fitCamera(); }
+  SH.dom.init(); renderSpeeds(); refreshAll();
+}
+
+let lastReal = performance.now(), panelT = 0, fcT = 0;
+function frame(now) {
+  const dt = Math.min(100, now - lastReal); lastReal = now; const d = SH.dom;
+  if (SH.running) {
+    SH.acc += dt / 1000 * d.rate(d.speeds[SH.speedIdx]);
+    let n = 0;
+    while (SH.acc >= 1 && n < 400) { if (!d.step()) { SH.acc = 0; SH.running = false; syncPlay(); d.forecast(); refreshPanel(); break; } SH.acc -= 1; n++; }
+    panelT += dt; fcT += dt;
+    if (fcT > 700) { d.forecast(); fcT = 0; }
+    if (panelT > 120) { refreshPanel(); panelT = 0; }
+  }
+  if (G.ok) { d.update3D(dt, now); G.controls.update(); G.renderer.render(G.scene, G.camera); placeTags(d.tags(G.host.getBoundingClientRect().width < 560)); }
+  requestAnimationFrame(frame);
+}
+
+$('play').onclick = () => { SH.running = !SH.running; syncPlay(); };
+$('reset').onclick = () => { SH.log = []; SH.dom.init(); SH.running = true; refreshAll(); };
+document.querySelectorAll('#sysSeg button').forEach(b => b.onclick = () => { if (b.dataset.sys !== SH.key) { SH.running = true; switchDomain(b.dataset.sys); } });
+document.querySelectorAll('#langSeg button').forEach(b => b.onclick = () => { SH.lang = b.dataset.lang; store.set('twb-lang', SH.lang); refreshAll(); });
+$('try').oninput = () => { SH.dom.whatif.onTry(Number($('try').value)); refreshPanel(); };
+$('send').onclick = () => { SH.dom.whatif.send(); SH.dom.forecast(); refreshPanel(); };
+new ResizeObserver(() => SH.dom && SH.dom.drawChart()).observe($('chart').parentElement);
+const reTheme = () => { if (G.ok) { SH.dom.theme(); G.floor.material.color = col('--line'); } SH.dom.drawChart(); };
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', reTheme);
+new MutationObserver(reTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+initThree();
+const startKey = ['#battery', '#incubator', '#uav'].includes(location.hash) ? location.hash.slice(1) : (store.get('twb-sys') || 'incubator');
+switchDomain(DOMAINS[startKey] ? startKey : 'incubator');
+requestAnimationFrame(frame);
+})();
+</script>

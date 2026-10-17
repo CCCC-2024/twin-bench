@@ -1,0 +1,40 @@
+name: New twin
+description: Propose a digital twin for a new domain or system
+labels: ["new twin"]
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks! Please describe the system with the six elements (docs/architecture.md). A paragraph each is enough."
+  - type: textarea
+    id: system
+    attributes:
+      label: System
+      description: The physical asset and why a twin of it is interesting. Reproduction of a paper, or built from a description?
+    validations:
+      required: true
+  - type: textarea
+    id: elements
+    attributes:
+      label: Six elements
+      description: S physical state, O observations, D digital state, Q quantities of interest, U actions, R reward.
+      value: |
+        - S:
+        - O:
+        - D:
+        - Q:
+        - U:
+        - R:
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Papers, code and data
+      description: Links, commits, and the license of each. Data without a license can only be used locally.
+    validations:
+      required: true
+  - type: textarea
+    id: checks
+    attributes:
+      label: How will we know it is right?
+      description: Which published numbers, upstream outputs or real data the twin will be checked against.

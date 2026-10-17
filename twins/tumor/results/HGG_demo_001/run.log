@@ -1,0 +1,48 @@
+[    0.5s] HGG_demo_001: 10 visits, grid (77, 116, 36), carrying capacity 5062500
+Initial step
+[  103.6s] LM step 1/20 params [0.025, 0.0496, 0.0254, 0.5]
+Accepted step
+[  184.1s] LM step 2/20 params [0.0503, 0.0485, 0.0273, 0.53]
+Accepted step
+[  258.5s] LM step 3/20 params [0.0799, 0.0485, 0.0281, 0.5371]
+Accepted step
+[  333.3s] LM step 4/20 params [0.0974, 0.0488, 0.0287, 0.5371]
+Accepted step
+[  410.3s] LM step 5/20 params [0.1022, 0.0493, 0.0293, 0.5354]
+Accepted step
+[  493.0s] LM step 6/20 params [0.1019, 0.0498, 0.0302, 0.532]
+Accepted step
+[  572.9s] LM step 7/20 params [0.1003, 0.0504, 0.0314, 0.5258]
+Accepted step
+[  652.1s] LM step 8/20 params [0.0987, 0.051, 0.0327, 0.5149]
+Accepted step
+[  729.6s] LM step 9/20 params [0.0974, 0.0515, 0.0344, 0.4973]
+Accepted step
+[  804.7s] LM step 10/20 params [0.0967, 0.0517, 0.0362, 0.4708]
+Accepted step
+[  881.3s] LM step 11/20 params [0.0966, 0.0517, 0.0384, 0.4345]
+Accepted step
+[  958.8s] LM step 12/20 params [0.097, 0.0514, 0.0407, 0.3894]
+Accepted step
+[ 1038.6s] LM step 13/20 params [0.0977, 0.0511, 0.0432, 0.3393]
+Accepted step
+[ 1118.6s] LM step 14/20 params [0.0985, 0.0507, 0.0456, 0.2906]
+Accepted step
+[ 1199.3s] LM step 15/20 params [0.0992, 0.0504, 0.0475, 0.2504]
+Accepted step
+[ 1282.0s] LM step 16/20 params [0.0996, 0.0502, 0.0489, 0.2231]
+Accepted step
+[ 1362.2s] LM step 17/20 params [0.0999, 0.0501, 0.0496, 0.2083]
+Accepted step
+[ 1442.2s] LM step 18/20 params [0.1, 0.05, 0.0499, 0.2023]
+Accepted step
+[ 1523.2s] LM step 19/20 params [0.1, 0.05, 0.05, 0.2005]
+Accepted step
+[ 1600.2s] LM step 20/20 params [0.1, 0.05, 0.05, 0.2001]
+[ 1670.4s] predictions done
+[ 1705.3s] what-if total dose 30: final TCC 3.171e+11
+[ 1741.2s] what-if total dose 40: final TCC 2.951e+11
+[ 1777.1s] what-if total dose 50: final TCC 2.733e+11
+[ 1812.2s] what-if total dose 60: final TCC 2.518e+11
+[ 1848.5s] what-if total dose 70: final TCC 2.306e+11
+[ 1848.5s] saved results/HGG_demo_001/repro.json
