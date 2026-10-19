@@ -12,18 +12,15 @@ About 15 s.
 """
 import datetime
 import json
-import sys
 from pathlib import Path
 
 import numpy as np
 
+from dtcore import Recorder, run
+from twins.bikeshare import ReplayStation, SimStation, StationTwin, data, model
+
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT.parents[1] / "web"
-sys.path.insert(0, str(ROOT))
-from sdt import data, model  # noqa: E402
-from sdt.station import ReplayStation, SimStation  # noqa: E402
-from sdt.twin import StationTwin  # noqa: E402
-from dtcore import Recorder, run  # noqa: E402
 
 STATION, JAN1, NOV1 = 426, datetime.date(2018, 1, 1), datetime.date(2018, 11, 1)
 C, ev, hourly = data.capacity(STATION), data.events(STATION), data.hourly(STATION)

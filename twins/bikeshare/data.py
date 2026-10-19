@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-UPSTREAM = Path(__file__).resolve().parents[1] / "upstream" / "variational-poisson-rnn"
+UPSTREAM = Path(__file__).resolve().parent / "upstream" / "variational-poisson-rnn"
 DATA = UPSTREAM / "data"
 FORECASTS = UPSTREAM / "saved_files" / "60min" / "predicted_demand"
 

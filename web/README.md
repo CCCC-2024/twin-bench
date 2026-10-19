@@ -14,7 +14,7 @@ Published by `.github/workflows/pages.yml` on every push to `main` that touches 
 | `incubator_core.js` | incubator model, Kalman filter, controller, simulated box; ported from `twins/incubator/idt` | yes |
 | `battery_core.js` | retirement decision; ported from `twins/battery/bdt` | yes |
 | `uav_core.js` | Bayes filter, policy, closed-loop asset; ported from `twins/uav/udt` | yes |
-| `bikeshare_core.js` | station model (matrix exponential), Gamma–Poisson twin, simulated or replayed station; ported from `twins/bikeshare/sdt` | yes |
+| `bikeshare_core.js` | station model (matrix exponential), Gamma–Poisson twin, simulated or replayed station; ported from `twins/bikeshare` | yes |
 | `battery_cells.js` | measured capacity and twin states of 3 cells, from `twins/battery/scripts/export_web.py` | no |
 | `uav_model.js` | strain table, transition model, planner reward (authors' data, BSD 3-Clause), from `twins/uav/scripts/export_web.py` | no |
 | `bikeshare_model.js` | the twin's learned totals per hour and day type and the Nov–Dec 2018 average demand (aggregates of Citi Bike data), from `twins/bikeshare/scripts/export_web.py` | no |

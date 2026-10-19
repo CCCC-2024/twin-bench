@@ -53,7 +53,7 @@ class ReplayStation(_Station):
     kind = "replay"
 
     def __init__(self, C, events, start_date, n_days, bikes=None):
-        """events: DataFrame from sdt.data.events (time-ordered changes with date and hour)."""
+        """events: DataFrame from data.events (time-ordered changes with date and hour)."""
         super().__init__(C, start_date, n_days, bikes)
         self.by_hour = {(d, h): g["change"].to_numpy() for (d, h), g in events.groupby(["date", "hour"])}
 

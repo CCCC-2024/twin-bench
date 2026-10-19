@@ -27,25 +27,43 @@ paper's two benchmarks (all earlier days, or the last 30, same hour and day type
 inputs from its observations. Physical side: a replay of the recorded events. The demand is fixed by the record but
 the number of bikes is ours, so actions change the inventory and the shortages.
 
+### Observations and actions
+
+One step is one hour. What a Source returns, and what the twin uses:
+
+| Field | Meaning | A real station has it? | `StationTwin.update` reads it |
+|---|---|---|---|
+| `t` | hour index since the Source's start date (0, 1, 2 …) | — | no (passed through) |
+| `date`, `hour`, `weekday` | the calendar hour | yes | yes |
+| `pickups`, `returns` | rentals and returns in that hour: the recorded (or simulated) demand, including those our station could not serve | only the served ones | yes |
+| `bikes` | bikes in the station at the end of the hour | yes | yes |
+| `lost_rent`, `lost_return` | rentals and returns that failed at our station in that hour | no: people who leave are not recorded | no; for scoring only |
+
+Action `{"set_bikes": s}`: a truck brings the station to s bikes (clipped to 0–30). The demand stays as recorded.
+`decide()` also returns `expected_lost`, the twin's own forecast; the Source ignores it.
+
 ## Files
-- `sdt/model.py`: the number of bikes as a birth–death chain; one hour is a matrix exponential, and the time spent
+- `__init__.py`: the public names, `from twins.bikeshare import StationTwin, ReplayStation, SimStation`.
+- `twin.py`: `StationTwin` with update, predict / what-if and decide.
+- `sources.py`: `ReplayStation` (recorded events, hour by hour) and `SimStation` (Poisson demand).
+- `model.py`: the number of bikes as a birth–death chain; one hour is a matrix exponential, and the time spent
   empty / full comes from the same exponential (Van Loan); expected shortages for every start; replay of events.
-- `sdt/data.py` reads the upstream files; `sdt/experiment.py` is the paper's set-up (Nov–Dec 2018, five rate sources).
-- `sdt/station.py`: `ReplayStation` (recorded events, hour by hour) and `SimStation` (Poisson demand).
-- `sdt/twin.py`: `StationTwin` with update, predict / what-if and decide.
+- `data.py` reads the upstream files; `experiment.py` is the paper's set-up (Nov–Dec 2018, five rate sources).
+- `scripts/step1_model.py`: model only, the paper's table and a Monte Carlo check of the model;
+  `scripts/step5_whatif.py`: the daytime-truck what-if.
 - `scripts/export_web.py` writes the page data (`web/bikeshare_model.js`, and the local-only `web/bikeshare_replay.js`) and
   the reference run `results/ref_web_bikeshare.json` that `web/checks/check_bikeshare.js` replays.
-- `scripts/step1_model.py` model only; `crosscheck_upstream.py` runs the authors' code (about 10 min, saves
-  `results/ref_upstream.json`); `check_repro.py`; `check_dtcore.py`; `step5_whatif.py` the daytime-truck what-if.
-- Package name `sdt` (station digital twin): `bdt` is the battery twin's.
+- `results/ref_upstream.json`: the authors' decision code run once on the same inputs (about 10 min;
+  `twins/bikeshare/scripts/crosscheck_upstream.py` in v0.2.0).
+- `tests/test_bikeshare.py` (in the repository's `tests/`): the learned rates equal the paper's benchmarks, the
+  nightly decisions equal the paper's experiment, and the decisions equal the authors' code except one numerical tie.
 
 ## Run
 ```bash
 twins/bikeshare/fetch_upstream.sh                    # about 11 MB
-python twins/bikeshare/scripts/step1_model.py        # about 10 s
-python twins/bikeshare/scripts/check_repro.py        # BIKESHARE REPRO OK
-python twins/bikeshare/scripts/check_dtcore.py       # BIKESHARE DTCORE OK, about 10 s
-python twins/bikeshare/scripts/step5_whatif.py       # about 10 s
+pytest tests/test_bikeshare.py                       # what the twin reproduces of the paper, a few seconds
+python twins/bikeshare/scripts/step1_model.py        # model only -> results/step1_*, a few seconds
+python twins/bikeshare/scripts/step5_whatif.py       # daytime-truck what-if -> results/step5_*, a few seconds
 python twins/bikeshare/scripts/export_web.py         # page data and reference run, about 5 s
 node web/checks/check_bikeshare.js twins/bikeshare/results web    # BIKESHARE WEB CHECK OK
 ```
@@ -90,5 +108,8 @@ Station 426, 1 Nov – 31 Dec 2018 (61 days), one decision per night (`results/s
   day), and each new day moves them by about 1/220, so the twin adapts slowly. The page's simulated station uses the
   Nov–Dec average, so the gap shows there.
 - The capacity (30) comes from the station table in the upstream repository; its date is unknown.
+- Where a learned forecast would plug in: every rate the twin uses comes from `StationTwin.rate(day, hour)` (through
+  `rates_ahead`, used by `predict` and `decide`). The paper's RNN forecasts are read by `data.rnn_rates` and used only
+  in `experiment.py`; they are not yet a rate source of the twin.
 - "Twin expects" is the twin's forecast with its own rates. The paper's evaluation code instead computes expected cost
   with the day's true counts.

@@ -6,15 +6,14 @@ against a Monte Carlo simulation of the same Poisson model (does the code solve 
 Writes results/step1_decisions.json and results/step1_model.png. About 20 s.
 """
 import json
-import sys
 from pathlib import Path
 
 import numpy as np
 
+from twins.bikeshare import data, model
+from twins.bikeshare import experiment as X
+
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-from sdt import data, model  # noqa: E402
-from sdt import experiment as X  # noqa: E402
 
 S = X.load()
 C = S["C"]

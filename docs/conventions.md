@@ -47,11 +47,11 @@ Create only the folders you use; delete empty ones.
 | Twin / Sources | `twin.py` / `sources.py` | `<Asset>Twin`; Sources named for what they are (`SimMug`, `CellReplay`) |
 | Tests | `tests/test_<name>.py` | what the twin must do and the published numbers it reproduces |
 | Page export | `scripts/export_web.py` | writes `web/<name>_*.js` and `results/ref_web_<name>.json` |
-| Comparison with upstream | `scripts/crosscheck_upstream.py` | |
+| Comparison with upstream | done once; the result, and where its script lives in a tagged version, go in the README | a test keeps a claim that must stay true (e.g. `results/ref_upstream.json`) |
 | Results | `results/` | say what it is, no dates: `baseline.csv`, `ref_closed_loop.json`; dates go on experiment folders |
 | Runtime databases | `results/*.db` by default, `DT_DB` to move | not results; git-ignored |
 
-Being migrated (October 2026): `_template` follows this layout; bikeshare, incubator, uav and battery still have a
+Being migrated (October 2026): `_template` and bikeshare follow this layout; incubator, uav and battery still have a
 `<x>dt/` subpackage and `scripts/check_*.py` until they are moved.
 
 Scripts find their files from their own location (`Path(__file__)`), so they run from any directory.

@@ -1,4 +1,4 @@
-"""Station digital twin, following the skeleton contract in docs/dt_template.md.
+"""Station digital twin on the dtcore contract (docs/architecture.md).
 
 D (digital state)  the current number of bikes (observed) and, for every hour of the day and
                    day type (weekday / weekend), a Gamma posterior over the rental and return rates.

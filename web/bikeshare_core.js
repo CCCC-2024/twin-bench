@@ -1,4 +1,4 @@
-/* Bike-share station twin for the page, ported from twins/bikeshare/sdt (model.py, twin.py, station.py).
+/* Bike-share station twin for the page, ported from twins/bikeshare (model.py, twin.py, sources.py).
  * Needs window.BIKESHARE_MODEL (bikeshare_model.js) for the learned totals and the simulated demand.
  * check_bikeshare.js compares this file with Python.
  */
@@ -52,7 +52,7 @@
     return R;
   }
 
-  // ---------- station model (sdt/model.py) ----------
+  // ---------- station model (model.py) ----------
   function generator(lp, lr, C) {
     const n = C + 1, Q = new Float64Array(n * n);
     for (let i = 0; i < C; i++) { Q[i * n + i + 1] = lr; Q[(i + 1) * n + i] = lp; }
@@ -101,7 +101,7 @@
     return [lp, lr, bikes];
   }
 
-  // ---------- twin (sdt/twin.py) ----------
+  // ---------- twin (twin.py) ----------
   const weekday = day => day % 7 < 5;                 // day index from 1 Jan 2018, a Monday
   class Twin {
     /* base: totals per day type and hour learned before the page starts: [n days, rentals, returns] */
@@ -153,7 +153,7 @@
     }
   }
 
-  // ---------- physical side (sdt/station.py): simulated demand, or given events per hour ----------
+  // ---------- physical side (sources.py): simulated demand, or given events per hour ----------
   function rng(seed) {
     let a = seed >>> 0;
     return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
