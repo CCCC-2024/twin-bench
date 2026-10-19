@@ -13,7 +13,7 @@ dtcore/            the skeleton; no domain concepts
 twins/<name>/      one folder per twin
 web/               the shared page
 docs/              architecture, adding a twin, these conventions
-tests/             unit tests for dtcore
+tests/             tests for dtcore and each twin (pytest)
 tools/             helper scripts shared by twins
 .github/           CI, Pages deployment, issue and PR templates
 ```
@@ -23,10 +23,13 @@ No other top-level folders.
 ## 2. A twin folder
 
 ```
-twins/<name>/
+twins/<name>/            the Python package twins.<name>
+  __init__.py            the public names: the Twin and Source classes; other code imports only these
+  twin.py                the Twin class, <Asset>Twin
+  sources.py             the Source classes
+  *.py                   the rest of the twin (model, estimator, decision), named freely
   README.md              fixed structure (section 4)
-  <x>dt/                 importable code: model, estimator, decision, the Source / Twin adapter
-  scripts/               runnable entry points: checks, exports, result generation
+  scripts/               runnable entry points: exports, result generation
   results/               output of scripts/; regenerable
   experiments/           one-off studies, one subfolder each (section 3)
   fetch_upstream.sh      downloads third-party code and data into upstream/ (git-ignored)
@@ -40,13 +43,16 @@ Create only the folders you use; delete empty ones.
 | What | Where | Name |
 |---|---|---|
 | Twin folder | `twins/<name>/` | the physical asset, lower case, no author or paper name: `incubator`, `battery`, `uav` |
-| Package | `twins/<name>/<x>dt/` | first letter + `dt`: `idt`, `bdt`, `udt` |
-| dtcore adapter | `<x>dt/twin.py` (or `dt.py` when wrapping existing code) | the `Source` and `Twin` classes |
-| Checks | `scripts/check_<what>.py` | last line `<NAME> OK` or `<NAME> MISMATCH` |
+| Package | `twins/<name>/` | imported as `twins.<name>`; scripts and tests import it, never `sys.path` |
+| Twin / Sources | `twin.py` / `sources.py` | `<Asset>Twin`; Sources named for what they are (`SimMug`, `CellReplay`) |
+| Tests | `tests/test_<name>.py` | what the twin must do and the published numbers it reproduces |
 | Page export | `scripts/export_web.py` | writes `web/<name>_*.js` and `results/ref_web_<name>.json` |
 | Comparison with upstream | `scripts/crosscheck_upstream.py` | |
 | Results | `results/` | say what it is, no dates: `baseline.csv`, `ref_closed_loop.json`; dates go on experiment folders |
 | Runtime databases | `results/*.db` by default, `DT_DB` to move | not results; git-ignored |
+
+Being migrated (October 2026): `_template` follows this layout; bikeshare, incubator, uav and battery still have a
+`<x>dt/` subpackage and `scripts/check_*.py` until they are moved.
 
 Scripts find their files from their own location (`Path(__file__)`), so they run from any directory.
 Commands in READMEs are written from the repository root, except inside experiments.

@@ -11,15 +11,17 @@ warm it. The twin estimates the temperature from a noisy sensor and switches the
 | water temperature | noisy thermometer every 10 s; heater on/off | temperature estimate and its variance | temperature over the next minutes | heater on / off | stay near 60 °C |
 
 ## Files
-- `mdt/model.py` — Newton's law of cooling with a heater, one exact step for a given dt.
-- `mdt/twin.py` — `SimMug` (the physical side: a simulated mug with sensor noise) and `MugTwin` (scalar Kalman
-  filter as `update`, model roll-out as `predict` and what-if, a heater rule as `decide`).
-- `scripts/check_dtcore.py` — one hour through `dtcore.run`; checks the estimate beats the raw sensor and the mug is
-  held within 2 K of the target.
+- `__init__.py` — the public names, `MugTwin` and `SimMug`: `from twins._template import MugTwin, SimMug`.
+- `model.py` — Newton's law of cooling with a heater, one exact step for a given dt.
+- `sources.py` — `SimMug`, the physical side: a simulated mug with sensor noise.
+- `twin.py` — `MugTwin`: scalar Kalman filter as `update`, model roll-out as `predict` and what-if, a heater rule as
+  `decide`.
+- `tests/test_template.py` (in the repository's `tests/`) — one hour through `dtcore.run`: the estimate beats the raw
+  sensor, the mug is held within 2 K of the target, and a prediction starts from the current estimate.
 
 ## Run
 ```bash
-python twins/_template/scripts/check_dtcore.py    # TEMPLATE OK
+pytest tests/test_template.py    # 3 passed
 ```
 
 ## Making it yours

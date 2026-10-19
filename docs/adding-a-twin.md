@@ -16,11 +16,12 @@ Open an issue with the **New twin** template. A good candidate:
 
 ```bash
 cp -r twins/_template twins/<name>          # <name>: the physical asset, lower case, e.g. "pump", "greenhouse"
-mv twins/<name>/mdt twins/<name>/<x>dt      # package: first letter + "dt", e.g. pdt
+cp tests/test_template.py tests/test_<name>.py
 ```
 
-Rename the imports in `scripts/check_dtcore.py`, and rewrite the README following
-[conventions.md](conventions.md#4-readme-structure).
+The folder is the Python package `twins.<name>`: keep `__init__.py` (the public names), `twin.py` (the Twin) and
+`sources.py` (the Sources); name the rest freely. Change the import in `tests/test_<name>.py` to `twins.<name>`, and
+rewrite the README following [conventions.md](conventions.md#4-readme-structure).
 
 ## 2. The seven steps
 
@@ -37,11 +38,10 @@ Rename the imports in `scripts/check_dtcore.py`, and rewrite the README followin
 
 ## 3. Checks
 
-`scripts/check_dtcore.py` must print `<NAME> DTCORE OK` when running through `dtcore.run` gives exactly the same
-states and decisions as calling your functions directly. Run both in the same process, never against a stored file:
-library versions can change the last digits (see `twins/uav/scripts/check_dtcore.py`).
-
-Add every check to [run_checks.sh](../run_checks.sh); CI runs that file.
+`tests/test_<name>.py` runs the twin through `dtcore.run` and asserts what it must do (see `tests/test_template.py`);
+a reproduction also asserts the published numbers it reproduces. Compare with results computed in the same run, not
+with long float lists stored from another machine: library versions change the last digits. pytest finds the file by
+itself; CI runs [run_checks.sh](../run_checks.sh), which runs pytest.
 
 ## 4. Third-party code and data
 
@@ -58,7 +58,7 @@ out of `run_checks.sh`.
 ## Checklist for the pull request
 
 - [ ] README with the six elements, sources, how to run, results, notes
-- [ ] `check_dtcore.py` prints OK and is in `run_checks.sh`
+- [ ] `tests/test_<name>.py` passes
 - [ ] `fetch_upstream.sh` pinned to commits; licenses in THIRD_PARTY_NOTICES.md
 - [ ] new dependencies in `pyproject.toml`
 - [ ] row added to the table in the top-level README; entry in CHANGELOG.md

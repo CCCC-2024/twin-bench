@@ -17,8 +17,8 @@ twins = ["numpy", "scipy", "pandas", "openpyxl", "matplotlib"]   # incubator, ba
 live = ["paho-mqtt", "amqtt", "streamlit"]                  # battery real-time demo (twins/battery/live)
 dev = ["pytest"]
 
-[tool.setuptools]
-packages = ["dtcore"]
+[tool.setuptools.packages.find]
+include = ["dtcore", "twins", "twins.*"]   # each twin is importable as twins.<name>
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

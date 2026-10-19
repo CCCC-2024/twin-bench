@@ -6,6 +6,9 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Changed
+- Twins are importable as `twins.<name>` (`pip install -e .` now installs `twins` next to `dtcore`). The template
+  shows the layout every twin moves to: public names in `__init__.py`, the Twin in `twin.py`, the Sources in
+  `sources.py`; `twins/_template/mdt/` is gone and its check is `tests/test_template.py`.
 - `dtcore.Source.act` raises `NotImplementedError` unless a source overrides it: a decision sent to a source that does
   not handle actions used to be dropped without notice. Every source in the repository already overrides it.
 - `dtcore` and `docs/architecture.md` state what `t` and `kind` promise: the meaning and unit of `t` belong to each

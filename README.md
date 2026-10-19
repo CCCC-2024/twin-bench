@@ -45,7 +45,7 @@ is described in [docs/architecture.md](docs/architecture.md).
 git clone https://github.com/CCCC-2024/twin-bench.git && cd twin-bench
 python -m venv .venv && source .venv/bin/activate          # Python 3.10+
 pip install -e ".[twins,dev]"
-python twins/_template/scripts/check_dtcore.py              # TEMPLATE OK
+pytest tests/test_template.py                               # the template twin, no downloads needed
 
 for t in incubator battery uav bikeshare; do twins/$t/fetch_upstream.sh; done   # third-party code and data, pinned commits
 ./run_checks.sh                                             # everything CI runs; ends with ALL CHECKS OK
@@ -58,10 +58,10 @@ The tumor twin needs PyTorch and its own environment; see [twins/tumor](twins/tu
 
 ```
 dtcore/            the skeleton: Source, Twin, run(), Recorder
-twins/<name>/      one folder per twin: README, package, scripts/, results/, experiments/, fetch_upstream.sh
+twins/<name>/      one folder per twin, importable as twins.<name>: README, code, scripts/, results/, fetch_upstream.sh
 web/               the shared page: one shell, one module per twin, JS checked against Python
 docs/              architecture, adding a twin, file conventions
-tests/             unit tests for dtcore
+tests/             tests for dtcore and the twins (pytest)
 tools/             helper scripts (fetching pinned upstream code)
 ```
 
