@@ -6,7 +6,7 @@ body:
     id: where
     attributes:
       label: Where
-      description: Twin, script or page module, e.g. twins/battery/scripts/check_repro.py
+      description: Twin, script or page module, e.g. twins/battery/scripts/baseline.py
     validations:
       required: true
   - type: textarea

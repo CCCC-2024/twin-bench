@@ -4,8 +4,9 @@ Same algorithm and same random-number order as upstream/run_pf_and_optimize_reti
   capacity(k) = 1 - 10**log10_a * k**b, parameters follow a random walk,
   one Gaussian likelihood update per measured cycle.
 Only change: the end-of-life search over 500 sampled trajectories is solved in
-closed form instead of a 10,000-cycle grid search (no randomness involved, so the
-random stream and all outputs are identical; check_eol=True asserts this).
+closed form instead of a 10,000-cycle grid search. No randomness is involved, so the
+random stream and all outputs are identical (checked at every cycle of the paper's
+example cell by scripts/check_repro.py in v0.2.0).
 """
 import numpy as np
 from scipy import stats
@@ -43,15 +44,8 @@ def _eol_samples(cycle, la, b, eol_threshold):
     return np.where(hit, k, 100000.0)
 
 
-def _eol_samples_grid(cycle, la, b, eol_threshold):
-    """Upstream's brute-force version, kept for the equality check."""
-    ks = np.arange(cycle, HORIZON).astype(float)
-    hit = power_law(ks[:, None], la[None, :], b[None, :]) <= eol_threshold
-    return np.where(hit.any(axis=0), ks[hit.argmax(axis=0)], 100000.0)
-
-
-class BatteryTwin:
-    """Particle-filter twin that is updated one measured cycle at a time.
+class ParticleFilter:
+    """Particle filter on the fade-model parameters, updated one measured cycle at a time.
 
     Same algorithm and random-number order as the original batch loop, so feeding the
     measurements one by one gives exactly the batch result (run_pf below uses this class).
@@ -64,7 +58,7 @@ class BatteryTwin:
         self.particles = np.column_stack([prior[k] + rng.randn(n_particles) * prior_std[k] for k in range(2)])
         self.weights = np.full_like(self.particles, 1 / n_particles)
 
-    def step(self, cycle, cap, check_eol=False):
+    def step(self, cycle, cap):
         """Ingest one measurement (cycle number, normalized capacity) and update the state."""
         rng, n = self.rng, self.n
         # predict (random walk)
@@ -86,18 +80,20 @@ class BatteryTwin:
         self.particles, self.weights = new, np.full_like(particles, 1 / n)
 
         eol = _eol_samples(cycle, la_s, b_s, self.eol_threshold)
-        if check_eol:
-            assert np.array_equal(eol, _eol_samples_grid(cycle, la_s, b_s, self.eol_threshold)), cycle
         lo, hi = np.percentile(eol - cycle, (5, 95))
         return dict(cycle=int(cycle), capacity=float(cap), log10_a=m[0], b=m[1],
                     log10_a_std=s[0], b_std=s[1], eol_pred=float(np.median(eol)),
                     rul_lo=float(lo), rul_hi=float(hi))
 
+    def capacity_band(self, cycles):
+        """5th and 95th percentile of the projected normalized capacity over the particles, at each cycle."""
+        band = power_law(np.asarray(cycles)[None, :], self.particles[:, :1], self.particles[:, 1:])
+        return np.percentile(band, 5, axis=0), np.percentile(band, 95, axis=0)
+
 
 def run_pf(cell, prior=PRIOR, prior_std=PROC_STD, meas_std=MEAS_STD, proc_std=PROC_STD,
-           n_particles=N_PARTICLES, eol_threshold=EOL_THRESHOLD, q=None, rng=np.random,
-           check_eol=False):
-    """Filter cycle by cycle from first-prediction time to end of life (batch use of BatteryTwin).
+           n_particles=N_PARTICLES, eol_threshold=EOL_THRESHOLD, q=None, rng=np.random):
+    """Filter cycle by cycle from first-prediction time to end of life (batch use of ParticleFilter).
 
     `q` lets experiments feed a modified measurement stream (e.g. noisier sensors);
     by default the cell's normalized capacity is used. `prior_std` defaults to the
@@ -107,8 +103,8 @@ def run_pf(cell, prior=PRIOR, prior_std=PROC_STD, meas_std=MEAS_STD, proc_std=PR
     i0, k_eol = cell["idx_fpt"], cell["k_eol"]
     cycles = np.arange(cell["k_fpt"], k_eol + 1, dtype=int)
     caps = q[i0:]
-    twin = BatteryTwin(prior, prior_std, meas_std, proc_std, n_particles, eol_threshold, rng)
-    rows = [twin.step(c, caps[i], check_eol) for i, c in enumerate(cycles)]
+    filt = ParticleFilter(prior, prior_std, meas_std, proc_std, n_particles, eol_threshold, rng)
+    rows = [filt.step(c, caps[i]) for i, c in enumerate(cycles)]
     col = lambda k: np.array([r[k] for r in rows])
     return dict(cycles=cycles, capacities=caps, log10_a=col("log10_a"), b=col("b"),
                 log10_a_std=col("log10_a_std"), b_std=col("b_std"), eol_pred=col("eol_pred"),

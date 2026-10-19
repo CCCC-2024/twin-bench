@@ -11,7 +11,6 @@ web/bikeshare_replay.js
 twins/incubator/results/ref_web_incubator_replay.json
 twins/*/results/*.db
 twins/*/results/*.db-journal
-twins/battery/results/upstream_cell.pkl
 twins/tumor/results/*/sims_*.npz
 logs/
 tmp_*/

@@ -28,12 +28,25 @@ versions follow [Semantic Versioning](https://semver.org/).
   `tests/test_uav.py`, which tests the README's results through the twin itself (the authors' planner policy; the
   study's error and maneuver rates on the authors' asset, which the twin reproduces exactly). The study stays as it
   is; `upstream_sources.json` (checksums of a snapshot, now pinned by commit) is removed.
+- battery moved to that layout (`from twins.battery import BatteryTwin, CellReplay`; `bdt/` is gone and `dt.py` is
+  split into `twin.py` and `sources.py`). The dtcore twin is now `BatteryTwin` and the particle filter, which was called
+  `BatteryTwin`, is `ParticleFilter`; it now gives the capacity band itself, so the twin no longer reads its particles
+  (page data unchanged byte for byte). `decide` is `decide_paper`, named for knowing the cell's true end of life, next
+  to `decide_online`. `scripts/check_repro.py` and `scripts/check_dtcore.py` became `tests/test_battery.py`, which also
+  tests the README's notes; the grid search kept only to check the closed form is removed. `baseline.csv` gains
+  `x_online`. `live/` imports the package instead of editing `sys.path`; `check_live.py` passes unchanged.
+- Only two places still edit `sys.path`, both to reach authors' code that cannot be installed: `twins/uav/__init__.py`
+  and bikeshare's `scripts/crosscheck_upstream.py` (the frozen UAV study and the tumor scripts aside). `run_checks.sh`
+  is now pytest plus the page checks.
 - `dtcore.Source.act` raises `NotImplementedError` unless a source overrides it: a decision sent to a source that does
   not handle actions used to be dropped without notice. Every source in the repository already overrides it.
 - `dtcore` and `docs/architecture.md` state what `t` and `kind` promise: the meaning and unit of `t` belong to each
   twin and `run()` does not check them; `kind` says where the data come from, not whether actions can change state.
 
 ### Fixed
+- battery README: the closed-form end of life is about 100× faster than the grid search here (timed 2026-10-19
+  against v0.2.0's), not 40×; "one decision out of 82" is seed 0 of 4 in 246 over the three seeds; the dip decisions'
+  "wrong twice as often" now gives its counts (3 of 21 against 15 of 225, all three from one cell).
 - `twins/battery/scripts/baseline.py` writes the five columns `plot_tradeoff.py` needs (`x_global`, `u_global`,
   `u_twin_true`, `regret_global`, `too_late`); before, the committed `baseline.csv` and `tradeoff_baseline.png` could
   not be regenerated from the repository. The rebuilt columns equal the committed ones in all 1,230 rows.

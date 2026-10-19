@@ -10,12 +10,12 @@ from pathlib import Path
 
 import numpy as np
 
+from twins.battery.data import load_cells, split
+from twins.battery.decision import decide_paper
+from twins.battery.live import store
+from twins.battery.pf import run_pf
+
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "live"))
-from bdt.data import load_cells, split  # noqa: E402
-from bdt.pf import run_pf  # noqa: E402
-from bdt.decision import decide  # noqa: E402
-import store  # noqa: E402
 
 CELL, SEED = 27, 0
 py = sys.executable
@@ -40,7 +40,7 @@ m = len(rows)
 live = np.array(rows)
 same = (np.array_equal(live[:, 0], ref["cycles"][:m]) and np.array_equal(live[:, 1], ref["log10_a"][:m])
         and np.array_equal(live[:, 2], ref["b"][:m]) and np.array_equal(live[:, 3], ref["eol_pred"][:m]))
-paper = decide(cell, ref, threshold=0.95)
+paper = decide_paper(cell, ref, threshold=0.95)
 print(f"measurements stored: {n_meas[0]} (cell measured {cell['n_measured']}, last cycle {n_meas[1]})")
 print(f"twin states: {m}; identical to batch PF on these cycles: {same}")
 print(f"online decision: at cycle {dec[0]} -> retire at {dec[1]} (twin-predicted EOL {dec[2]})")

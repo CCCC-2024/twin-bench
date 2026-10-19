@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run every check: the tests in tests/ (dtcore and the twins), each twin on dtcore, and the web page against Python.
+# Run every check: the tests in tests/ (dtcore and each twin) and the web page against Python.
 # Prints one line per check and exits non-zero if any is not OK. CI runs exactly this.
 #
 #   ./run_checks.sh            needs: pip install -e ".[twins,dev]"  and  twins/*/fetch_upstream.sh
@@ -18,8 +18,6 @@ check() {   # check <text the last line must contain> <command...>
 }
 
 check "passed"              $PY -m pytest -q
-check "REPRO OK"            $PY twins/battery/scripts/check_repro.py
-check "BATTERY DTCORE OK"   $PY twins/battery/scripts/check_dtcore.py 27 4 24
 
 if command -v node > /dev/null; then
   # the incubator replay reference is built locally from the (unlicensed, not committed) upstream data

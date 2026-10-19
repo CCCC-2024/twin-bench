@@ -1,7 +1,7 @@
 /* Battery twin: the deterministic parts the page computes itself, ported from
- * twins/battery/bdt (pf.power_law, decision._exp_utility / utility_curve / decide_online).
+ * twins/battery (pf.power_law, decision._exp_utility / utility_curve / decide_online).
  * The particle filter itself runs in Python on the shared skeleton; its states are in battery_cells.js.
- * web/check_battery.js compares this file with Python.
+ * web/checks/check_battery.js compares this file with Python.
  */
 (function (root) {
   'use strict';

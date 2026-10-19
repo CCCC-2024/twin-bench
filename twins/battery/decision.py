@@ -3,8 +3,10 @@
 Utility functions, bounds and weights are copied from the upstream retirement script.
 The twin decides once, when the measured normalized capacity first drops to
 `threshold` (authors: 0.95). Future capacity = PF mean projection at that cycle.
-The oracle decision uses the cell's true capacity curve instead; comparing the two
-gives the twin's decision error.
+Two versions, because they know different things:
+  decide_paper   the authors' evaluation: candidates run to the cell's true end of life, and an oracle
+                 decision on the true capacity curve scores the twin's (its decision error);
+  decide_online  what an online twin can do: candidates run to the twin's predicted end of life.
 """
 import numpy as np
 
@@ -39,9 +41,11 @@ def utility_curve(cap_ah, x_candidates, weights=WEIGHTS):
     return np.array(out)
 
 
-def decide(cell, pf_res, threshold=0.95, q_obs=None):
+def decide_paper(cell, pf_res, threshold=0.95, q_obs=None):
     """Return the twin's retirement cycle, the oracle's, and the true-utility regret.
 
+    Knows what an online twin cannot: candidates run to the cell's true end of life, and the oracle and the regret use
+    the true capacity curve (the authors' extrapolation past the last measured cycle).
     q_obs: the measurement stream the twin saw (default: the cell's own data).
     """
     q_obs = cell["q"] if q_obs is None else q_obs
@@ -70,7 +74,7 @@ def decide(cell, pf_res, threshold=0.95, q_obs=None):
 def decide_online(q_hist, q0, log10_a, b, eol_pred, weights=WEIGHTS):
     """Retirement decision using only what the twin knows now.
 
-    Unlike `decide` (and the upstream script), the candidate range ends at the twin's
+    Unlike `decide_paper` (and the upstream script), the candidate range ends at the twin's
     *predicted* end of life, not the cell's true one, which an online twin cannot know.
     q_hist: normalized capacities measured so far, starting at cycle 2.
     Returns the suggested retirement cycle and the utility curve the twin sees.

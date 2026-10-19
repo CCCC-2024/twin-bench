@@ -5,14 +5,11 @@ Usage: python live/replayer.py --cell 27 --rate 20
 """
 import argparse
 import json
-import sys
 import time
-from pathlib import Path
 
 import paho.mqtt.client as mqtt
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from bdt.data import load_cells, split  # noqa: E402
+from twins.battery.data import load_cells, split
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--cell", type=int, default=27, help="test-cell index (27 = authors' example, Primary Test Cell 28)")

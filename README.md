@@ -71,11 +71,10 @@ Where each kind of file goes is fixed in [docs/conventions.md](docs/conventions.
 
 Every claim of "same as the original" is checked by CI on each push ([run_checks.sh](run_checks.sh)):
 
-- the tests in `tests/` assert, through each twin, the results its README states (e.g. bike share: the learned rates
-  equal the paper's benchmarks and the decisions equal the authors' code except one numerical tie; UAV: the authors'
-  planner policy, and the error and maneuver rates of our study of their loop);
-- the battery twin is still checked by scripts that print `OK` or `MISMATCH` (retirement at cycle 542 of the paper's
-  example cell; the twin on `dtcore` equal to the original particle filter), being moved to `tests/`;
+- the tests in `tests/` assert, through each twin, the results its README states (e.g. battery: retirement at cycle
+  542 of the paper's example cell, and the twin on `dtcore` equal to the original particle filter; bike share: the
+  learned rates equal the paper's benchmarks and the decisions equal the authors' code except one numerical tie; UAV:
+  the authors' planner policy, and the error and maneuver rates of our study of their loop);
 - the page's JavaScript matches the Python reference (incubator ~1e-12 °C; battery 615/615 what-if decisions;
   UAV 120/120 maneuvers; bike share 72 hours of decisions and forecasts).
 

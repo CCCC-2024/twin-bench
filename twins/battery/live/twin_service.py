@@ -8,17 +8,14 @@ capacity first drops to 0.95, using only information available at that cycle.
 import json
 import sys
 import time
-from pathlib import Path
 
 import numpy as np
 import paho.mqtt.client as mqtt
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from bdt.data import FPT_THRESHOLD  # noqa: E402
-from bdt.pf import BatteryTwin  # noqa: E402
-from bdt.decision import decide_online  # noqa: E402
-import store  # noqa: E402
+from twins.battery.data import FPT_THRESHOLD
+from twins.battery.decision import decide_online
+from twins.battery.live import store
+from twins.battery.pf import ParticleFilter
 
 DECIDE_AT = 0.95
 SEED = int(sys.argv[1]) if len(sys.argv) > 1 else 0
@@ -40,7 +37,7 @@ def on_capacity(c, u, m):
     hist.setdefault(name, []).append(q)
     con.execute("INSERT INTO measurements VALUES (?,?,?,?,?)", (name, cycle, q, d["cap_ah"], d["t"]))
     if name not in twins and q <= FPT_THRESHOLD:              # first-prediction time reached
-        twins[name] = BatteryTwin(rng=np.random.RandomState(SEED))
+        twins[name] = ParticleFilter(rng=np.random.RandomState(SEED))
         con.execute("UPDATE meta SET k_fpt=? WHERE cell=?", (cycle, name))
     if name in twins:
         s = twins[name].step(cycle, q)

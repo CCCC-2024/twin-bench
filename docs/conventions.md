@@ -25,7 +25,8 @@ No other top-level folders.
 ```
 twins/<name>/            the Python package twins.<name>
   __init__.py            the public names: the Twin and Source classes and anything a caller must pass to them
-                         (a reproduction also exports its paper experiment); code outside the twin imports only these
+                         (a reproduction also exports its paper experiment); code outside the twin imports only
+                         these, while the twin's own scripts and tests/test_<name>.py may use any of its modules
   twin.py                the Twin class, <Asset>Twin
   sources.py             the Source classes
   *.py                   the rest of the twin (model, estimator, decision), named freely
@@ -51,9 +52,6 @@ Create only the folders you use; delete empty ones.
 | Comparison with upstream | `scripts/crosscheck_upstream.py` | runs the authors' code on our inputs; kept when a test compares against its saved answers, so `results/` stays regenerable; a comparison made once and only reported goes in the README |
 | Results | `results/` | say what it is, no dates: `baseline.csv`, `step1_decisions.json`; dates go on experiment folders |
 | Runtime databases | `results/*.db` by default, `DT_DB` to move | not results; git-ignored |
-
-Being migrated (October 2026): `_template`, bikeshare, incubator and uav follow this layout; battery still has a
-`bdt/` subpackage and `scripts/check_*.py` until it is moved.
 
 Scripts find their files from their own location (`Path(__file__)`), so they run from any directory.
 Commands in READMEs are written from the repository root, except inside experiments.

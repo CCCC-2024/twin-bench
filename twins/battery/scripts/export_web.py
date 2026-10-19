@@ -7,17 +7,16 @@ predicted from the particles. results/ref_web_battery.json holds what-if decisio
 Data: Severson et al. 2019 cells, as packaged in Thelen's MIT-licensed repository.
 """
 import json
-import sys
 from pathlib import Path
 
 import numpy as np
 
+from dtcore import Recorder, run
+from twins.battery import BatteryTwin, CellReplay
+from twins.battery.data import load_cells, split
+from twins.battery.decision import decide_online
+
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-from bdt.data import load_cells, split  # noqa: E402
-from bdt.decision import decide_online  # noqa: E402
-from bdt.dt import BatteryDT, CellReplay  # noqa: E402
-from dtcore import Recorder, run  # noqa: E402
 
 CELLS = [(27, "Paper's example cell"), (4, "Long-lived cell"), (24, "Short-lived cell")]
 CELLS_ZH = {27: "论文示例电池", 4: "长寿命电池", 24: "短寿命电池"}
@@ -47,7 +46,7 @@ cells = split(load_cells())[1]
 out, ref = [], []
 for idx, label in CELLS:
     c = cells[idx]
-    src, tw = KeepReplaying(c), BatteryDT(c["q0"], seed=0)
+    src, tw = KeepReplaying(c), BatteryTwin(c["q0"], seed=0)
     rec = BandRecorder(tw)
     run(src, tw, recorder=rec)
     S = [r["est"] for r in rec.rows if r["est"]["started"]]

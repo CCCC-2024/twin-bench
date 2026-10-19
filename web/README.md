@@ -12,7 +12,7 @@ Published by `.github/workflows/pages.yml` on every push to `main` that touches 
 | `build.py` | wraps `page.html` into `index.html` | yes |
 | `index.html` | built page; open it in a browser | no (git-ignored) |
 | `incubator_core.js` | incubator model, Kalman filter, controller, simulated box; ported from `twins/incubator` | yes |
-| `battery_core.js` | retirement decision; ported from `twins/battery/bdt` | yes |
+| `battery_core.js` | retirement decision; ported from `twins/battery` | yes |
 | `uav_core.js` | Bayes filter, policy, closed-loop asset; ported from `twins/uav` | yes |
 | `bikeshare_core.js` | station model (matrix exponential), Gamma–Poisson twin, simulated or replayed station; ported from `twins/bikeshare` | yes |
 | `battery_cells.js` | measured capacity and twin states of 3 cells, from `twins/battery/scripts/export_web.py` | no |

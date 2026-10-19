@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 
-UPSTREAM = Path(__file__).resolve().parents[1] / "upstream" / "battery_digital_twin"   # ../fetch_upstream.sh
+UPSTREAM = Path(__file__).resolve().parent / "upstream" / "battery_digital_twin"   # fetch_upstream.sh
 RAW = UPSTREAM / "124 LFP Capacity Data"
 
 FPT_THRESHOLD = 0.985  # prediction starts once normalized capacity <= this

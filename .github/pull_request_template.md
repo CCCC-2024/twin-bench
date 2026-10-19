@@ -9,7 +9,7 @@
 ## Checklist
 
 - [ ] `./run_checks.sh` ends with `ALL CHECKS OK`
-- [ ] new claims ("same as the paper", "unchanged") have a check that prints OK / MISMATCH, listed in `run_checks.sh`
+- [ ] new claims ("same as the paper", "unchanged") have a test in `tests/` (for the page, a check in `web/checks/`)
 - [ ] files are where `docs/conventions.md` says; no third-party code or data committed
 - [ ] new upstream sources pinned in `fetch_upstream.sh` and listed in `THIRD_PARTY_NOTICES.md`
 - [ ] README(s) and `CHANGELOG.md` (Unreleased) updated

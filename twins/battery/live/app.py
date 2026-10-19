@@ -1,20 +1,16 @@
 """Local web page for the live battery twin: what is coming in, what the twin believes,
 what it decided, and what-if questions. Run: streamlit run live/app.py
 """
-import sys
 import time
-from pathlib import Path
 
 import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from bdt.pf import BatteryTwin, power_law  # noqa: E402
-from bdt.decision import decide_online  # noqa: E402
-import store  # noqa: E402
+from twins.battery.decision import decide_online
+from twins.battery.live import store
+from twins.battery.pf import ParticleFilter, power_law
 
 st.set_page_config(page_title="Battery Digital Twin", layout="wide")
 con = store.connect()
@@ -115,7 +111,7 @@ if st.button("Re-run the twin on the same history with this noise"):
     rng = np.random.RandomState(1)
     noisy = hist + rng.randn(len(hist)) * noise
     start = int(np.where(noisy <= 0.985)[0][0])
-    tw = BatteryTwin(rng=np.random.RandomState(0))
+    tw = ParticleFilter(rng=np.random.RandomState(0))
     for i in range(start, len(noisy)):
         out = tw.step(i + 2, noisy[i])
     r2 = decide_online(noisy, meta.q0, out["log10_a"], out["b"], out["eol_pred"], weights=(w, 1 - w))
