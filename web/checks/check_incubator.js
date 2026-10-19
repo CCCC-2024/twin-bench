@@ -1,9 +1,9 @@
-// Check the page's JavaScript core against the Python reference runs (scripts/export_reference.py).
+// Check the page's JavaScript core against the Python reference runs (twins/incubator/scripts/export_web.py).
 // Usage: node web/checks/check_incubator.js twins/incubator/results web
 const fs = require('fs'), path = require('path');
 const [refDir, webDir] = process.argv.slice(2);
 const IDT = require(path.resolve(webDir, 'incubator_core.js'));
-const ref = JSON.parse(fs.readFileSync(path.join(refDir, 'ref_closed_loop.json')));
+const ref = JSON.parse(fs.readFileSync(path.join(refDir, 'ref_web_incubator.json')));
 let worst = {}, fails = 0;
 const cmp = (name, a, b) => { const d = Math.abs(Number(a) - Number(b)); worst[name] = Math.max(worst[name] || 0, d); };
 const same = (name, a, b) => { if (a !== b) { fails++; if (fails < 5) console.log('mismatch', name, a, b); } };
@@ -28,8 +28,8 @@ for (let k = 0; k < ref.obs.length; k++) {
 }
 // 2) replay of the real experiment
 global.window = {};
-eval(fs.readFileSync(path.join(webDir, 'replay_2023.js'), 'utf8'));
-const R = window.REPLAY_2023, rr = JSON.parse(fs.readFileSync(path.join(refDir, 'ref_replay.json')));
+eval(fs.readFileSync(path.join(webDir, 'incubator_replay.js'), 'utf8'));
+const R = window.INCUBATOR_REPLAY, rr = JSON.parse(fs.readFileSync(path.join(refDir, 'ref_web_incubator_replay.json')));
 const tw2 = new IDT.Twin();
 for (let i = 0; i < R.t.length; i++) {
   const s = tw2.update({ t: R.t[i], T: R.T[i], T_room: R.T_room[i], heater_on: R.heater_on[i] });

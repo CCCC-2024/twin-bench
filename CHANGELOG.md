@@ -14,6 +14,15 @@ versions follow [Semantic Versioning](https://semver.org/).
   claims, a little stricter (learned rates = the paper's benchmarks; nightly decisions and shortages = the paper's
   experiment; decisions = the authors' code except exactly one numerical tie). The README lists every observation
   field, whether a real station has it, and what an action changes.
+- incubator moved to that layout (`from twins.incubator import IncubatorTwin, SimBox, RecordedBox, Controller`; `idt/`
+  is gone; the two Sources are in `sources.py`). Its scripts are `step1_model.py` (was `step1a_model.py`, results
+  renamed to match) and `export_web.py` (was `export_reference.py`), like the other twins, and its outputs take the
+  conventions' names (`ref_web_incubator.json`; locally `ref_web_incubator_replay.json`, `web/incubator_replay.js`).
+  `scripts/check_dtcore.py`, which compared `dtcore.run` with a hand-written loop, became `tests/test_incubator.py`,
+  which tests the README's results instead: model RMSE 0.46 °C on the real data, the controller against the recorded
+  heater, an alarm 9 s after the lid opens and none from a new set point or on the real empty-box run, the alarm on
+  half the tempeh run. `scripts/crosscheck_upstream.py`, a one-time comparison that needs a full clone of the
+  authors' repository, is removed; its result stays in the README.
 - `dtcore.Source.act` raises `NotImplementedError` unless a source overrides it: a decision sent to a source that does
   not handle actions used to be dropped without notice. Every source in the repository already overrides it.
 - `dtcore` and `docs/architecture.md` state what `t` and `kind` promise: the meaning and unit of `t` belong to each
@@ -26,6 +35,10 @@ versions follow [Semantic Versioning](https://semver.org/).
 - All committed results regenerated in one environment, so rerunning the scripts now reproduces them byte for byte.
   Against the previous files only floating-point noise changed (at most 2e-11); every decision, count and figure value
   is the same.
+- incubator README: the 97.7 % controller agreement now says it counts from the first recorded heating (the box's
+  controller starts 31 samples into the recording) and that the recording lags by exactly 3 samples, not 2–3.
+  "No false alarms on the real data" now says the empty-box run: on the tempeh run, with a load the model does not
+  have, the alarm is on for half the samples.
 
 ## [0.2.0] - 2026-10-17
 

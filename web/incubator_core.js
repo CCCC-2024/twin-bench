@@ -1,6 +1,6 @@
 /* Incubator digital twin: computing core for the page.
- * A line-by-line port of twins/incubator/idt (model.py, controller.py, kalman.py,
- * plant_sim.py, twin.py). Python is the reference; scripts/check_web.js compares the two.
+ * A line-by-line port of twins/incubator (model.py, controller.py, kalman.py,
+ * sources.py, twin.py). Python is the reference; web/checks/check_incubator.js compares the two.
  */
 (function (root) {
   'use strict';
@@ -125,7 +125,7 @@
     }
   }
 
-  // ---------- plant_sim.py ----------
+  // ---------- sources.py (SimBox) ----------
   function roundHalfEven(x) {
     const r = Math.round(x);
     return (Math.abs(x % 1) === 0.5) ? 2 * Math.round(x / 2) : r;

@@ -213,7 +213,7 @@ button, input, select { font: inherit; color: inherit; }
 <script>
 /* Real-data replays ship only with the local copy: the incubator dataset has no license for redistribution, and
    Citi Bike data may not be redistributed as a stand-alone dataset. */
-if (location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { document.write('<script src="replay_2023.js"><\/script>'); document.write('<script src="bikeshare_replay.js"><\/script>'); }
+if (location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { document.write('<script src="incubator_replay.js"><\/script>'); document.write('<script src="bikeshare_replay.js"><\/script>'); }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -403,7 +403,7 @@ const Inc = (function () {
             ['R', '目标', '温度留在控制区间内，加热耗电更少。']] }
   };
   const HORIZON = 1800, WINDOW = 1500;
-  const replayData = () => window.REPLAY_2023 || null;
+  const replayData = () => window.INCUBATOR_REPLAY || null;
   const S = { mode: 'sim', lid: false, mismatch: false, room: 22, tryD: 35, box: null, twin: null, hist: [], ri: 0,
               lastObs: null, lastEst: null, fcNow: null, fcTry: null, wasAnomaly: false };
   const t = k => TXT[SH.lang][k];

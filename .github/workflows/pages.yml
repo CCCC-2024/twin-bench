@@ -32,7 +32,7 @@ jobs:
         run: |
           python web/build.py
           mkdir _site
-          # runtime files only; the incubator replay (replay_2023.js) and the recorded Citi Bike days (bikeshare_replay.js) are never published
+          # runtime files only; the incubator replay (incubator_replay.js) and the recorded Citi Bike days (bikeshare_replay.js) are never published
           cp web/index.html web/*_core.js web/battery_cells.js web/uav_model.js web/bikeshare_model.js _site/
           cp THIRD_PARTY_NOTICES.md _site/
       - uses: actions/configure-pages@v5

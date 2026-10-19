@@ -1,4 +1,4 @@
-"""Incubator digital twin, following the skeleton contract in docs/dt_template.md.
+"""Incubator digital twin on the dtcore contract (docs/architecture.md).
 
 update(obs)            Kalman step; returns the estimate (incl. the unmeasured heatbed temperature)
                        and an anomaly flag when measurements keep disagreeing with the model.

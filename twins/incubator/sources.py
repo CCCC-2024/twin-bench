@@ -1,6 +1,9 @@
-"""Physical side for closed-loop runs: a simulated box (the real box is in Aarhus).
+"""Physical side of the incubator: two Sources.
 
-True dynamics = the same four-parameter model with the published parameters, plus:
+SimBox       a simulated box for closed-loop runs (the real box is in Aarhus).
+RecordedBox  a replay of a real 2023 experiment, one sample at a time; it cannot obey actions, only record them.
+
+SimBox's true dynamics = the same four-parameter model with the published parameters, plus:
   - lid: when open, heat loss to the room uses G_open_lid instead of G_box
     (14.39 W/K, upstream's calibration from its 2021 lid-opening experiment, older hardware;
     used here only to simulate the effect of opening the lid);
@@ -13,6 +16,7 @@ import numpy as np
 from dtcore import Source
 
 from .controller import Controller
+from .data import load
 from .model import PARAMS_2023, Stepper
 
 G_OPEN_LID = 14.3873949
@@ -55,3 +59,23 @@ class SimBox(Source):
         self.x = st.step(self.x, self.heater_on, self.T_room, dt)
         self.t += dt
         self.k += 1
+
+
+class RecordedBox(Source):
+    kind = "replay"
+
+    def __init__(self, name="calibration_2023"):
+        self.d, self.i, self.received = load(name), 0, []
+
+    def observe(self):
+        if self.i >= len(self.d):
+            return None
+        r = self.d.iloc[self.i]
+        return dict(t=float(r.t), T=float(r["T"]), T_room=float(r.T_room), heater_on=float(r.heater_on),
+                    t1=float(r.t1), t2=float(r.t2))
+
+    def act(self, action):
+        self.received.append(action)        # recorded only: the experiment already happened
+
+    def advance(self):
+        self.i += 1

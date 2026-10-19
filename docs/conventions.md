@@ -24,8 +24,8 @@ No other top-level folders.
 
 ```
 twins/<name>/            the Python package twins.<name>
-  __init__.py            the public names: the Twin and Source classes (a reproduction also exports its paper
-                         experiment); code outside the twin imports only these
+  __init__.py            the public names: the Twin and Source classes and anything a caller must pass to them
+                         (a reproduction also exports its paper experiment); code outside the twin imports only these
   twin.py                the Twin class, <Asset>Twin
   sources.py             the Source classes
   *.py                   the rest of the twin (model, estimator, decision), named freely
@@ -49,10 +49,10 @@ Create only the folders you use; delete empty ones.
 | Tests | `tests/test_<name>.py` | what the twin must do and the published numbers it reproduces |
 | Page export | `scripts/export_web.py` | writes `web/<name>_*.js` and `results/ref_web_<name>.json` |
 | Comparison with upstream | `scripts/crosscheck_upstream.py` | runs the authors' code on our inputs; kept when a test compares against its saved answers, so `results/` stays regenerable; a comparison made once and only reported goes in the README |
-| Results | `results/` | say what it is, no dates: `baseline.csv`, `ref_closed_loop.json`; dates go on experiment folders |
+| Results | `results/` | say what it is, no dates: `baseline.csv`, `step1_decisions.json`; dates go on experiment folders |
 | Runtime databases | `results/*.db` by default, `DT_DB` to move | not results; git-ignored |
 
-Being migrated (October 2026): `_template` and bikeshare follow this layout; incubator, uav and battery still have a
+Being migrated (October 2026): `_template`, bikeshare and incubator follow this layout; uav and battery still have a
 `<x>dt/` subpackage and `scripts/check_*.py` until they are moved.
 
 Scripts find their files from their own location (`Path(__file__)`), so they run from any directory.

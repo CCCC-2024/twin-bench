@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-DATA = (Path(__file__).resolve().parents[1] / "upstream" / "example_digital-twin_incubator"
+DATA = (Path(__file__).resolve().parent / "upstream" / "example_digital-twin_incubator"
         / "software" / "incubator" / "datasets")
 FILES = {
     "calibration_2023": "20230501_calibration_empty_system/20230501_calibration_empty_system.csv",
