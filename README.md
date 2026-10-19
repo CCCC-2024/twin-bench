@@ -16,7 +16,7 @@ controls, all computed in the browser.
 | [incubator](twins/incubator/) | Thermal control | Kalman filter estimates the unmeasured heater temperature, flags an opened lid, what-if on the set point | Built from the description in Feng et al. 2021; real data from Aarhus University | dtcore + page |
 | [battery](twins/battery/) | Prognostics | Particle filter on capacity fade, decides when to retire a cell | Reproduces Thelen et al. 2023 on the Severson et al. 2019 cells | dtcore + page + MQTT live demo |
 | [uav](twins/uav/) | Structural health | Bayesian filter over 25 damage states, picks 2g / 3g maneuvers | Reproduces Kapteyn, Pretorius & Willcox 2021 | dtcore + page |
-| [bikeshare](twins/bikeshare/) | Mobility operations | Learns hourly rental and return rates (Gamma–Poisson), forecasts an empty or full station, sets the overnight number of bikes; what-if on a daytime truck | Reproduces Gammelli et al. 2022 (queueing model of Raviv & Kolka 2013) on Citi Bike station data | dtcore + page |
+| [bikeshare](twins/bikeshare/) | Mobility operations | Learns hourly rental and return rates (Gamma–Poisson), forecasts an empty or full station, sets the overnight number of bikes; what-if on a daytime truck; the rate model can be the paper's trained RNN | Reproduces Gammelli et al. 2022 (queueing model of Raviv & Kolka 2013) on Citi Bike station data | dtcore + page |
 | [tumor](twins/tumor/) | Oncology | Calibrates a glioma reaction–diffusion model to MRI, predicts chemo doses | Reproduces TumorTwin (Kapteyn et al. 2026) | reproduction only |
 | [_template](twins/_template/) | — | A cooling mug with a heater: the smallest complete twin, copy it to start | — | dtcore |
 

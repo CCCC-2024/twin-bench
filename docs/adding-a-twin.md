@@ -38,6 +38,11 @@ rewrite the README following [conventions.md](conventions.md#4-readme-structure)
 7. **Page.** `scripts/export_web.py`, `web/<name>_core.js`, `web/checks/check_<name>.js`, and a module in
    `web/page.html`. Python is the reference; the JavaScript is checked against it.
 
+Steps 4–6 write the twin's parts: its estimator, forecaster and policy. Keep each one inside the twin until a second
+implementation of it arrives, often a learned one. Then make that part an argument of the twin, keep the first as the
+default and baseline, and compare the two with `scripts/compare_<part>.py`
+([conventions](conventions.md#parts-of-a-twin); bike share's `rates.py` and `RNNRates` are the example).
+
 ## 3. Tests
 
 `tests/test_<name>.py` runs the twin through `dtcore.run` and asserts what it must do (see `tests/test_template.py`);
@@ -53,9 +58,10 @@ locally only: git-ignore everything derived from them and keep them out of the p
 
 ## 5. Dependencies
 
-Add what the twin needs to the `twins` extra in [pyproject.toml](../pyproject.toml). If it cannot share that
-environment (the tumor twin needs PyTorch and Python ≤ 3.11), document a separate setup in its README and leave it
-out of `run_checks.sh`.
+Add what the twin needs to the `twins` extra in [pyproject.toml](../pyproject.toml). A heavy dependency that only one
+part needs gets its own extra (bike share's VP-RNN: `rnn`, PyTorch); see [conventions](conventions.md#parts-of-a-twin).
+If the twin cannot share that environment (the tumor twin needs Python 3.10–3.11 and the authors' TumorTwin
+package), document a separate setup in its README and leave it out of `run_checks.sh`.
 
 ## Checklist for the pull request
 

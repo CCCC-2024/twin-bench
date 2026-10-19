@@ -50,12 +50,29 @@ Create only the folders you use; delete empty ones.
 | Twin / Sources | `twin.py` / `sources.py` | `<Asset>Twin`; Sources named for what they are (`SimMug`, `CellReplay`) |
 | Tests | `tests/test_<name>.py` | what the twin must do and the published numbers it reproduces |
 | Page export | `scripts/export_web.py` | writes `web/<name>_*.js` and `results/ref_web_<name>.json`; with `--replay-only`, only the git-ignored files from recordings that may not be committed (`run_checks.sh` builds them that way) |
+| Comparison of a twin's parts | `scripts/compare_<part>.py` | runs the same twin and Source once per implementation of one part (section "Parts of a twin"); writes `results/compare_<part>.json` |
 | Comparison with upstream | `scripts/crosscheck_upstream.py` | runs the authors' code on our inputs; kept when a test compares against its saved answers, so `results/` stays regenerable; a comparison made once and only reported goes in the README |
 | Results | `results/` | say what it is, no dates: `baseline.csv`, `step1_decisions.json`; dates go on experiment folders |
 | Runtime databases | `results/*.db` by default, `DT_DB` to move | not results; git-ignored |
 
 Scripts find their files from their own location (`Path(__file__)`), so they run from any directory.
 Commands in READMEs are written from the repository root, except inside experiments.
+
+### Parts of a twin
+
+A twin's estimator, forecaster or policy is a part (`docs/architecture.md`). When a part gets a second implementation
+(a learned one, typically), it becomes a constructor argument: `StationTwin(C, rates=RNNRates())`.
+
+- The default is the twin's own physical or statistical model: the baseline every other implementation is compared with.
+- What the twin asks of the part is its interface, written where the part is defined (bike share: `rates.py`). No
+  shared base class: parts of different twins do different jobs.
+- A part gets data only through the twin's `update`, in time order, so it cannot use what the twin has not yet seen.
+  Anything else it reads is an argument too, with its assumption stated (bike share: the weather, a perfect forecast).
+- One implementation stays inside the twin; the table in `docs/architecture.md` says where its part is.
+- The implementations are compared by `scripts/compare_<part>.py`: same twin, same Source, only the part changes. The
+  page lets a person choose the part where its module offers one (`web/README.md`, `renderParts`).
+- A dependency that only one part needs (PyTorch for the VP-RNN) is its own extra in `pyproject.toml`, imported only
+  where that part is built; its tests skip with the reason when it is missing, and CI installs every extra.
 
 ### Upstream
 

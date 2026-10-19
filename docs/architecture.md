@@ -65,10 +65,23 @@ each twin's page module.
 The tumor reproduction (`twins/tumor`) is not on `dtcore`: it has no reward (a higher dose is always better), no
 parameter uncertainty yet, and one calibration takes about half an hour.
 
-## Where AI can attach
+## Parts of a twin, and where AI attaches
 
-- **Q**: a learned forecast in place of a statistical one (bikeshare: the paper's RNN demand forecast would be a
-  second rate model passed to `StationTwin`), or a learned surrogate in place of a slow model (the tumor
-  reproduction's Gaussian process).
-- **D**: a learned estimator (e.g. damage straight from strain readings).
-- **U**: a policy trained inside the twin, or an LLM agent that calls `predict` / what-if as tools.
+Inside a twin, the estimator (D), the forecaster (Q) and the policy (U) are its parts. AI enters a twin as another
+implementation of one of them. A part with a second implementation is a constructor argument whose default is the
+twin's physical or statistical model, the baseline it is compared with ([conventions](conventions.md#parts-of-a-twin)).
+dtcore has no class for parts: what a twin asks of a part differs from twin to twin, as the table shows.
+
+| Twin | Part | Now | What the twin asks of it | Implementations |
+|---|---|---|---|---|
+| bikeshare | rate model (Q) | argument: `StationTwin(C, rates)` | each hour's counts (`update`); mean rental and return rates for the hours ahead (`ahead`) | `HistoricalRates` (default), `RNNRates` (the paper's VP-RNN); compared by `scripts/compare_rates.py` |
+| uav | model (D, Q, U) | argument: `UAVTwin(model)`, shared with the simulated asset | strain likelihood, damage transitions, damage states, the policy for a reward weight, a roll-out | `UAVModel` (the authors' configuration) |
+| battery | particle filter (D, Q) | built in `BatteryTwin` at first-prediction time | a step per cycle giving `log10_a`, `b`, `eol_pred` (the decision's inputs), and a capacity band | `ParticleFilter` |
+| incubator | Kalman filter (D); model and controller (Q) | built in `IncubatorTwin`; `predict` takes the controller | a step per sample giving the state and the innovation (the lid alarm); a forward simulation | `Kalman`, `Stepper`, `Controller` |
+| every twin | policy (U) | `decide()` (incubator: a person) | the twin's what-if, `predict(horizon, **scenario)`, as its tools | each twin's rule; an LLM agent would be a second |
+
+A learned part must give what the twin asks of it: a battery predictor that only estimates the end of life cannot
+replace the filter without a capacity band and the decision's inputs. The one learned part so far shows why the
+comparison runs inside the twin: given only what the twin has seen, the VP-RNN forecasts better than the historical
+average but does not decide better (`twins/bikeshare/README.md`). The tumor reproduction's Gaussian-process surrogate,
+in place of a slow model, is a Q part outside dtcore.

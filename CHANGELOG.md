@@ -24,6 +24,10 @@ versions follow [Semantic Versioning](https://semver.org/).
   `fetch_upstream.sh` had added files; it now fetches when a listed file is missing.
 
 ### Changed
+- Docs: a twin's estimator, forecaster and policy are its parts; a part with a second implementation is a
+  constructor argument whose default is the baseline, compared by `scripts/compare_<part>.py`
+  (`docs/conventions.md`, `docs/adding-a-twin.md`). `docs/architecture.md` lists every twin's parts, what the twin
+  asks of each, and where AI attaches.
 - `run_checks.sh` builds the local-only page data of every twin whose `export_web.py` takes `--replay-only` (was:
   the incubator's only); bike share's `export_web.py` takes it.
 - bikeshare: `StationTwin` takes its rate model as an argument, `StationTwin(C, rates)`; the Gamma–Poisson rates
