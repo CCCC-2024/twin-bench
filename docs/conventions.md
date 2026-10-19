@@ -24,7 +24,7 @@ No other top-level folders.
 
 ```
 twins/<name>/            the Python package twins.<name>
-  __init__.py            the public names: the Twin and Source classes; other code imports only these
+  __init__.py            the public names: the Twin and Source classes; code outside the twin imports only these
   twin.py                the Twin class, <Asset>Twin
   sources.py             the Source classes
   *.py                   the rest of the twin (model, estimator, decision), named freely
@@ -43,7 +43,7 @@ Create only the folders you use; delete empty ones.
 | What | Where | Name |
 |---|---|---|
 | Twin folder | `twins/<name>/` | the physical asset, lower case, no author or paper name: `incubator`, `battery`, `uav` |
-| Package | `twins/<name>/` | imported as `twins.<name>`; scripts and tests import it, never `sys.path` |
+| Package | `twins/<name>/` | imported as `twins.<name>`, never through `sys.path`; the twin's own scripts and tests may also use its other modules |
 | Twin / Sources | `twin.py` / `sources.py` | `<Asset>Twin`; Sources named for what they are (`SimMug`, `CellReplay`) |
 | Tests | `tests/test_<name>.py` | what the twin must do and the published numbers it reproduces |
 | Page export | `scripts/export_web.py` | writes `web/<name>_*.js` and `results/ref_web_<name>.json` |
