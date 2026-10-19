@@ -8,7 +8,6 @@ web/bikeshare_replay.js (local only, git-ignored): the recorded rentals/returns 
 results/ref_web_bikeshare.json: a simulated run on dtcore (3 days from 1 Nov; demand x1.5 from hour 30; a truck sets
     5 bikes before hour 44) with every simulated event, the twin's estimates and decisions, forecasts and what-ifs at
     a few hours, and model-only cases. The check feeds the same events to the page's code and compares.
-About 15 s.
 """
 import datetime
 import json

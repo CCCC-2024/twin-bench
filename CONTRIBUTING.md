@@ -5,8 +5,8 @@ contributions are one of: a new twin, an improvement to an existing twin, a fix 
 
 ## Ground rules
 
-- **Every claim is a check.** If a change says "same as the paper" or "same as before", add or update a script that
-  prints `OK` / `MISMATCH`, and list it in `run_checks.sh`.
+- **Every claim is tested.** If a change says "same as the paper" or "same as before", add or update a test in
+  `tests/` (for the page, a check in `web/checks/`); `run_checks.sh` runs them all.
 - **The skeleton stays small.** Something goes into `dtcore` only when every twin needs it. Changes to `dtcore` need a
   test in `tests/` and must keep all twin checks passing.
 - **No third-party code or data in git.** Fetch it at a pinned commit (`fetch_upstream.sh`) and record its license in
@@ -21,7 +21,7 @@ contributions are one of: a new twin, an improvement to an existing twin, a fix 
 3. Set up and run the checks:
    ```bash
    pip install -e ".[twins,dev]"
-   for t in incubator battery uav; do twins/$t/fetch_upstream.sh; done
+   for t in incubator battery uav bikeshare; do twins/$t/fetch_upstream.sh; done
    ./run_checks.sh                    # must end with ALL CHECKS OK
    ```
 4. Open a pull request using the template. CI runs `run_checks.sh`; it must pass.

@@ -5,7 +5,7 @@
 2. What-if on the test day where the overnight decision went worst in the replay: one hour before the
    first lost rental/return, compare "no truck" with "a truck sets s bikes now" for every s, as the twin
    predicts it and as the replay of the recorded events then turns out.
-Writes results/step5_whatif.json and results/step5_whatif.png. About 10 s.
+Writes results/step5_whatif.json and results/step5_whatif.png.
 """
 import copy
 import datetime

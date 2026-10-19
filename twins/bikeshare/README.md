@@ -53,8 +53,8 @@ Action `{"set_bikes": s}`: a truck brings the station to s bikes (clipped to 0â€
   `scripts/step5_whatif.py`: the daytime-truck what-if.
 - `scripts/export_web.py` writes the page data (`web/bikeshare_model.js`, and the local-only `web/bikeshare_replay.js`) and
   the reference run `results/ref_web_bikeshare.json` that `web/checks/check_bikeshare.js` replays.
-- `results/ref_upstream.json`: the authors' decision code run once on the same inputs (about 10 min;
-  `twins/bikeshare/scripts/crosscheck_upstream.py` in v0.2.0).
+- `scripts/crosscheck_upstream.py` runs the authors' decision code on the same inputs and saves its answers in
+  `results/ref_upstream.json`, which the tests compare against.
 - `tests/test_bikeshare.py` (in the repository's `tests/`): the learned rates equal the paper's benchmarks, the
   nightly decisions equal the paper's experiment, and the decisions equal the authors' code except one numerical tie.
 
@@ -64,7 +64,8 @@ twins/bikeshare/fetch_upstream.sh                    # about 11 MB
 pytest tests/test_bikeshare.py                       # what the twin reproduces of the paper, a few seconds
 python twins/bikeshare/scripts/step1_model.py        # model only -> results/step1_*, a few seconds
 python twins/bikeshare/scripts/step5_whatif.py       # daytime-truck what-if -> results/step5_*, a few seconds
-python twins/bikeshare/scripts/export_web.py         # page data and reference run, about 5 s
+python twins/bikeshare/scripts/export_web.py         # page data and reference run, a few seconds
+python twins/bikeshare/scripts/crosscheck_upstream.py  # the authors' code on the same inputs -> results/ref_upstream.json, about 10 min
 node web/checks/check_bikeshare.js twins/bikeshare/results web    # BIKESHARE WEB CHECK OK
 ```
 

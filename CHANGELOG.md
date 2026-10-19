@@ -9,11 +9,10 @@ versions follow [Semantic Versioning](https://semver.org/).
 - Twins are importable as `twins.<name>` (`pip install -e .` now installs `twins` next to `dtcore`). The template
   shows the layout every twin moves to: public names in `__init__.py`, the Twin in `twin.py`, the Sources in
   `sources.py`; `twins/_template/mdt/` is gone and its check is `tests/test_template.py`.
-- bikeshare moved to that layout (`from twins.bikeshare import StationTwin, ReplayStation, SimStation`; `sdt/` is
-  gone). `scripts/check_dtcore.py` and `scripts/check_repro.py` became `tests/test_bikeshare.py`, which keeps their
-  research claims (learned rates = the paper's benchmarks; nightly decisions = the paper's experiment; decisions = the
-  authors' code except one numerical tie) and drops the loop-against-loop comparison. `scripts/crosscheck_upstream.py`
-  (run once, 10 min) is removed; the README says where its saved result came from. The README lists every observation
+- bikeshare moved to that layout (`from twins.bikeshare import StationTwin, ReplayStation, SimStation, experiment`;
+  `sdt/` is gone). `scripts/check_dtcore.py` and `scripts/check_repro.py` became `tests/test_bikeshare.py` with the same
+  claims, a little stricter (learned rates = the paper's benchmarks; nightly decisions and shortages = the paper's
+  experiment; decisions = the authors' code except exactly one numerical tie). The README lists every observation
   field, whether a real station has it, and what an action changes.
 - `dtcore.Source.act` raises `NotImplementedError` unless a source overrides it: a decision sent to a source that does
   not handle actions used to be dropped without notice. Every source in the repository already overrides it.

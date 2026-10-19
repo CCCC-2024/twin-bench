@@ -27,8 +27,9 @@ rewrite the README following [conventions.md](conventions.md#4-readme-structure)
 
 1. **Six elements.** Fill the S / O / D / Q / U / R table in the README.
 2. **Model only.** Write the model and run it on its own against the paper or the data
-   (`scripts/step1_model.py` → `results/`). Reproducing a published twin: compare with the authors' code
-   (`scripts/crosscheck_upstream.py`) and their numbers (`scripts/check_repro.py`).
+   (`scripts/step1_model.py` → `results/`). Reproducing a published twin: compare with the authors' numbers and code
+   in a test (section 3); when their code is too slow or hard to run every time, save its answers with
+   `scripts/crosscheck_upstream.py` and test against those (see `twins/bikeshare`).
 3. **Observations.** Write the `Source`: a replay of recorded data, a simulator, or a live feed.
 4. **Update.** `Twin.update(obs)` — the estimator.
 5. **Predict, then what-if.** `Twin.predict(horizon, **scenario)`.

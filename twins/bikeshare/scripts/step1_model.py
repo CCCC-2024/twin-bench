@@ -3,7 +3,7 @@
 For each test day and each rate source: choose the number of bikes at midnight with the queueing model,
 then replay that day's recorded rentals/returns to count real shortages. Also checks the model math
 against a Monte Carlo simulation of the same Poisson model (does the code solve its own equations?).
-Writes results/step1_decisions.json and results/step1_model.png. About 20 s.
+Writes results/step1_decisions.json and results/step1_model.png.
 """
 import json
 from pathlib import Path

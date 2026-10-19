@@ -69,8 +69,9 @@ Where each kind of file goes is fixed in [docs/conventions.md](docs/conventions.
 
 ## How results are checked
 
-Every claim of "same as the original" is a script that prints `OK` or `MISMATCH`, and CI runs all of them on each
-push ([run_checks.sh](run_checks.sh)):
+Every claim of "same as the original" is checked by CI on each push ([run_checks.sh](run_checks.sh)): by the tests in
+`tests/` (the template and bike share so far; the other twins' check scripts, which print `OK` or `MISMATCH`, are
+being moved there):
 
 - each twin run through `dtcore` gives bit-for-bit the same states and decisions as the code it wraps;
 - reproductions match the authors' published numbers (e.g. battery: retirement at cycle 542 of the example cell);

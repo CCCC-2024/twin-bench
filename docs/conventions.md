@@ -24,7 +24,8 @@ No other top-level folders.
 
 ```
 twins/<name>/            the Python package twins.<name>
-  __init__.py            the public names: the Twin and Source classes; code outside the twin imports only these
+  __init__.py            the public names: the Twin and Source classes (a reproduction also exports its paper
+                         experiment); code outside the twin imports only these
   twin.py                the Twin class, <Asset>Twin
   sources.py             the Source classes
   *.py                   the rest of the twin (model, estimator, decision), named freely
@@ -43,11 +44,11 @@ Create only the folders you use; delete empty ones.
 | What | Where | Name |
 |---|---|---|
 | Twin folder | `twins/<name>/` | the physical asset, lower case, no author or paper name: `incubator`, `battery`, `uav` |
-| Package | `twins/<name>/` | imported as `twins.<name>`, never through `sys.path`; the twin's own scripts and tests may also use its other modules |
+| Package | `twins/<name>/` | imported as `twins.<name>`, never through `sys.path` |
 | Twin / Sources | `twin.py` / `sources.py` | `<Asset>Twin`; Sources named for what they are (`SimMug`, `CellReplay`) |
 | Tests | `tests/test_<name>.py` | what the twin must do and the published numbers it reproduces |
 | Page export | `scripts/export_web.py` | writes `web/<name>_*.js` and `results/ref_web_<name>.json` |
-| Comparison with upstream | done once; the result, and where its script lives in a tagged version, go in the README | a test keeps a claim that must stay true (e.g. `results/ref_upstream.json`) |
+| Comparison with upstream | `scripts/crosscheck_upstream.py` | runs the authors' code on our inputs; kept when a test compares against its saved answers, so `results/` stays regenerable; a comparison made once and only reported goes in the README |
 | Results | `results/` | say what it is, no dates: `baseline.csv`, `ref_closed_loop.json`; dates go on experiment folders |
 | Runtime databases | `results/*.db` by default, `DT_DB` to move | not results; git-ignored |
 

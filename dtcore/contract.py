@@ -5,7 +5,7 @@ class Source:
     """Physical side: a real sensor feed, a replay of recorded data, or a simulator."""
 
     # Where the data come from: "replay" (recorded), "sim" or "sensor". Recorded data cannot change, but a replay
-    # source may still simulate state that actions change (the bikes in a station); act() says what an action does.
+    # source may still simulate state that actions change; act() says what an action does.
     kind = "replay"
 
     def observe(self):

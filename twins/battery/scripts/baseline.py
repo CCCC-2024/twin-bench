@@ -38,12 +38,12 @@ def one(args):
         # was the decision triggered by a one-cycle dip (next 5 cycles back above threshold)?
         k = np.where(cell["q"] <= thr)[0][0]
         spurious = bool(np.all(cell["q"][k + 1:k + 6] > thr))
+        u_twin_true = float(u_true[d["x_twin"] - xs[0]])
         rows.append(dict(cell=ci, barcode=cell["barcode"], seed=seed, threshold=thr,
                          k_fpt=cell["k_fpt"], k_eol=cell["k_eol"],
-                         last_measured=cell["last_measured_cycle"], spurious_trigger=spurious, **d))
-        u_twin_true = float(u_true[d["x_twin"] - 3])
-        rows[-1].update(x_global=x_global, u_global=u_global, u_twin_true=u_twin_true,
-                        regret_global=u_global - u_twin_true, too_late=x_global < d["k_decide"])
+                         last_measured=cell["last_measured_cycle"], spurious_trigger=spurious, **d,
+                         x_global=x_global, u_global=u_global, u_twin_true=u_twin_true,
+                         regret_global=u_global - u_twin_true, too_late=x_global < d["k_decide"]))
     return rows
 
 
