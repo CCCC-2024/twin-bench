@@ -5,6 +5,12 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- `dtcore.Source.act` raises `NotImplementedError` unless a source overrides it: a decision sent to a source that does
+  not handle actions used to be dropped without notice. Every source in the repository already overrides it.
+- `dtcore` and `docs/architecture.md` state what `t` and `kind` promise: the meaning and unit of `t` belong to each
+  twin and `run()` does not check them; `kind` says where the data come from, not whether actions can change state.
+
 ### Fixed
 - `twins/battery/scripts/baseline.py` writes the five columns `plot_tradeoff.py` needs (`x_global`, `u_global`,
   `u_twin_true`, `regret_global`, `too_late`); before, the committed `baseline.csv` and `tradeoff_baseline.png` could

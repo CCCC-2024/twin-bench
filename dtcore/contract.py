@@ -4,14 +4,23 @@
 class Source:
     """Physical side: a real sensor feed, a replay of recorded data, or a simulator."""
 
-    kind = "replay"          # "replay", "sim" or "sensor"; a replay cannot be changed by actions
+    # Where the data come from: "replay" (recorded), "sim" or "sensor". Recorded data cannot change, but a replay
+    # source may still simulate state that actions change (the bikes in a station); act() says what an action does.
+    kind = "replay"
 
     def observe(self):
-        """Return the next observation as a dict with at least 't', or None when there is no more data."""
+        """Return the next observation as a dict with at least 't', or None when there is no more data.
+
+        The meaning and unit of 't' belong to the domain (seconds, cycles, hours, steps); run() does not check it.
+        """
         raise NotImplementedError
 
     def act(self, action):
-        """Receive a decision from the twin (digital -> physical). A replay can only record it."""
+        """Receive a decision from the twin (digital -> physical) and apply or record it.
+
+        A source that receives actions must override this, so a decision is never dropped silently.
+        """
+        raise NotImplementedError(f"{type(self).__name__} does not accept actions; override act()")
 
     def advance(self):
         """Move to the next sample (a simulator integrates its dynamics here)."""

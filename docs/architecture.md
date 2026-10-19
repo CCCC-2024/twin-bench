@@ -43,8 +43,12 @@ Only what all twins share went into the skeleton; anything used by one twin stay
 | `capabilities` | which of the above the twin supports | | | | |
 
 **Source** (`dtcore.Source`), the physical side: `observe()` returns the next observation as a dict with at least
-`t` (or None when finished); `act(action)` receives a decision — a simulator changes its state, a replay can only
-record it; `advance()` moves to the next sample. `kind` is `"sim"`, `"replay"` or `"sensor"`.
+`t` (or None when finished); what `t` means and its unit belong to the twin (seconds, cycles, hours, steps), and
+`run()` does not check it. `act(action)` receives a decision and says what it does with it: a simulator changes its
+state, a replay of the incubator only records it, the bike-share replay keeps the recorded demand but changes the
+bikes in the station. A source that does not override `act` raises an error when a decision arrives, so no decision is
+dropped silently. `advance()` moves to the next sample. `kind` is `"sim"`, `"replay"` or `"sensor"` (where the data
+come from).
 
 **run(source, twin, max_steps=None, recorder=None, before_step=None)** loops
 observe → update → decide (if the twin declares it) → act → record → advance. `before_step(k, source, twin)` lets an

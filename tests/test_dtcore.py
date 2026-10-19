@@ -92,6 +92,14 @@ def test_recorder_converts_numpy_values():
     json.dumps(rec.rows)
 
 
+def test_an_action_for_a_source_without_act_is_not_dropped():
+    class NoAct(Counter):
+        act = Source.act
+
+    with pytest.raises(NotImplementedError, match="does not accept actions"):
+        run(NoAct(n=4), Echo())                   # Echo decides at x == 1
+
+
 def test_base_classes_must_be_implemented():
     with pytest.raises(NotImplementedError):
         Source().observe()
