@@ -34,6 +34,15 @@ controls, all computed in the browser.
  dtcore.run(source, twin): observe -> update -> decide -> act -> record -> advance, until the source runs out
 ```
 
+```python
+from dtcore import Recorder, run
+from twins._template import MugTwin, SimMug
+
+rec = Recorder("mug")
+run(SimMug(), MugTwin(), recorder=rec)       # one hour of a simulated mug whose heater the twin controls
+print(rec.rows[-1]["est"])                    # the twin's last estimate: temperature and its uncertainty
+```
+
 `dtcore` knows nothing about temperatures, batteries or drones. A twin plugs in by implementing `Source` and `Twin`;
 `Recorder` keeps every observation, estimate and action (in memory and optionally SQLite). The six-element view
 behind it (physical state, observations, digital state, quantities of interest, actions, reward; Kapteyn et al. 2021)
@@ -69,14 +78,16 @@ Where each kind of file goes is fixed in [docs/conventions.md](docs/conventions.
 
 ## How results are checked
 
-Every claim of "same as the original" is checked by CI on each push ([run_checks.sh](run_checks.sh)):
+CI runs [run_checks.sh](run_checks.sh) on each push:
 
-- the tests in `tests/` assert, through each twin, the results its README states (e.g. battery: retirement at cycle
-  542 of the paper's example cell, and the twin on `dtcore` equal to the original particle filter; bike share: the
-  learned rates equal the paper's benchmarks and the decisions equal the authors' code except one numerical tie; UAV:
-  the authors' planner policy, and the error and maneuver rates of our study of their loop);
-- the page's JavaScript matches the Python reference (incubator ~1e-12 °C; battery 615/615 what-if decisions;
-  UAV 120/120 maneuvers; bike share 72 hours of decisions and forecasts).
+- the tests in `tests/` assert, through each twin, the results its README states (e.g. battery: the retirement cycle
+  of the paper's example cell, and the twin on `dtcore` equal to the original particle filter; bike share: the
+  learned rates equal the paper's benchmarks and the decisions equal the authors' code except one numerical tie);
+- the page's JavaScript matches the Python reference (each twin's README says how closely).
+
+Two comparisons with the authors' own code were made once and are not rerun: the incubator model against their
+implementation, and the UAV filter against their pomegranate model (their software no longer installs cleanly). Each
+twin's README gives the result and where the script is.
 
 ## Adding a twin
 

@@ -63,6 +63,8 @@ node web/checks/check_uav.js twins/uav/results web    # UAV WEB CHECK OK
   the grid state nearest the true damage 2.4 % of the time, always switching to 2g one or two turns late *(test)*. If
   the twin assumes damage does not grow, the maneuver differs 48 % of the time
   (`experiments/2026-10-02_noros_repro/metrics_1007.json`).
+- The page's JavaScript gives the same maneuvers, damage and policies at all 120 turns of the reference run,
+  estimates within 5e-13 (`web/checks/check_uav.js`).
 
 ## Notes
 - The authors' asset advances damage by script, independent of maneuvers; the twin's growth model is 5 % (2g) or

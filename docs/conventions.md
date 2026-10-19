@@ -31,7 +31,8 @@ twins/<name>/            the Python package twins.<name>
   sources.py             the Source classes
   *.py                   the rest of the twin (model, estimator, decision), named freely
   README.md              fixed structure (section 4)
-  scripts/               runnable entry points: exports, result generation
+  scripts/               runnable entry points: exports, result generation (and battery's check_live.py, which
+                         needs the live extra and a broker, so it is run by hand, not in CI)
   results/               output of scripts/; regenerable
   experiments/           one-off studies, one subfolder each (section 3)
   fetch_upstream.sh      downloads third-party code and data into upstream/ (git-ignored)
@@ -87,7 +88,8 @@ One or two sentences: what it does, reproduced from whom or built from what desc
                  asset has it, whether `update` reads it; what an action changes
 ## Files         one line per folder or key file
 ## Run           commands from the repository root, with rough run times, including the twin's test and page check
-## Results       numbers, each with a source: a file in results/, a test (marked *(test)*), or a named frozen study
+## Results       numbers, each with a source: a file in results/, a test (marked *(test)*), a named frozen study, or
+                 a comparison made once, with where its script is in a tagged version
 ## Notes         data problems, differences from the original, pitfalls (numbers sourced the same way)
 ```
 

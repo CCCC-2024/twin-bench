@@ -39,4 +39,4 @@ for (let i = 0; i < R.t.length; i++) {
 for (const [k, v] of Object.entries(worst)) console.log(k.padEnd(22), 'max |JS - Python| =', v.toExponential(2));
 const ok = fails === 0 && Object.values(worst).every(v => v < 1e-6);
 console.log(fails ? `${fails} exact mismatches` : 'no exact mismatches (heater, anomaly)');
-console.log(ok ? 'WEB CHECK OK' : 'WEB CHECK FAILED');
+console.log(ok ? 'INCUBATOR WEB CHECK OK' : 'INCUBATOR WEB CHECK FAILED');

@@ -37,7 +37,13 @@ versions follow [Semantic Versioning](https://semver.org/).
   `x_online`. `live/` imports the package instead of editing `sys.path`; `check_live.py` passes unchanged.
 - Only two places still edit `sys.path`, both to reach authors' code that cannot be installed: `twins/uav/__init__.py`
   and bikeshare's `scripts/crosscheck_upstream.py` (the frozen UAV study and the tumor scripts aside). `run_checks.sh`
-  is now pytest plus the page checks.
+  is now pytest plus the page checks, which it finds itself (`web/checks/check_<name>.js`); the incubator page check
+  prints `INCUBATOR WEB CHECK OK` like the others.
+- Every number in a twin README has a source: a results file, a test (marked *(test)*), a named frozen study, or a
+  comparison made once with its script's place in v0.2.0 (`docs/conventions.md`). How closely the page matches Python
+  is now stated in each twin's README rather than in three places. The top-level README shows a short example.
+- Two duplicates stay open on purpose and now say so: the page's JavaScript models (`web/README.md`) and battery's live
+  service (`twins/battery/README.md`).
 - `dtcore.Source.act` raises `NotImplementedError` unless a source overrides it: a decision sent to a source that does
   not handle actions used to be dropped without notice. Every source in the repository already overrides it.
 - `dtcore` and `docs/architecture.md` state what `t` and `kind` promise: the meaning and unit of `t` belong to each
@@ -50,9 +56,14 @@ versions follow [Semantic Versioning](https://semver.org/).
 - `twins/battery/scripts/baseline.py` writes the five columns `plot_tradeoff.py` needs (`x_global`, `u_global`,
   `u_twin_true`, `regret_global`, `too_late`); before, the committed `baseline.csv` and `tradeoff_baseline.png` could
   not be regenerated from the repository. The rebuilt columns equal the committed ones in all 1,230 rows.
-- All committed results regenerated in one environment, so rerunning the scripts now reproduces them byte for byte.
+- All committed results regenerated in one environment (bikeshare's `ref_upstream.json` too), so rerunning the
+  scripts now reproduces them byte for byte.
   Against the previous files only floating-point noise changed (at most 2e-11); every decision, count and figure value
   is the same.
+- bikeshare README: the forecast RMSEs are recomputed from the authors' saved forecasts (MOVP-RNN 3.61 / 3.58 against
+  VP-RNN 3.85 / 3.78; the old figures came from a file this repository does not have); the numerical tie is 3.5e-6,
+  not 4e-6; the overdispersion and correlation ranges name the hours they cover; the comparison script takes about a
+  minute, not ten.
 - incubator README: the 97.7 % controller agreement now says it counts from the first recorded heating (the box's
   controller starts 31 samples into the recording) and that the recording lags by exactly 3 samples, not 2–3.
   "No false alarms on the real data" now says the empty-box run: on the tempeh run, with a load the model does not

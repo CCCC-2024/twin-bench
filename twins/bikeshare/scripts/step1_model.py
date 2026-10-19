@@ -11,19 +11,19 @@ from pathlib import Path
 import numpy as np
 
 from twins.bikeshare import data, model
-from twins.bikeshare import experiment as X
+from twins.bikeshare import experiment
 
 ROOT = Path(__file__).resolve().parents[1]
 
-S = X.load()
-C = S["C"]
-print(f"station 426 ({data.name(426)}), {C} docks; {len(X.TEST_DAYS)} test days")
+paper = experiment.load()
+C = paper["C"]
+print(f"station 426 ({data.name(426)}), {C} docks; {len(experiment.TEST_DAYS)} test days")
 
-res = {str(d): X.run_day(S, d) for d in X.TEST_DAYS}
+res = {str(d): experiment.run_day(paper, d) for d in experiment.TEST_DAYS}
 json.dump(res, open(ROOT / "results" / "step1_decisions.json", "w"), indent=0)
 
 print(f"\n{'rate source':<14}{'start (median)':>15}{'expected':>10}{'real lost/day':>15}{'rent':>7}{'return':>8}")
-for src in X.SOURCES + ("best_possible",):
+for src in experiment.SOURCES + ("best_possible",):
     rows = [r[src] for r in res.values()]
     exp = np.mean([r["expected"] for r in rows]) if rows[0]["expected"] is not None else float("nan")
     rp, rr = np.mean([r["lost_rent"] for r in rows]), np.mean([r["lost_return"] for r in rows])
@@ -31,8 +31,8 @@ for src in X.SOURCES + ("best_possible",):
 
 # --- verification: analytic expectation vs Monte Carlo of the same model (one day, a few starts) ---
 rng = np.random.default_rng(0)
-day = X.TEST_DAYS[13]
-lp, lr = X.rates(S, "overall_ha", day)
+day = experiment.TEST_DAYS[13]
+lp, lr = experiment.rates(paper, "overall_ha", day)
 
 
 def simulate(start):
@@ -65,13 +65,13 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 fig, ax = plt.subplots(1, 2, figsize=(11, 3.8))
 for src, ls in (("overall_ha", "-"), ("true_count", "--")):
-    a, b = X.rates(S, src, day)
+    a, b = experiment.rates(paper, src, day)
     u = model.udf(a, b, C)
     ax[0].plot(range(C + 1), u, ls, label=src)
     ax[0].plot(int(np.argmin(u)), u.min(), "o", color=ax[0].lines[-1].get_color())
 ax[0].set(xlabel="bikes at midnight", ylabel="expected lost rentals + returns", title=f"decision, {day}")
 ax[0].legend()
-ev = S["events"][day]
+ev = paper["events"][day]
 for src in ("overall_ha", "best_possible"):
     s = res[str(day)][src]["start"]
     bikes, traj = s, [s]

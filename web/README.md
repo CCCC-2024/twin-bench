@@ -25,13 +25,15 @@ Published by `.github/workflows/pages.yml` on every push to `main` that touches 
 ## Build and check
 ```bash
 python web/build.py                                                      # -> web/index.html
-node web/checks/check_incubator.js twins/incubator/results web           # WEB CHECK OK
+node web/checks/check_incubator.js twins/incubator/results web           # INCUBATOR WEB CHECK OK
 node web/checks/check_battery.js twins/battery/results web               # BATTERY WEB CHECK OK
 node web/checks/check_uav.js twins/uav/results web                       # UAV WEB CHECK OK
 node web/checks/check_bikeshare.js twins/bikeshare/results web           # BIKESHARE WEB CHECK OK
 ```
 The incubator check needs `python twins/incubator/scripts/export_web.py --replay-only` first (local data).
 
-Python is the reference and the JavaScript is checked against it: incubator max difference ~1e-12 °C; battery
-615/615 what-if retirement cycles identical; UAV 120/120 steps of maneuvers and policies identical, estimates within ~5e-13; bike share 72 simulated hours, 3 nightly decisions
-and every 10–90 % band identical, numbers within ~1e-11.
+Python is the reference and the JavaScript is checked against it; each twin's README says how closely. `run_checks.sh`
+runs every `checks/check_<name>.js` it finds.
+
+Open: each `*_core.js` is a second implementation of its twin's model, kept equal to the Python by these checks.
+Removing it (running the Python twins behind the page) is a decision left for later.

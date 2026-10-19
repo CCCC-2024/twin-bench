@@ -83,6 +83,8 @@ The service decides the first time capacity is ≤ 95 %, using only what it has 
   `decide_online` on those states, and the replay stops at the retirement cycle (cells 27, 4 and 24) *(test)*.
 - Waiting for more of the cell's own data trades large decision errors for late decisions
   (`results/tradeoff_baseline.png`, from `results/baseline.csv`).
+- The page's JavaScript gives the same retirement cycle in all 615 what-if cases of the three page cells
+  (`web/checks/check_battery.js`).
 
 ## Notes
 - The raw data stop near 80 % capacity. The authors extrapolate the last 30 cycles linearly for 3000 cycles to reach
@@ -98,3 +100,5 @@ The service decides the first time capacity is ≤ 95 %, using only what it has 
 - The authors' prior (log10 a = −15.77, b = 5.45, std 0.05) is narrow: power laws fitted to every measured cycle of
   the training cells have mean (−12.9, 4.35) and std (3.2, 1.2) *(test)*.
 - The model has no usage inputs (charging rate is fixed per cell), so it cannot answer "what if we use it differently".
+- Open: `live/twin_service.py` runs `ParticleFilter` and `decide_online` itself rather than `BatteryTwin` through
+  `dtcore.run`, a second copy of the twin's loop; it stays until the live demo is redesigned.

@@ -10,6 +10,19 @@ warm it. The twin estimates the temperature from a noisy sensor and switches the
 |---|---|---|---|---|---|
 | water temperature | noisy thermometer every 10 s; heater on/off | temperature estimate and its variance | temperature over the next minutes | heater on / off | stay near 60 °C |
 
+### Observations and actions
+
+One step is 10 s. What `SimMug` returns, and what the twin uses:
+
+| Field | Meaning | A real mug has it? | `MugTwin.update` reads it |
+|---|---|---|---|
+| `t` | seconds since the start | yes | no (passed through) |
+| `T` | the thermometer reading, °C | yes | yes |
+| `heater_on` | heater on (1) or off (0) during the last 10 s | yes | yes |
+| `true_T` | the simulated true temperature | no | no; for scoring only |
+
+Action `{"heater_on": 0 or 1}`: switches the heater for the next 10 s.
+
 ## Files
 - `__init__.py` — the public names, `MugTwin` and `SimMug`: `from twins._template import MugTwin, SimMug`.
 - `model.py` — Newton's law of cooling with a heater, one exact step for a given dt.
@@ -21,7 +34,7 @@ warm it. The twin estimates the temperature from a noisy sensor and switches the
 
 ## Run
 ```bash
-pytest tests/test_template.py    # 3 passed
+pytest tests/test_template.py    # 3 passed, under a second
 ```
 
 ## Making it yours

@@ -45,15 +45,15 @@ chooses the set point with the what-if, `predict(horizon_s, controller, desired=
   (`results/step1_*`).
 - `scripts/export_web.py`: the page's reference run (`results/ref_web_incubator.json`) and, locally only, the real
   experiment for the page (`web/incubator_replay.js`, `results/ref_web_incubator_replay.json`).
-- `tests/test_incubator.py` (in the repository's `tests/`): the results below marked *(test)*.
+- `tests/test_incubator.py` (in the repository's `tests/`): the results and notes below marked *(test)*.
 
 ## Run
 ```bash
 twins/incubator/fetch_upstream.sh
-pytest tests/test_incubator.py                       # under a second
+pytest tests/test_incubator.py                       # about a second
 python twins/incubator/scripts/step1_model.py        # a few seconds; figures in results/
-python twins/incubator/scripts/export_web.py         # page references
-node web/checks/check_incubator.js twins/incubator/results web    # WEB CHECK OK
+python twins/incubator/scripts/export_web.py         # page references, a few seconds
+node web/checks/check_incubator.js twins/incubator/results web    # INCUBATOR WEB CHECK OK
 ```
 
 ## Results
@@ -76,6 +76,8 @@ On the 2023 empty-box experiment (1.85 h, 2216 samples) unless noted.
   from the first recorded heating on; every one of the 17 switches appears in the recording exactly 3 samples (about
   9 s) after ours *(test)*. Before that (31 samples) the recording shows a cold box with the heater off: the box's
   controller had not started.
+- The page's JavaScript gives the same heater states and alarms as Python, temperatures within 1e-12 °C, in the
+  closed-loop reference run and on the real experiment (`web/checks/check_incubator.js`).
 
 ## Notes
 - 2023 hardware: t1 and t2 are inside the box, t3 measures the room. In the 2020–2021 datasets t1 is the room; do not mix them.

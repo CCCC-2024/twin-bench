@@ -55,8 +55,7 @@ Action `{"set_bikes": s}`: a truck brings the station to s bikes (clipped to 0�
   the reference run `results/ref_web_bikeshare.json` that `web/checks/check_bikeshare.js` replays.
 - `scripts/crosscheck_upstream.py` runs the authors' decision code on the same inputs and saves its answers in
   `results/ref_upstream.json`, which the tests compare against.
-- `tests/test_bikeshare.py` (in the repository's `tests/`): the learned rates equal the paper's benchmarks, the
-  nightly decisions equal the paper's experiment, and the decisions equal the authors' code except one numerical tie.
+- `tests/test_bikeshare.py` (in the repository's `tests/`): the results and notes below marked *(test)*.
 
 ## Run
 ```bash
@@ -65,7 +64,7 @@ pytest tests/test_bikeshare.py                       # what the twin reproduces 
 python twins/bikeshare/scripts/step1_model.py        # model only -> results/step1_*, a few seconds
 python twins/bikeshare/scripts/step5_whatif.py       # daytime-truck what-if -> results/step5_*, a few seconds
 python twins/bikeshare/scripts/export_web.py         # page data and reference run, a few seconds
-python twins/bikeshare/scripts/crosscheck_upstream.py  # the authors' code on the same inputs -> results/ref_upstream.json, about 10 min
+python twins/bikeshare/scripts/crosscheck_upstream.py  # the authors' code -> results/ref_upstream.json, ~1 min
 node web/checks/check_bikeshare.js twins/bikeshare/results web    # BIKESHARE WEB CHECK OK
 ```
 
@@ -82,32 +81,38 @@ Station 426, 1 Nov – 31 Dec 2018 (61 days), one decision per night (`results/s
 | hindsight best (knows every event of the day) | 5 | — | 4.7 |
 
 - Against the authors' code: 365 of 366 decisions identical, with identical replayed shortages. The other one
-  (2 Nov, VP-RNN) is a numerical tie: its two options differ by 4e-6 relative, below the upstream Runge–Kutta error
-  (up to 9.2e-4). The model also agrees with a Monte Carlo simulation of itself within 0.3 standard errors.
-- On dtcore, starting from nothing on 1 Jan, the twin's rate estimates equal the paper's benchmark columns (largest
-  difference 7e-15 over 8,712 hours), and its 61 overnight decisions and replayed shortages equal the model-only run.
-- Learned forecasts: the RNN forecasts lose 1.66 ± 0.76 fewer per day than the all-history average (paired, 61 days).
-  MOVP-RNN forecasts more accurately (test RMSE 3.66 vs 3.82 for rentals, 3.57 vs 3.79 for returns, from the authors'
-  saved results) but does not decide better here (+0.34 ± 0.42 per day). One station is consistent with the paper's
-  conclusion that better forecasts need not give better decisions; it cannot confirm it.
-- What-if (`results/step5_whatif.png`): on 2 Nov, the worst day for the overnight decision, the station holds 14 bikes
-  at 06:59. A truck setting 1 bike: predicted 65.7 → 54.0 lost for the rest of the day; replay 99 → 86.
+  (2 Nov, VP-RNN) is a numerical tie: its two options differ by 3.5e-6 relative, below the upstream Runge–Kutta error
+  (up to 9.2e-4) *(test)*. The model also agrees with a Monte Carlo simulation of itself within 0.3 standard errors
+  (printed by `scripts/step1_model.py`).
+- On dtcore, starting from nothing on 1 Jan, the twin's rate estimates equal the paper's benchmark columns up to
+  rounding (over the 8,712 hours where the all-history column is defined), and its 61 overnight decisions and replayed
+  shortages equal the model-only run *(test)*.
+- Learned forecasts: the VP-RNN forecasts lose 1.66 ± 0.76 fewer per day than the all-history average (mean ± standard
+  error of the paired daily difference, 61 days) *(test)*. MOVP-RNN forecasts more accurately (RMSE of the authors'
+  saved forecasts against the recorded counts, Nov–Dec: 3.61 vs 3.85 for rentals, 3.58 vs 3.78 for returns) but does
+  not decide better here (+0.34 ± 0.42 per day) *(test)*. One station is consistent with the paper's conclusion that
+  better forecasts need not give better decisions; it cannot confirm it.
+- What-if (`results/step5_whatif.json`, `.png`): on 2 Nov, the worst day for the overnight decision, the station holds
+  14 bikes at 06:59. A truck setting 1 bike: predicted 65.7 → 54.0 lost for the rest of the day; replay 99 → 86.
 - Page (Twin Bench, `web/`): a simulated station online, the recorded Nov–Dec days in the local copy. The JavaScript
-  matches Python over 72 simulated hours (decisions, station states and 10–90 % bands identical; numbers within 1.3e-11).
+  matches Python over 72 simulated hours: decisions, station states and 10–90 % bands identical, numbers within
+  ~1e-11 (`web/checks/check_bikeshare.js`).
 
 ## Notes
-- The twin's expected shortages and the replay disagree a lot, in both directions (42.8 vs 8.4 per day on average;
-  66 vs 99 on 2 Nov after 07:00). The model assumes independent Poisson rentals and returns at average rates; the
-  replay holds only trips that happened (the operator's rebalancing trips are removed from the data, and returns that
-  went elsewhere when the station was full are missing). Without the station's recorded inventory it is not possible
-  to say which is closer. Differences between actions agree better than absolute levels.
-- Day-to-day variation is much larger than Poisson (variance 4–11 times the mean in the hours checked) and rentals
-  and returns in the same hour are correlated (0.7–0.9). The posterior sd reflects estimation error only.
+- The twin's expected shortages and the replay disagree a lot, in both directions (42.8 vs 8.4 per day on average,
+  `results/step1_decisions.json`; 66 vs 99 on 2 Nov after 07:00, `results/step5_whatif.json`). The model assumes
+  independent Poisson rentals and returns at average rates; the replay holds only trips that happened (the operator's
+  rebalancing trips are removed from the data, and returns that went elsewhere when the station was full are missing).
+  Without the station's recorded inventory it is not possible to say which is closer. Differences between actions
+  agree better than absolute levels.
+- Day-to-day variation is much larger than Poisson, and rentals and returns in the same hour move together: in the 29
+  busy hours (an hour of a day type with at least 5 rentals and 5 returns on average over 2018) the variance is 3–26
+  times the mean and the correlation 0.78–0.96 *(test)*. The posterior sd reflects estimation error only.
 - Censored demand: people who find the station empty or full leave no record, so the estimated rates are below the
   true demand. Neither the paper nor this twin corrects for it.
 - The twin's all-history rates, learned from Jan–Oct, are about twice the Nov–Dec demand (weekday rentals 292 vs 139 a
-  day), and each new day moves them by about 1/220, so the twin adapts slowly. The page's simulated station uses the
-  Nov–Dec average, so the gap shows there.
+  day), and after 218 weekdays each new one moves them by about 1/220, so the twin adapts slowly *(test)*. The page's
+  simulated station uses the Nov–Dec average, so the gap shows there.
 - The capacity (30) comes from the station table in the upstream repository; its date is unknown.
 - Where a learned forecast would plug in: every rate the twin uses comes from `StationTwin.rate(day, hour)` (through
   `rates_ahead`, used by `predict` and `decide`). The paper's RNN forecasts are read by `data.rnn_rates` and used only

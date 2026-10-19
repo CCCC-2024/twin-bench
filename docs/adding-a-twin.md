@@ -65,3 +65,5 @@ out of `run_checks.sh`.
 - [ ] `fetch_upstream.sh` pinned to commits; licenses in THIRD_PARTY_NOTICES.md
 - [ ] new dependencies in `pyproject.toml`
 - [ ] row added to the table in the top-level README; entry in CHANGELOG.md
+- [ ] its name added to the `fetch_upstream.sh` loops in `.github/workflows/checks.yml`, `CONTRIBUTING.md` and the
+  top-level README's Quick start (its tests and page check are found automatically)

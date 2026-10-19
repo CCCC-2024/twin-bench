@@ -16,12 +16,12 @@ import numpy as np
 
 from dtcore import run
 from twins.bikeshare import ReplayStation, StationTwin, data, model
-from twins.bikeshare import experiment as X
+from twins.bikeshare import experiment
 
 ROOT = Path(__file__).resolve().parents[1]
 
-S = X.load()
-C, ev = S["C"], data.events(426)
+paper = experiment.load()
+C, ev = paper["C"], data.events(426)
 JAN1 = datetime.date(2018, 1, 1)
 
 
@@ -33,16 +33,16 @@ def twin_at(day, hour):
 
 
 # 1. consistency with the model-only curve on one test day (from 23:00 the day before, every start)
-day = X.TEST_DAYS[13]
+day = experiment.TEST_DAYS[13]
 st, tw = twin_at(day - datetime.timedelta(days=1), 23)
-curve = model.udf(*X.rates(S, "overall_ha", day), C)
+curve = model.udf(*experiment.rates(paper, "overall_ha", day), C)
 pred = np.array([tw.predict(24, set_bikes=s)["expected_lost"] for s in range(C + 1)])
 gap = np.abs(pred - curve).max()
 print(f"predict from midnight vs model-only curve ({day}): max diff {gap:.1e}")
 
 # 2. the worst test day for the overnight decision, one hour before its first shortage
-night = {d: X.run_day(S, d, sources=("overall_ha",))["overall_ha"] for d in X.TEST_DAYS}
-worst = max(X.TEST_DAYS, key=lambda d: night[d]["lost_rent"] + night[d]["lost_return"])
+night = {d: experiment.run_day(paper, d, sources=("overall_ha",))["overall_ha"] for d in experiment.TEST_DAYS}
+worst = max(experiment.TEST_DAYS, key=lambda d: night[d]["lost_rent"] + night[d]["lost_return"])
 day_ev = ev[ev.date == worst]
 bikes, first = night[worst]["start"], None
 for hr in range(24):

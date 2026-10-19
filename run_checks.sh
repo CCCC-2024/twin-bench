@@ -23,10 +23,10 @@ if command -v node > /dev/null; then
   # the incubator replay reference is built locally from the (unlicensed, not committed) upstream data
   [ -f twins/incubator/results/ref_web_incubator_replay.json ] && [ -f web/incubator_replay.js ] \
     || $PY twins/incubator/scripts/export_web.py --replay-only > /dev/null
-  check "WEB CHECK OK"         node web/checks/check_incubator.js twins/incubator/results web
-  check "BATTERY WEB CHECK OK" node web/checks/check_battery.js twins/battery/results web
-  check "UAV WEB CHECK OK"     node web/checks/check_uav.js twins/uav/results web
-  check "BIKESHARE WEB CHECK OK" node web/checks/check_bikeshare.js twins/bikeshare/results web
+  for c in web/checks/check_*.js; do        # check_<name>.js reads twins/<name>/results
+    name=$(basename "$c" .js); name=${name#check_}
+    check "WEB CHECK OK" node "$c" "twins/$name/results" web
+  done
 else
   echo "skip  web checks (node not installed)"
 fi
