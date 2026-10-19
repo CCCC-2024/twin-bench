@@ -14,12 +14,18 @@ versions follow [Semantic Versioning](https://semver.org/).
   (`results/compare_rates.json`). In the twin, knowing only what is known at 23:00, the VP-RNN forecasts better than
   the last-30-days average but does not decide better; the paper's protocol owes its advantage to forecasts that use
   the same day's earlier counts. The README's results and notes say so, with tests.
+- Page: a twin's part with more than one implementation can be chosen in the twin panel (`renderParts`). Bike share:
+  on the recorded days (local copy), the demand forecast switches between the historical average and the VP-RNN,
+  whose rates `export_web.py` precomputes into the local replay file. `check_bikeshare.js` now replays the recorded
+  days with both and requires the decisions and shortages of `results/compare_rates.json`.
 
 ### Fixed
 - `tools/fetch_github.sh` skipped a repository already fetched at the same commit even when a twin's
   `fetch_upstream.sh` had added files; it now fetches when a listed file is missing.
 
 ### Changed
+- `run_checks.sh` builds the local-only page data of every twin whose `export_web.py` takes `--replay-only` (was:
+  the incubator's only); bike share's `export_web.py` takes it.
 - bikeshare: `StationTwin` takes its rate model as an argument, `StationTwin(C, rates)`; the Gamma–Poisson rates
   moved unchanged to `rates.py` as `HistoricalRates`, the default. `StationTwin(C, window_days=30)` is now
   `StationTwin(C, HistoricalRates(window_days=30))`. Results are unchanged.

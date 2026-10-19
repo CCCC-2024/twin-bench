@@ -70,7 +70,7 @@ pytest tests/test_bikeshare.py                       # what the twin reproduces 
 python twins/bikeshare/scripts/step1_model.py        # model only -> results/step1_*, a few seconds
 python twins/bikeshare/scripts/step5_whatif.py       # daytime-truck what-if -> results/step5_*, a few seconds
 python twins/bikeshare/scripts/compare_rates.py      # rate models in the twin -> results/compare_rates.json, ~10 s
-python twins/bikeshare/scripts/export_web.py         # page data and reference run, a few seconds
+python twins/bikeshare/scripts/export_web.py         # page data and reference run, ~10 s (--replay-only: local file only)
 python twins/bikeshare/scripts/crosscheck_upstream.py  # the authors' code -> results/ref_upstream.json, ~1 min
 node web/checks/check_bikeshare.js twins/bikeshare/results web    # BIKESHARE WEB CHECK OK
 ```
@@ -117,7 +117,11 @@ from `results/compare_rates.json`):
   14 bikes at 06:59. A truck setting 1 bike: predicted 65.7 → 54.0 lost for the rest of the day; replay 99 → 86.
 - Page (Twin Bench, `web/`): a simulated station online, the recorded Nov–Dec days in the local copy. The JavaScript
   matches Python over 72 simulated hours: decisions, station states and 10–90 % bands identical, numbers within
-  ~1e-11 (`web/checks/check_bikeshare.js`).
+  ~1e-11 (`web/checks/check_bikeshare.js`). On the recorded days a person can switch the demand forecast between
+  the historical average and the VP-RNN (its rates computed in Python for those days, so local copy only); the page
+  then takes the same nightly decisions and loses the same rentals and returns as the twin in
+  `results/compare_rates.json`, every day: 61 with the average, 60 with the VP-RNN, whose weather input ends with
+  2018 (also `check_bikeshare.js`).
 
 ## Notes
 - The twin's expected shortages and the replay disagree a lot, in both directions (42.8 vs 8.4 per day on average,

@@ -49,7 +49,7 @@ Create only the folders you use; delete empty ones.
 | Package | `twins/<name>/` | imported as `twins.<name>`, never through `sys.path` |
 | Twin / Sources | `twin.py` / `sources.py` | `<Asset>Twin`; Sources named for what they are (`SimMug`, `CellReplay`) |
 | Tests | `tests/test_<name>.py` | what the twin must do and the published numbers it reproduces |
-| Page export | `scripts/export_web.py` | writes `web/<name>_*.js` and `results/ref_web_<name>.json` |
+| Page export | `scripts/export_web.py` | writes `web/<name>_*.js` and `results/ref_web_<name>.json`; with `--replay-only`, only the git-ignored files from recordings that may not be committed (`run_checks.sh` builds them that way) |
 | Comparison with upstream | `scripts/crosscheck_upstream.py` | runs the authors' code on our inputs; kept when a test compares against its saved answers, so `results/` stays regenerable; a comparison made once and only reported goes in the README |
 | Results | `results/` | say what it is, no dates: `baseline.csv`, `step1_decisions.json`; dates go on experiment folders |
 | Runtime databases | `results/*.db` by default, `DT_DB` to move | not results; git-ignored |
@@ -103,6 +103,7 @@ web/index.html               built by build.py; git-ignored
 web/<name>_core.js           the twin's computations, ported line by line from Python; hand-written
 web/<name>_*.js              data written by export_web.py (battery_cells.js, uav_model.js); committed, not hand-edited
 web/<name>_replay.js         recorded data that may not be published; written by export_web.py, git-ignored
+                             (export_web.py --replay-only writes only these, so the checks can build them)
 web/checks/check_<name>.js   compares the page's JS with the Python reference
 ```
 

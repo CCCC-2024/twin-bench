@@ -82,6 +82,9 @@ button, input, select { font: inherit; color: inherit; }
 .twinp { display: flex; flex-direction: column; }
 .twinp header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 12px 14px 0; flex-wrap: wrap; }
 .twinp header h2 { font-size: 20px; font-weight: 700; color: var(--twin); }
+.parts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 14px 0; }
+.parts:empty { display: none; }
+.parts .meta { color: var(--muted); font-size: 13px; }
 .readouts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line);
             margin: 10px 14px 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
 .ro { background: var(--panel); padding: 9px 11px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -180,6 +183,7 @@ button, input, select { font: inherit; color: inherit; }
 
     <aside class="card twinp" aria-label="Digital twin">
       <header><h2 id="twinTitle">Digital twin</h2><span class="label" id="twinSees"></span></header>
+      <div class="parts" id="parts"></div>
       <div class="readouts">
         <div class="ro"><span class="k" id="ro0k"></span><span class="v" id="ro0v"></span><span class="s" id="ro0s"></span></div>
         <div class="ro"><span class="k" id="ro1k"></span><span class="v" id="ro1v"></span><span class="s" id="ro1s"></span></div>
@@ -1092,7 +1096,7 @@ const Bike = (function () {
       expLost: 'expected lost', rent: 'rentals', ret: 'returns', rented: 'rented', returned: 'returned', emptyW: 'empty', fullW: 'full',
       lgBikes: 'bikes in the station', lgFc: 'twin forecast as is, 10–90 %', lgTry: 'what-if', lgLost: 'hours with lost rentals / returns',
       wiTitle: 'What-if: send a truck now', wiSlider: 'Truck sets the station to', send: 'Send truck', bikes: 'bikes',
-      wiNote: 'Expected over the next 12 hours, from the bikes now and the rates the twin has learned. Nothing changes at the station until you send the truck. Every night at 23:00 the twin sets the next day’s bikes on its own.',
+      wiNote: 'Expected over the next 12 hours, from the bikes now and the twin’s forecast rates. Nothing changes at the station until you send the truck. Every night at 23:00 the twin sets the next day’s bikes on its own.',
       mHead: ['', 'as is', 'what-if'], mRent: 'lost rentals (empty)', mRet: 'lost returns (full)', mTot: 'total lost', mMove: 'bikes moved',
       physical: 'Station', physicalSim: 'Station · simulated', physicalRec: 'Station · recorded', twin: 'Digital twin',
       obsFlow: 'rentals and returns each hour →', cmdFlow: '← truck', in3h: 'in 3 h', thisHour: 'this hour', est: 'est.', lostTag: 'lost',
@@ -1102,11 +1106,15 @@ const Bike = (function () {
         lost: (a, b) => `Lost this hour: ${a} rental${a === 1 ? '' : 's'} (empty), ${b} return${b === 1 ? '' : 's'} (full).`,
         demand: v => `Demand at the station is now ${v}; the twin is not told.`,
         replayStart: 'Replaying the recorded rentals and returns of Nov–Dec 2018. Demand is fixed by the record; the number of bikes follows the twin and your trucks.',
-        replayEnd: 'End of the recorded days.', noReplay: 'Recorded days are only in the local copy (Citi Bike data may not be redistributed as a stand-alone dataset).' },
-      about: 'The queueing model and the nightly decision reproduce Gammelli et al. 2022 (the station model of Raviv & Kolka 2013) on Citi Bike station 426: 365 of 366 decisions match the authors’ code, the other is a numerical tie. The twin learned its rental and return rates from the real 2018 record up to 31 Oct; this page holds only their totals per hour and day type. In “Simulated station” the demand is the Nov–Dec 2018 average, about half of what the twin learned (its all-history average includes busier months), so the twin over-predicts lost rentals and returns: one of the problems we record. “Recorded days” replays the real rentals and returns (local copy only): demand is fixed by the record, the number of bikes follows the twin and your trucks. The page’s numbers match the Python code to about 1e-11.',
+        replayEnd: 'End of the recorded days.', noReplay: 'Recorded days are only in the local copy (Citi Bike data may not be redistributed as a stand-alone dataset).',
+        rnnStart: s => `The twin’s demand forecast is the paper’s trained VP-RNN, run in Python for these days on what was known each hour. It set the station to ${s} bikes for 1 Nov.`,
+        rnnEnd: 'End of the VP-RNN’s forecasts: the weather it reads ends with 2018, so the replay stops after the decision for 31 Dec.' },
+      forecastBy: 'Demand forecast', rateModel: { historical: 'Historical average', rnn: 'VP-RNN (paper’s network)' }, rnnSays: 'VP-RNN forecast',
+      rnnOff: 'VP-RNN runs only on the recorded days in the local copy: its forecasts for those days are computed in Python (export_web.py with the rnn extra).',
+      about: 'The queueing model and the nightly decision reproduce Gammelli et al. 2022 (the station model of Raviv & Kolka 2013) on Citi Bike station 426: 365 of 366 decisions match the authors’ code, the other is a numerical tie. The twin learned its rental and return rates from the real 2018 record up to 31 Oct; this page holds only their totals per hour and day type. In “Simulated station” the demand is the Nov–Dec 2018 average, about half of what the twin learned (its all-history average includes busier months), so the twin over-predicts lost rentals and returns: one of the problems we record. “Recorded days” replays the real rentals and returns (local copy only): demand is fixed by the record, the number of bikes follows the twin and your trucks. There the demand forecast can be switched to the paper’s trained VP-RNN, run in Python for those days: knowing only what is known each night, it forecasts better than the historical average, yet its nightly decisions lose about as many rentals and returns (8.8 against 8.4 a day; see the bike-share README). The page’s numbers match the Python code to about 1e-11.',
       els: [['S', 'Physical state', 'Bikes in the station (0–30). The true hourly demand for rentals and returns is not observed.'],
             ['O', 'Observations', 'Each hour: rentals and returns recorded at the docks, and the bike count.'],
-            ['D', 'Digital state', 'For every hour of a weekday or weekend day, a Gamma posterior over the rental and return rates.'],
+            ['D', 'Digital state', 'For every hour of a weekday or weekend day, a Gamma posterior over the rental and return rates; with VP-RNN chosen, the state of the paper’s trained network.'],
             ['Q', 'Predictions', 'Bikes over the next hours (10–90 %), time empty or full, expected lost rentals and returns.'],
             ['U', 'Actions', 'Every night the twin sets the next day’s bikes on its own; during the day you can send a truck (what-if first).'],
             ['R', 'Objective', 'Fewest expected lost rentals + lost returns (as in the paper).']] },
@@ -1119,7 +1127,7 @@ const Bike = (function () {
       expLost: '预计损失', rent: '借不到', ret: '还不了', rented: '借出', returned: '还入', emptyW: '空站', fullW: '满站',
       lgBikes: '站里的车数', lgFc: '孪生预测（维持现状），10–90 %', lgTry: 'what-if', lgLost: '有人借不到或还不了的小时',
       wiTitle: 'What-if：现在派一辆卡车', wiSlider: '卡车把站里调到', send: '派车', bikes: '辆',
-      wiNote: '从现在的车数和孪生学到的速度出发，预测未来 12 小时。按“派车”之前，站点不会有任何变化。每天 23 点，孪生自动决定第二天的车数。',
+      wiNote: '从现在的车数和孪生预测的速度出发，预测未来 12 小时。按“派车”之前，站点不会有任何变化。每天 23 点，孪生自动决定第二天的车数。',
       mHead: ['', '维持现状', 'what-if'], mRent: '借不到（站空）', mRet: '还不了（站满）', mTot: '合计损失', mMove: '搬动的车',
       physical: '站点', physicalSim: '站点 · 模拟', physicalRec: '站点 · 真实记录', twin: '数字孪生',
       obsFlow: '每小时的借车和还车 →', cmdFlow: '← 卡车', in3h: '3 小时后', thisHour: '这一小时', est: '估计', lostTag: '损失',
@@ -1129,11 +1137,15 @@ const Bike = (function () {
         lost: (a, b) => `这一小时：站空借不到 ${a} 次，站满还不了 ${b} 次。`,
         demand: v => `站点的需求改为 ${v}，孪生不知道。`,
         replayStart: '回放 2018 年 11–12 月真实的借车和还车。需求由记录决定，站里的车数跟着孪生和你派的车走。',
-        replayEnd: '真实记录播放完毕。', noReplay: '真实记录只在本地版本里有（Citi Bike 数据不允许单独再发布）。' },
-      about: '排队模型和每晚的决策复现 Gammelli 等 2022（站点模型来自 Raviv & Kolka 2013），用的是 Citi Bike 426 号站：366 个决定里 365 个和作者代码相同，另 1 个是数值上的平手。孪生的借车、还车速度是从 2018 年到 10 月 31 日的真实记录学来的；页面里只有按小时和日类型汇总的总数。“模拟的站点”里，需求取 2018 年 11–12 月的平均，大约是孪生学到的一半（全部历史平均包含更忙的月份），所以孪生会高估借不到和还不了的人数：这是记录下来的问题之一。“真实记录”回放真实的借车和还车（仅本地版本）：需求由记录决定，站里的车数跟着孪生和你派的车走。页面的数字和 Python 相差约 1e-11。',
+        replayEnd: '真实记录播放完毕。', noReplay: '真实记录只在本地版本里有（Citi Bike 数据不允许单独再发布）。',
+        rnnStart: s => `孪生的需求预测改用论文训练好的 VP-RNN（用 Python 针对这些天预先算好，每小时只用当时已知的数据）。它把 11 月 1 日的车数定为 ${s} 辆。`,
+        rnnEnd: 'VP-RNN 的预测到此为止：它读的天气数据只到 2018 年底，所以回放在定好 12 月 31 日的车数后结束。' },
+      forecastBy: '需求预测', rateModel: { historical: '历史平均', rnn: 'VP-RNN（论文的网络）' }, rnnSays: 'VP-RNN 预测',
+      rnnOff: 'VP-RNN 只能用在本地版本的真实记录上：这些天的预测是用 Python 预先算好的（export_web.py，需要 rnn 依赖）。',
+      about: '排队模型和每晚的决策复现 Gammelli 等 2022（站点模型来自 Raviv & Kolka 2013），用的是 Citi Bike 426 号站：366 个决定里 365 个和作者代码相同，另 1 个是数值上的平手。孪生的借车、还车速度是从 2018 年到 10 月 31 日的真实记录学来的；页面里只有按小时和日类型汇总的总数。“模拟的站点”里，需求取 2018 年 11–12 月的平均，大约是孪生学到的一半（全部历史平均包含更忙的月份），所以孪生会高估借不到和还不了的人数：这是记录下来的问题之一。“真实记录”回放真实的借车和还车（仅本地版本）：需求由记录决定，站里的车数跟着孪生和你派的车走。这时可以把需求预测换成论文训练好的 VP-RNN（用 Python 针对这些天预先算好）：只用每晚已知的数据时，它预测得比历史平均准，但每晚的决定损失的人数差不多（每天 8.8 对 8.4，见单车 README）。页面的数字和 Python 相差约 1e-11。',
       els: [['S', '物理状态', '站里的车数（0–30）。每小时真实的借车、还车需求看不到。'],
             ['O', '观测', '每小时车位记录的借车数、还车数，以及当前车数。'],
-            ['D', '数字状态', '工作日和周末的每个小时各一个伽马后验，估计借车、还车的速度。'],
+            ['D', '数字状态', '工作日和周末的每个小时各一个伽马后验，估计借车、还车的速度；选 VP-RNN 时，是论文训练好的网络的状态。'],
             ['Q', '预测量', '未来几小时的车数（10–90 %）、空站或满站的时间、预计借不到和还不了的人数。'],
             ['U', '动作', '每晚孪生自动决定第二天的车数；白天你可以先 what-if，再派车。'],
             ['R', '目标', '预计借不到 + 还不了的人数最少（论文设定）。']] }
@@ -1141,7 +1153,8 @@ const Bike = (function () {
   const t = k => TXT[SH.lang][k];
   const M = window.BIKESHARE_MODEL, CAP = M ? M.C : 30, HZ = 12;
   const replayData = () => window.BIKESHARE_REPLAY || null;
-  const S = { mode: 'sim', demand: 1, st: null, tw: null, hist: [], last: null, est: null, night: null, known: null,
+  const rnnData = () => (replayData() || {}).rnn || null;            // VP-RNN rates for the recorded days (Python)
+  const S = { mode: 'sim', rates: 'historical', demand: 1, st: null, tw: null, hist: [], last: null, est: null, night: null, known: null,
               lostDay: [0, 0], tryS: 15, fcNow: null, fcTry: null, stale: true, shown: 0, ghost: 0 };
   const WD = { en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], zh: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'] };
   const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -1155,14 +1168,15 @@ const Bike = (function () {
   const pct = v => Math.round(v * 100) + ' %';
   const twinBikes = () => S.known !== null ? S.known : S.tw.bikes;   // the twin knows the bikes its own trucks set
 
+  const useRnn = () => S.mode === 'replay' && S.rates === 'rnn' && !!rnnData();
   function init() {
-    const rep = S.mode === 'replay' && !!replayData();
-    S.tw = new BIKE.Twin(CAP, M.base);
-    S.st = new BIKE.Station({ C: CAP, day0: M.day0, bikes: M.start_bikes, seed: 7,
-                              rates: rep ? null : truth, events: rep ? (k => replayData().hours[k]) : null });
+    const rep = S.mode === 'replay' && !!replayData(), rnn = useRnn() ? rnnData() : null, start = rnn ? rnn.start_bikes : M.start_bikes;
+    S.tw = new BIKE.Twin(CAP, rnn ? new BIKE.PrecomputedRates(rnn.table) : new BIKE.HistoricalRates(M.base));
+    S.st = new BIKE.Station({ C: CAP, day0: M.day0, bikes: start, seed: 7, rates: rep ? null : truth,
+                              events: rep ? (k => rnn && k >= rnn.table.length ? null : replayData().hours[k]) : null });
     S.st.surge = rep ? 1 : S.demand;
-    Object.assign(S, { hist: [], last: null, est: null, night: { set_bikes: M.start_bikes }, known: null, lostDay: [0, 0], shown: M.start_bikes });
-    addLog('', t('ev').start(M.start_bikes));
+    Object.assign(S, { hist: [], last: null, est: null, night: { set_bikes: start }, known: null, lostDay: [0, 0], shown: start });
+    addLog('', rnn ? t('ev').rnnStart(start) : t('ev').start(start));
     if (rep) addLog('', t('ev').replayStart);
     for (let i = 0; i < 6; i++) step();
     S.tryS = Math.min(CAP, S.st.bikes + 10);
@@ -1170,7 +1184,7 @@ const Bike = (function () {
   }
   function step() {
     const o = S.st.observe();
-    if (!o) { addLog('', t('ev').replayEnd); return false; }
+    if (!o) { addLog('', useRnn() ? t('ev').rnnEnd : t('ev').replayEnd); return false; }
     if (o.hour === 0) S.lostDay = [0, 0];
     S.known = null;
     const e = S.tw.update(o), a = S.tw.decide();
@@ -1197,6 +1211,13 @@ const Bike = (function () {
     el.querySelectorAll('#bkDem button').forEach(b => b.onclick = () => { const v = Number(b.dataset.v); if (v === S.demand) return;
       S.demand = v; S.st.surge = v; addLog('', t('ev').demand(t('dem')[v])); renderWorld(el); });
   }
+  // ---------- the twin's parts: its rate model (rates.py), chosen by a person; switching restarts the run ----------
+  function renderParts(el) {
+    const can = S.mode === 'replay' && !!rnnData(), cur = can ? S.rates : 'historical';
+    el.innerHTML = `<span class="meta">${t('forecastBy')}</span><span class="seg" id="bkRates">` + ['historical', 'rnn'].map(v =>
+      `<button data-v="${v}" aria-pressed="${cur === v}" ${v === 'rnn' && !can ? 'disabled title="' + t('rnnOff') + '"' : ''}>${t('rateModel')[v]}</button>`).join('') + '</span>';
+    el.querySelectorAll('#bkRates button').forEach(b => b.onclick = () => { if (b.dataset.v !== cur) { S.rates = b.dataset.v; SH.log = []; SH.running = true; init(); SH.refreshAll(); } });
+  }
   // ---------- panel ----------
   function readouts() {
     fresh(); const o = S.last, e = S.est, fc = S.fcNow; if (!o || !e) return [];
@@ -1207,7 +1228,7 @@ const Bike = (function () {
     return [
       { k: t('roBikes'), v: `${S.st.bikes} ${small('/ ' + CAP)}`, s: S.night ? t('lastNight')(S.night.set_bikes) : '' },
       { k: t('roRates'), v: `${f1(e.next_rent_rate)} / ${f1(e.next_return_rate)} ${small(t('perH'))}`,
-        s: sim ? `${t('trueSim')} ${f1(tr[0] * S.demand)} / ${f1(tr[1] * S.demand)}` : t('learned')(e.days_seen) },
+        s: sim ? `${t('trueSim')} ${f1(tr[0] * S.demand)} / ${f1(tr[1] * S.demand)}` : useRnn() ? t('rnnSays') : t('learned')(e.days_seen) },
       { k: t('roRisk'), v: fc ? `${risk(pE, t('emptyW'))} ${risk(pF, t('fullW'))}` : '–', s: fc ? `${t('expLost')} ${f1(sum(fc.lost_rent.slice(0, 3)) + sum(fc.lost_return.slice(0, 3)))}` : '' },
       { k: t('roLost'), v: String(S.lostDay[0] + S.lostDay[1]), s: `${t('rent')} ${S.lostDay[0]} · ${t('ret')} ${S.lostDay[1]}` }];
   }
@@ -1341,7 +1362,7 @@ const Bike = (function () {
   }
   return { key: 'bikeshare', TXT, speeds: [1, 3, 8], speedLabel: v => v + ' h/s', rate: v => v,
            view: { target: [0, 0.03, 0], dir: [0, 1.35, 1.05], halfWidth: 0.62, minDist: 1.75 },
-           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
+           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, renderParts, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
            clockOf: () => S.last ? stamp(S.last.day, S.last.hour + 1) : '–', available: !!(window.BIKE && M),
            links: '<a href="https://doi.org/10.1016/j.trc.2022.103571" target="_blank" rel="noopener">Gammelli et al. 2022</a> · <a href="https://github.com/DanieleGammelli/variational-poisson-rnn" target="_blank" rel="noopener">authors’ code and station data (MIT)</a> · <a href="https://citibikenyc.com/system-data" target="_blank" rel="noopener">Citi Bike System Data</a>' };
 })();
@@ -1370,6 +1391,7 @@ function renderStatic() {
   $('aboutText').textContent = D('about'); $('aboutLinks').innerHTML = d.links;
   $('legend').innerHTML = d.legend();
   d.renderWorld($('world'));
+  if (d.renderParts) d.renderParts($('parts')); else $('parts').innerHTML = '';   // the twin's parts a person can choose
   const cfg = d.whatif.cfg(), sl = $('try'); sl.min = cfg.min; sl.max = cfg.max; sl.step = cfg.step; sl.value = cfg.value;
   syncPlay();
 }

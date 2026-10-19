@@ -3,14 +3,19 @@
 web/bikeshare_model.js (published): station capacity; the twin's learned totals per hour and day type after the
     real record up to 31 Oct 2018 (n days, total rentals, total returns: aggregates only); the Nov-Dec 2018 average
     demand per hour and day type, used as the simulated station's true rates; the twin's decision for 1 Nov.
-web/bikeshare_replay.js (local only, git-ignored): the recorded rentals/returns of Nov-Dec 2018, hour by hour.
-    Citi Bike data may not be redistributed as a stand-alone dataset, so this file is never committed or published.
+web/bikeshare_replay.js (local only, git-ignored): the recorded rentals/returns of Nov-Dec 2018, hour by hour, and,
+    with the rnn extra, what the twin with the VP-RNN as its rate model forecasts after each of those hours (the page
+    reads it with PrecomputedRates). Citi Bike data may not be redistributed as a stand-alone dataset, so this file is
+    never committed or published.
 results/ref_web_bikeshare.json: a simulated run on dtcore (3 days from 1 Nov; demand x1.5 from hour 30; a truck sets
     5 bikes before hour 44) with every simulated event, the twin's estimates and decisions, forecasts and what-ifs at
     a few hours, and model-only cases. The check feeds the same events to the page's code and compares.
+
+Usage: python twins/bikeshare/scripts/export_web.py [--replay-only]   (--replay-only writes only bikeshare_replay.js)
 """
 import datetime
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -24,6 +29,39 @@ WEB = ROOT.parents[1] / "web"
 STATION, JAN1, NOV1 = 426, datetime.date(2018, 1, 1), datetime.date(2018, 11, 1)
 C, ev, hourly = data.capacity(STATION), data.events(STATION), data.hourly(STATION)
 DAY0 = (NOV1 - JAN1).days                                   # day index of 1 Nov (Jan 1 = 0, a Monday)
+
+
+def rnn_replay(rates):
+    """The twin with the VP-RNN as its rate model over the recorded days, as the page reads it: its decision for 1 Nov,
+    and after each hour the rates of the next 24 hours and the sd of the next hour's. The weather the network reads
+    ends with 2018, so the table stops at 30 Dec 23:00, the decision for 31 Dec."""
+    first, n = DAY0 * 24, 60 * 24
+    rec, ahead = Recorder("bikeshare-rnn-replay"), {}
+
+    def keep(k, source, twin):                              # before hour k the twin has seen hour k - 1
+        if first < k <= first + n:
+            ahead[k - 1 - first] = [v.tolist() for v in twin.rates.ahead(24)]
+    run(ReplayStation(C, ev, JAN1, 365), StationTwin(C, rates), max_steps=first + n + 1, recorder=rec, before_step=keep)
+    sd = [[r["est"]["next_rent_sd"], r["est"]["next_return_sd"]] for r in rec.rows[first:first + n]]
+    return dict(start_bikes=rec.rows[first - 1]["action"]["set_bikes"], table=[ahead[k] + [sd[k]] for k in range(n)])
+
+
+# local-only replay of the recorded Nov-Dec days, one string per hour ("+" return, "-" rental)
+by_hour = {(d, hr): g["change"].to_numpy() for (d, hr), g in ev[ev["date"] >= NOV1].groupby(["date", "hour"])}
+hours = []
+for i in range(61 * 24):
+    d = NOV1 + datetime.timedelta(days=i // 24)
+    hours.append("".join("+" if c > 0 else "-" for c in by_hour.get((d, i % 24), [])))
+replay = dict(day0=DAY0, hours=hours)
+try:
+    from twins.bikeshare import RNNRates
+except ImportError:                                         # the rnn extra (PyTorch) is not installed
+    print("no PyTorch: bikeshare_replay.js is written without the VP-RNN rates (pip install -e \".[rnn]\")")
+else:
+    replay["rnn"] = rnn_replay(RNNRates())
+(WEB / "bikeshare_replay.js").write_text("window.BIKESHARE_REPLAY = " + json.dumps(replay) + ";\n")
+if "--replay-only" in sys.argv:
+    sys.exit(print(f"wrote {WEB / 'bikeshare_replay.js'} (local only)"))
 
 # 1. the twin learns from the real record, 1 Jan - 31 Oct, deciding every night
 st, tw = ReplayStation(C, ev, JAN1, DAY0), StationTwin(C)
@@ -54,14 +92,6 @@ def true_rates(day, hour):
 web = dict(station=STATION, name=data.name(STATION), C=C, day0=DAY0, start_bikes=s0, base=base, truth=truth,
            source="Gammelli et al. 2022 (variational-poisson-rnn @ abf77f7, MIT); Citi Bike System Data 2018 (aggregates)")
 (WEB / "bikeshare_model.js").write_text("window.BIKESHARE_MODEL = " + json.dumps(web, separators=(",", ":")) + ";\n")
-
-# local-only replay of the recorded Nov-Dec days, one string per hour ("+" return, "-" rental)
-by_hour = {(d, hr): g["change"].to_numpy() for (d, hr), g in ev[ev["date"] >= NOV1].groupby(["date", "hour"])}
-hours = []
-for i in range(61 * 24):
-    d = NOV1 + datetime.timedelta(days=i // 24)
-    hours.append("".join("+" if c > 0 else "-" for c in by_hour.get((d, i % 24), [])))
-(WEB / "bikeshare_replay.js").write_text("window.BIKESHARE_REPLAY = " + json.dumps(dict(day0=DAY0, hours=hours)) + ";\n")
 
 # 3. reference run on a simulated station, continuing the learned twin
 N, SURGE_AT, TRUCK_AT, PRED_AT = 72, 30, 44, (5, 23, 44, 60)

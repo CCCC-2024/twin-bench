@@ -1,5 +1,6 @@
 /* Bike-share station twin for the page, ported from twins/bikeshare (model.py, twin.py, rates.py, sources.py).
- * Needs window.BIKESHARE_MODEL (bikeshare_model.js) for the learned totals and the simulated demand.
+ * Needs window.BIKESHARE_MODEL (bikeshare_model.js) for the learned totals and the simulated demand; the recorded days
+ * and the VP-RNN's rates for them come from window.BIKESHARE_REPLAY (bikeshare_replay.js, local only).
  * check_bikeshare.js compares this file with Python.
  */
 (function (root) {
@@ -101,18 +102,18 @@
     return [lp, lr, bikes];
   }
 
-  // ---------- twin (twin.py, with HistoricalRates from rates.py) ----------
+  // ---------- rate models (rates.py): update(o) with one hour of counts, ahead(h) -> [rentals/h, returns/h] ----------
   const weekday = day => day % 7 < 5;                 // day index from 1 Jan 2018, a Monday
-  class Twin {
+  const nextHour = (day, hour) => hour < 23 ? [day, hour + 1] : [day + 1, 0];
+  class HistoricalRates {
     /* base: totals per day type and hour learned before the page starts: [n days, rentals, returns] */
-    constructor(C, base) { this.C = C; this.base = base; this.hist = {}; this.bikes = null; this.day = null; this.hour = null; }
+    constructor(base) { this.base = base; this.hist = {}; this.day = null; this.hour = null; }
     update(o) {
       const key = (o.weekday ? 'w' : 'e') + o.hour, H = this.hist[key] || (this.hist[key] = { days: [], cp: [0], cr: [0] });
       H.days.push(o.day); H.cp.push(H.cp[H.cp.length - 1] + o.pickups); H.cr.push(H.cr[H.cr.length - 1] + o.returns);
-      this.bikes = o.bikes; this.day = o.day; this.hour = o.hour;
-      const [nd, nh] = this.next(), r = this.rate(nd, nh);
-      return { t: o.t, bikes: this.bikes, next_rent_rate: r.mean[0], next_return_rate: r.mean[1],
-               next_rent_sd: r.sd[0], next_return_sd: r.sd[1], days_seen: r.n };
+      this.day = o.day; this.hour = o.hour;
+      const r = this.rate(...nextHour(o.day, o.hour));
+      return { next_rent_rate: r.mean[0], next_return_rate: r.mean[1], next_rent_sd: r.sd[0], next_return_sd: r.sd[1], days_seen: r.n };
     }
     rate(day, hour) {                                  // Gamma posterior (flat prior) from days before `day`
       const wk = weekday(day), b = this.base[wk ? 'weekday' : 'weekend'][hour], H = this.hist[(wk ? 'w' : 'e') + hour];
@@ -121,14 +122,29 @@
       const cp = b[1] + (H ? H.cp[end] : 0), cr = b[2] + (H ? H.cr[end] : 0);
       return { mean: [cp / n, cr / n], sd: [Math.sqrt(cp) / n, Math.sqrt(cr) / n], n };
     }
-    next() { return this.hour < 23 ? [this.day, this.hour + 1] : [this.day + 1, 0]; }
-    ratesAhead(h) {
-      let [day, hr] = this.next(); const lp = [], lr = [];
-      for (let i = 0; i < h; i++) { const m = this.rate(day, hr).mean; lp.push(m[0]); lr.push(m[1]); if (hr < 23) hr++; else { day++; hr = 0; } }
+    ahead(h) {
+      let [day, hr] = nextHour(this.day, this.hour); const lp = [], lr = [];
+      for (let i = 0; i < h; i++) { const m = this.rate(day, hr).mean; lp.push(m[0]); lr.push(m[1]); [day, hr] = nextHour(day, hr); }
       return [lp, lr];
     }
+  }
+  class PrecomputedRates {
+    /* RNNRates (rnn.py), run in Python over the recorded days: table[k], after hour k of the replay (o.t), holds the
+       rates of the next 24 hours, [rentals], [returns], and the sd of the next hour's [rental, return] rate */
+    constructor(table) { this.table = table; this.k = null; }
+    update(o) {
+      this.k = o.t; const [lp, lr, sd] = this.table[o.t];
+      return { next_rent_rate: lp[0], next_return_rate: lr[0], next_rent_sd: sd[0], next_return_sd: sd[1] };
+    }
+    ahead(h) { const [lp, lr] = this.table[this.k]; return [lp.slice(0, h), lr.slice(0, h)]; }
+  }
+
+  // ---------- twin (twin.py): takes its rate model ----------
+  class Twin {
+    constructor(C, rates) { this.C = C; this.rates = rates; this.bikes = null; this.hour = null; }
+    update(o) { this.bikes = o.bikes; this.hour = o.hour; return Object.assign({ t: o.t, bikes: this.bikes }, this.rates.update(o)); }
     predict(h, setBikes = null) {
-      const C = this.C, [lp, lr] = this.ratesAhead(h), start = new Array(C + 1).fill(0);
+      const C = this.C, [lp, lr] = this.rates.ahead(h), start = new Array(C + 1).fill(0);
       start[setBikes === null ? this.bikes : setBikes] = 1;
       const f = forecast(lp, lr, C, [start]), out = { rent_rate: lp, return_rate: lr, mean_bikes: [], p10: [], p90: [],
         p_empty: [], p_full: [], lost_rent: [], lost_return: [], expected_lost: 0 };
@@ -146,7 +162,7 @@
     }
     decide() {                                         // at 23:00: bikes to start tomorrow with
       if (this.hour !== 23) return null;
-      const [lp, lr] = this.ratesAhead(24);
+      const [lp, lr] = this.rates.ahead(24);
       if (lp.some(v => !isFinite(v)) || lr.some(v => !isFinite(v))) return null;
       const [s, cost] = bestStart(lp, lr, this.C);
       return { set_bikes: s, expected_lost: cost };
@@ -182,6 +198,6 @@
     advance() { this.k += 1; }
   }
 
-  const BIKE = { expm, generator, hour, forecast, udf, bestStart, replay, weekday, Twin, Station };
+  const BIKE = { expm, generator, hour, forecast, udf, bestStart, replay, weekday, Twin, HistoricalRates, PrecomputedRates, Station };
   if (typeof module !== 'undefined' && module.exports) module.exports = BIKE; else root.BIKE = BIKE;
 })(typeof self !== 'undefined' ? self : this);

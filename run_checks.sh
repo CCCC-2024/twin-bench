@@ -20,9 +20,11 @@ check() {   # check <text the last line must contain> <command...>
 check "passed"              $PY -m pytest -q
 
 if command -v node > /dev/null; then
-  # the incubator replay reference is built locally from the (unlicensed, not committed) upstream data
-  [ -f twins/incubator/results/ref_web_incubator_replay.json ] && [ -f web/incubator_replay.js ] \
-    || $PY twins/incubator/scripts/export_web.py --replay-only > /dev/null
+  # page data from recordings that may not be committed are built here from the fetched upstream data:
+  # every export_web.py that takes --replay-only writes only those git-ignored files
+  for e in twins/*/scripts/export_web.py; do
+    grep -q -- "--replay-only" "$e" && $PY "$e" --replay-only > /dev/null
+  done
   for c in web/checks/check_*.js; do        # check_<name>.js reads twins/<name>/results
     name=$(basename "$c" .js); name=${name#check_}
     check "WEB CHECK OK" node "$c" "twins/$name/results" web
