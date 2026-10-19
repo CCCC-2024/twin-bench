@@ -2,31 +2,31 @@
 "2018-11-01": {
 "overall_ha": {
 "start": 2,
-"expected": 59.45352367869198,
+"expected": 59.4535236786908,
 "lost_rent": 39,
 "lost_return": 52
 },
 "specific_ha": {
 "start": 2,
-"expected": 99.24414830942877,
+"expected": 99.24414830942887,
 "lost_rent": 39,
 "lost_return": 52
 },
 "vp_rnn": {
 "start": 1,
-"expected": 121.23203494726755,
+"expected": 121.23203494726744,
 "lost_rent": 39,
 "lost_return": 51
 },
 "mo_vp_rnn": {
 "start": 2,
-"expected": 75.93594396229054,
+"expected": 75.93594396229214,
 "lost_rent": 39,
 "lost_return": 52
 },
 "true_count": {
 "start": 0,
-"expected": 103.57062659373145,
+"expected": 103.57062659373032,
 "lost_rent": 39,
 "lost_return": 50
 },
@@ -40,31 +40,31 @@
 "2018-11-02": {
 "overall_ha": {
 "start": 2,
-"expected": 59.630113591589435,
+"expected": 59.63011359158938,
 "lost_rent": 34,
 "lost_return": 88
 },
 "specific_ha": {
 "start": 2,
-"expected": 98.8905760059628,
+"expected": 98.89057600596405,
 "lost_rent": 34,
 "lost_return": 88
 },
 "vp_rnn": {
 "start": 0,
-"expected": 109.12063650674787,
+"expected": 109.12063650674571,
 "lost_rent": 34,
 "lost_return": 86
 },
 "mo_vp_rnn": {
 "start": 5,
-"expected": 35.04101720538618,
+"expected": 35.041017205385344,
 "lost_rent": 34,
 "lost_return": 91
 },
 "true_count": {
 "start": 0,
-"expected": 134.18476455785813,
+"expected": 134.18476455785907,
 "lost_rent": 34,
 "lost_return": 86
 },
@@ -78,31 +78,31 @@
 "2018-11-03": {
 "overall_ha": {
 "start": 9,
-"expected": 15.56656261064321,
+"expected": 15.566562610643118,
 "lost_rent": 6,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 13,
-"expected": 15.224103902364938,
+"expected": 15.224103902365012,
 "lost_rent": 2,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 4,
-"expected": 15.407694865177294,
+"expected": 15.407694865177126,
 "lost_rent": 11,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 20,
-"expected": 10.955718534074055,
+"expected": 10.955718534074018,
 "lost_rent": 0,
 "lost_return": 2
 },
 "true_count": {
 "start": 13,
-"expected": 16.10692185057562,
+"expected": 16.106921850575617,
 "lost_rent": 2,
 "lost_return": 0
 },
@@ -116,31 +116,31 @@
 "2018-11-04": {
 "overall_ha": {
 "start": 9,
-"expected": 15.481774157463597,
+"expected": 15.481774157463686,
 "lost_rent": 3,
 "lost_return": 32
 },
 "specific_ha": {
 "start": 13,
-"expected": 14.610403860645985,
+"expected": 14.610403860646343,
 "lost_rent": 0,
 "lost_return": 33
 },
 "vp_rnn": {
 "start": 11,
-"expected": 34.81257971211031,
+"expected": 34.81257971211007,
 "lost_rent": 1,
 "lost_return": 32
 },
 "mo_vp_rnn": {
 "start": 19,
-"expected": 29.86307849482601,
+"expected": 29.86307849482522,
 "lost_rent": 0,
 "lost_return": 39
 },
 "true_count": {
 "start": 14,
-"expected": 42.218345505022796,
+"expected": 42.21834550502329,
 "lost_rent": 0,
 "lost_return": 34
 },
@@ -154,31 +154,31 @@
 "2018-11-05": {
 "overall_ha": {
 "start": 2,
-"expected": 59.937323499624554,
+"expected": 59.937323499622934,
 "lost_rent": 6,
 "lost_return": 11
 },
 "specific_ha": {
 "start": 2,
-"expected": 97.26207791576618,
+"expected": 97.26207791576836,
 "lost_rent": 6,
 "lost_return": 11
 },
 "vp_rnn": {
 "start": 3,
-"expected": 37.13678883614398,
+"expected": 37.13678883614376,
 "lost_rent": 5,
 "lost_return": 11
 },
 "mo_vp_rnn": {
 "start": 3,
-"expected": 16.51537165020854,
+"expected": 16.515371650208508,
 "lost_rent": 5,
 "lost_return": 11
 },
 "true_count": {
 "start": 9,
-"expected": 19.517189363657813,
+"expected": 19.51718936365761,
 "lost_rent": 0,
 "lost_return": 12
 },
@@ -192,31 +192,31 @@
 "2018-11-06": {
 "overall_ha": {
 "start": 2,
-"expected": 59.69117386810447,
+"expected": 59.69117386810541,
 "lost_rent": 0,
 "lost_return": 13
 },
 "specific_ha": {
 "start": 2,
-"expected": 92.80312772001515,
+"expected": 92.80312772001454,
 "lost_rent": 0,
 "lost_return": 13
 },
 "vp_rnn": {
 "start": 1,
-"expected": 29.76855179194236,
+"expected": 29.768551791942762,
 "lost_rent": 0,
 "lost_return": 12
 },
 "mo_vp_rnn": {
 "start": 3,
-"expected": 14.040325854684035,
+"expected": 14.040325854684095,
 "lost_rent": 0,
 "lost_return": 14
 },
 "true_count": {
 "start": 4,
-"expected": 24.672935817802493,
+"expected": 24.672935817802554,
 "lost_rent": 0,
 "lost_return": 15
 },
@@ -230,31 +230,31 @@
 "2018-11-07": {
 "overall_ha": {
 "start": 2,
-"expected": 59.43963544986354,
+"expected": 59.43963544986204,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 88.24628918099602,
+"expected": 88.24628918099512,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 1,
-"expected": 37.62255915418911,
+"expected": 37.622559154189354,
 "lost_rent": 1,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 2,
-"expected": 11.987286538109943,
+"expected": 11.987286538109934,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 2,
-"expected": 9.082711753588114,
+"expected": 9.082711753588052,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -268,31 +268,31 @@
 "2018-11-08": {
 "overall_ha": {
 "start": 2,
-"expected": 59.10296346995834,
+"expected": 59.10296346995814,
 "lost_rent": 28,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 84.3678049062617,
+"expected": 84.36780490626253,
 "lost_rent": 28,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 13,
-"expected": 47.92749325702283,
+"expected": 47.927493257023734,
 "lost_rent": 17,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 15,
-"expected": 19.380945181314857,
+"expected": 19.38094518131471,
 "lost_rent": 15,
 "lost_return": 0
 },
 "true_count": {
 "start": 18,
-"expected": 27.88762181157413,
+"expected": 27.887621811574498,
 "lost_rent": 12,
 "lost_return": 0
 },
@@ -306,31 +306,31 @@
 "2018-11-09": {
 "overall_ha": {
 "start": 2,
-"expected": 58.832072625866644,
+"expected": 58.83207262586641,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 75.33362684847305,
+"expected": 75.33362684847246,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 2,
-"expected": 13.46396124942408,
+"expected": 13.463961249424049,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 5,
-"expected": 6.304904234365592,
+"expected": 6.3049042343655515,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 1,
-"expected": 9.942714926204076,
+"expected": 9.942714926204003,
 "lost_rent": 1,
 "lost_return": 0
 },
@@ -344,31 +344,31 @@
 "2018-11-10": {
 "overall_ha": {
 "start": 9,
-"expected": 15.577994118334242,
+"expected": 15.577994118334129,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 12,
-"expected": 14.761275108977271,
+"expected": 14.761275108977225,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 25,
-"expected": 7.861959008098002,
+"expected": 7.861959008097921,
 "lost_rent": 0,
 "lost_return": 10
 },
 "mo_vp_rnn": {
 "start": 20,
-"expected": 7.25955073629032,
+"expected": 7.2595507362903575,
 "lost_rent": 0,
 "lost_return": 5
 },
 "true_count": {
 "start": 10,
-"expected": 9.497161111607138,
+"expected": 9.497161111607108,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -382,31 +382,31 @@
 "2018-11-11": {
 "overall_ha": {
 "start": 9,
-"expected": 15.486832147278971,
+"expected": 15.486832147279317,
 "lost_rent": 4,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 11,
-"expected": 14.059257382915451,
+"expected": 14.059257382915805,
 "lost_rent": 2,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 23,
-"expected": 5.6185478433243645,
+"expected": 5.61854784332441,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 15,
-"expected": 4.9001670544480245,
+"expected": 4.900167054447984,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 20,
-"expected": 6.4565315149381375,
+"expected": 6.456531514938127,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -420,19 +420,19 @@
 "2018-11-12": {
 "overall_ha": {
 "start": 2,
-"expected": 58.5365234089584,
+"expected": 58.536523408957365,
 "lost_rent": 17,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 64.37011593714479,
+"expected": 64.37011593714463,
 "lost_rent": 17,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 22,
-"expected": 43.37454412521844,
+"expected": 43.374544125218826,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -444,7 +444,7 @@
 },
 "true_count": {
 "start": 19,
-"expected": 15.824238878641975,
+"expected": 15.824238878641896,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -458,31 +458,31 @@
 "2018-11-13": {
 "overall_ha": {
 "start": 2,
-"expected": 58.219718435970876,
+"expected": 58.21971843597014,
 "lost_rent": 7,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 60.60157688947898,
+"expected": 60.601576889479944,
 "lost_rent": 7,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 20,
-"expected": 17.006692237384897,
+"expected": 17.006692237384822,
 "lost_rent": 0,
 "lost_return": 2
 },
 "mo_vp_rnn": {
 "start": 20,
-"expected": 6.572869488613785,
+"expected": 6.572869488613815,
 "lost_rent": 0,
 "lost_return": 2
 },
 "true_count": {
 "start": 13,
-"expected": 9.709787206272711,
+"expected": 9.709787206272683,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -496,31 +496,31 @@
 "2018-11-14": {
 "overall_ha": {
 "start": 2,
-"expected": 57.90724966206287,
+"expected": 57.907249662063975,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 57.136343655470924,
+"expected": 57.136343655470895,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 8,
-"expected": 14.478134783144057,
+"expected": 14.478134783144045,
 "lost_rent": 0,
 "lost_return": 4
 },
 "mo_vp_rnn": {
 "start": 6,
-"expected": 9.794459490902824,
+"expected": 9.79445949090277,
 "lost_rent": 0,
 "lost_return": 2
 },
 "true_count": {
 "start": 2,
-"expected": 15.576119654228735,
+"expected": 15.576119654228926,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -534,31 +534,31 @@
 "2018-11-15": {
 "overall_ha": {
 "start": 2,
-"expected": 57.662101392635435,
+"expected": 57.662101392634355,
 "lost_rent": 0,
 "lost_return": 2
 },
 "specific_ha": {
 "start": 2,
-"expected": 52.18237252507086,
+"expected": 52.18237252507042,
 "lost_rent": 0,
 "lost_return": 2
 },
 "vp_rnn": {
 "start": 2,
-"expected": 6.101367253448564,
+"expected": 6.101367253448521,
 "lost_rent": 0,
 "lost_return": 2
 },
 "mo_vp_rnn": {
 "start": 8,
-"expected": 4.30460375004386,
+"expected": 4.30460375004388,
 "lost_rent": 0,
 "lost_return": 8
 },
 "true_count": {
 "start": 2,
-"expected": 8.292490303716889,
+"expected": 8.292490303716912,
 "lost_rent": 0,
 "lost_return": 2
 },
@@ -572,31 +572,31 @@
 "2018-11-16": {
 "overall_ha": {
 "start": 2,
-"expected": 57.34944617731237,
+"expected": 57.349446177312394,
 "lost_rent": 13,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 45.41364305134907,
+"expected": 45.41364305134883,
 "lost_rent": 13,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 21,
-"expected": 19.779775227100743,
+"expected": 19.77977522710068,
 "lost_rent": 0,
 "lost_return": 1
 },
 "mo_vp_rnn": {
 "start": 21,
-"expected": 6.446283114280918,
+"expected": 6.446283114280883,
 "lost_rent": 0,
 "lost_return": 1
 },
 "true_count": {
 "start": 16,
-"expected": 11.610818991934257,
+"expected": 11.610818991934227,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -610,31 +610,31 @@
 "2018-11-17": {
 "overall_ha": {
 "start": 9,
-"expected": 15.383559616588261,
+"expected": 15.383559616588304,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 11,
-"expected": 11.913039478742325,
+"expected": 11.913039478742565,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 16,
-"expected": 9.51599583417371,
+"expected": 9.515995834173875,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 20,
-"expected": 7.669952627333842,
+"expected": 7.669952627333773,
 "lost_rent": 0,
 "lost_return": 3
 },
 "true_count": {
 "start": 11,
-"expected": 10.18694702517515,
+"expected": 10.186947025174955,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -648,31 +648,31 @@
 "2018-11-18": {
 "overall_ha": {
 "start": 9,
-"expected": 15.290983303586348,
+"expected": 15.29098330358623,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 10,
-"expected": 10.918015840048978,
+"expected": 10.918015840048973,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 19,
-"expected": 5.5458692711780575,
+"expected": 5.545869271178071,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 15,
-"expected": 4.654511178205585,
+"expected": 4.654511178205601,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 15,
-"expected": 6.937884514438014,
+"expected": 6.937884514438087,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -686,31 +686,31 @@
 "2018-11-19": {
 "overall_ha": {
 "start": 2,
-"expected": 57.030172881836734,
+"expected": 57.03017288183649,
 "lost_rent": 3,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 39.2488630275521,
+"expected": 39.248863027551614,
 "lost_rent": 3,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 11,
-"expected": 27.80448178237863,
+"expected": 27.804481782378467,
 "lost_rent": 0,
 "lost_return": 3
 },
 "mo_vp_rnn": {
 "start": 9,
-"expected": 20.535590682393767,
+"expected": 20.535590682393888,
 "lost_rent": 0,
 "lost_return": 1
 },
 "true_count": {
 "start": 7,
-"expected": 21.301418767681056,
+"expected": 21.301418767680836,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -724,31 +724,31 @@
 "2018-11-20": {
 "overall_ha": {
 "start": 2,
-"expected": 56.826051955620784,
+"expected": 56.826051955620244,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 38.034625925324725,
+"expected": 38.034625925324626,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 3,
-"expected": 36.62961559790889,
+"expected": 36.62961559790909,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 3,
-"expected": 16.75877926482995,
+"expected": 16.758779264829975,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 3,
-"expected": 15.50915032924512,
+"expected": 15.509150329245127,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -762,31 +762,31 @@
 "2018-11-21": {
 "overall_ha": {
 "start": 2,
-"expected": 56.55095526061638,
+"expected": 56.55095526061652,
 "lost_rent": 2,
 "lost_return": 2
 },
 "specific_ha": {
 "start": 2,
-"expected": 36.29021626765736,
+"expected": 36.29021626765747,
 "lost_rent": 2,
 "lost_return": 2
 },
 "vp_rnn": {
 "start": 3,
-"expected": 10.892038835455132,
+"expected": 10.892038835455178,
 "lost_rent": 1,
 "lost_return": 2
 },
 "mo_vp_rnn": {
 "start": 11,
-"expected": 12.277019453189656,
+"expected": 12.277019453189576,
 "lost_rent": 0,
 "lost_return": 9
 },
 "true_count": {
 "start": 4,
-"expected": 11.553745546758616,
+"expected": 11.553745546758588,
 "lost_rent": 0,
 "lost_return": 2
 },
@@ -800,31 +800,31 @@
 "2018-11-22": {
 "overall_ha": {
 "start": 2,
-"expected": 56.240838632808995,
+"expected": 56.24083863280825,
 "lost_rent": 5,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 32.43433240866667,
+"expected": 32.43433240866696,
 "lost_rent": 5,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 7,
-"expected": 1.3165560218637866,
+"expected": 1.3165560218637824,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 14,
-"expected": 0.7162255531663508,
+"expected": 0.7162255531663493,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 18,
-"expected": 0.12589464736546385,
+"expected": 0.12589464736546313,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -838,31 +838,31 @@
 "2018-11-23": {
 "overall_ha": {
 "start": 2,
-"expected": 55.830788587895675,
+"expected": 55.83078858789544,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 26.044620047612568,
+"expected": 26.044620047612867,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 6,
-"expected": 2.29140189599518,
+"expected": 2.2914018959951674,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 17,
-"expected": 1.9605505942141321,
+"expected": 1.9605505942141246,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 11,
-"expected": 2.1818287209433573,
+"expected": 2.181828720943349,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -876,31 +876,31 @@
 "2018-11-24": {
 "overall_ha": {
 "start": 10,
-"expected": 15.185805334400445,
+"expected": 15.185805334400452,
 "lost_rent": 1,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 11,
-"expected": 8.991105847627006,
+"expected": 8.991105847626862,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 14,
-"expected": 4.162489191930553,
+"expected": 4.162489191930547,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 16,
-"expected": 3.258723746335387,
+"expected": 3.2587237463354013,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 18,
-"expected": 4.342856092138368,
+"expected": 4.34285609213836,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -914,31 +914,31 @@
 "2018-11-25": {
 "overall_ha": {
 "start": 10,
-"expected": 15.045927713197969,
+"expected": 15.04592771319798,
 "lost_rent": 2,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 11,
-"expected": 8.19773034967784,
+"expected": 8.197730349677892,
 "lost_rent": 1,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 25,
-"expected": 6.689177769662123,
+"expected": 6.689177769662145,
 "lost_rent": 0,
 "lost_return": 1
 },
 "mo_vp_rnn": {
 "start": 16,
-"expected": 6.61654481730856,
+"expected": 6.616544817308476,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 17,
-"expected": 9.14191464684294,
+"expected": 9.141914646842817,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -952,31 +952,31 @@
 "2018-11-26": {
 "overall_ha": {
 "start": 2,
-"expected": 55.50928288706123,
+"expected": 55.50928288706132,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 2,
-"expected": 22.222250185307402,
+"expected": 22.222250185307637,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 13,
-"expected": 6.7657597722364144,
+"expected": 6.765759772236437,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 4,
-"expected": 4.881123207924198,
+"expected": 4.881123207924225,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 8,
-"expected": 4.227366389444266,
+"expected": 4.227366389444235,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -990,31 +990,31 @@
 "2018-11-27": {
 "overall_ha": {
 "start": 2,
-"expected": 55.15757797366483,
+"expected": 55.157577973664736,
 "lost_rent": 14,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 3,
-"expected": 20.59762092108661,
+"expected": 20.597620921086573,
 "lost_rent": 13,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 24,
-"expected": 15.961440931571024,
+"expected": 15.961440931571074,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 14,
-"expected": 8.474962542148424,
+"expected": 8.474962542148392,
 "lost_rent": 2,
 "lost_return": 0
 },
 "true_count": {
 "start": 20,
-"expected": 11.232813171647624,
+"expected": 11.232813171647857,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1028,31 +1028,31 @@
 "2018-11-28": {
 "overall_ha": {
 "start": 2,
-"expected": 54.834697558669305,
+"expected": 54.83469755866871,
 "lost_rent": 4,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 3,
-"expected": 19.446015661261058,
+"expected": 19.44601566126112,
 "lost_rent": 3,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 16,
-"expected": 12.352002162483467,
+"expected": 12.352002162483533,
 "lost_rent": 0,
 "lost_return": 3
 },
 "mo_vp_rnn": {
 "start": 12,
-"expected": 10.497855039617152,
+"expected": 10.497855039617153,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 8,
-"expected": 13.109458736954085,
+"expected": 13.109458736953865,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1066,31 +1066,31 @@
 "2018-11-29": {
 "overall_ha": {
 "start": 2,
-"expected": 54.58648464934896,
+"expected": 54.586484649348925,
 "lost_rent": 9,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 3,
-"expected": 16.35574778339993,
+"expected": 16.355747783400147,
 "lost_rent": 8,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 12,
-"expected": 13.551906706905882,
+"expected": 13.551906706906019,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 12,
-"expected": 9.170008244408436,
+"expected": 9.170008244408354,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 13,
-"expected": 10.548118386911103,
+"expected": 10.548118386911025,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1104,31 +1104,31 @@
 "2018-11-30": {
 "overall_ha": {
 "start": 2,
-"expected": 54.29174330958091,
+"expected": 54.2917433095807,
 "lost_rent": 15,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 3,
-"expected": 13.819679383081201,
+"expected": 13.819679383081029,
 "lost_rent": 14,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 7,
-"expected": 12.131839398410232,
+"expected": 12.131839398410266,
 "lost_rent": 10,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 14,
-"expected": 6.140645099156751,
+"expected": 6.140645099156762,
 "lost_rent": 3,
 "lost_return": 0
 },
 "true_count": {
 "start": 12,
-"expected": 13.70735284057234,
+"expected": 13.707352840572222,
 "lost_rent": 5,
 "lost_return": 0
 },
@@ -1142,31 +1142,31 @@
 "2018-12-01": {
 "overall_ha": {
 "start": 10,
-"expected": 14.963408537151185,
+"expected": 14.963408537151036,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 12,
-"expected": 8.862086381060077,
+"expected": 8.862086381060116,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 23,
-"expected": 7.82689431243581,
+"expected": 7.826894312435787,
 "lost_rent": 0,
 "lost_return": 5
 },
 "mo_vp_rnn": {
 "start": 18,
-"expected": 6.2121482371359065,
+"expected": 6.212148237135879,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 11,
-"expected": 8.122755305107814,
+"expected": 8.12275530510778,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1180,31 +1180,31 @@
 "2018-12-02": {
 "overall_ha": {
 "start": 10,
-"expected": 14.872403915242753,
+"expected": 14.872403915242899,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 11,
-"expected": 8.560763227739432,
+"expected": 8.560763227739425,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 18,
-"expected": 0.9630351930112451,
+"expected": 0.9630351930112487,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 16,
-"expected": 0.9623483853157928,
+"expected": 0.9623483853157919,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 14,
-"expected": 0.9585737619529313,
+"expected": 0.9585737619529324,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1218,31 +1218,31 @@
 "2018-12-03": {
 "overall_ha": {
 "start": 2,
-"expected": 54.04228315186142,
+"expected": 54.04228315186087,
 "lost_rent": 4,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 7,
-"expected": 8.331119237369489,
+"expected": 8.331119237369498,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 11,
-"expected": 26.01081228129314,
+"expected": 26.010812281293266,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 14,
-"expected": 15.576103508891617,
+"expected": 15.57610350889151,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 6,
-"expected": 16.435492484344845,
+"expected": 16.435492484344895,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1256,31 +1256,31 @@
 "2018-12-04": {
 "overall_ha": {
 "start": 2,
-"expected": 53.809573328914176,
+"expected": 53.809573328915164,
 "lost_rent": 0,
 "lost_return": 3
 },
 "specific_ha": {
 "start": 7,
-"expected": 8.60276421838732,
+"expected": 8.602764218387252,
 "lost_rent": 0,
 "lost_return": 8
 },
 "vp_rnn": {
 "start": 4,
-"expected": 10.234388739175506,
+"expected": 10.234388739175442,
 "lost_rent": 0,
 "lost_return": 5
 },
 "mo_vp_rnn": {
 "start": 6,
-"expected": 11.063311422447072,
+"expected": 11.0633114224472,
 "lost_rent": 0,
 "lost_return": 7
 },
 "true_count": {
 "start": 3,
-"expected": 11.800012873945128,
+"expected": 11.8000128739453,
 "lost_rent": 0,
 "lost_return": 4
 },
@@ -1294,31 +1294,31 @@
 "2018-12-05": {
 "overall_ha": {
 "start": 2,
-"expected": 53.57528489944091,
+"expected": 53.57528489944117,
 "lost_rent": 5,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 6,
-"expected": 8.543937817148636,
+"expected": 8.543937817148686,
 "lost_rent": 1,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 18,
-"expected": 8.126591524021062,
+"expected": 8.126591524021078,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 17,
-"expected": 6.0925737520538785,
+"expected": 6.092573752053882,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 13,
-"expected": 8.063589138265206,
+"expected": 8.063589138265078,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1332,31 +1332,31 @@
 "2018-12-06": {
 "overall_ha": {
 "start": 2,
-"expected": 53.228988716527866,
+"expected": 53.22898871652679,
 "lost_rent": 1,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 7,
-"expected": 8.366828229525993,
+"expected": 8.366828229526051,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 8,
-"expected": 7.429601705939304,
+"expected": 7.429601705939313,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 15,
-"expected": 10.130858490434129,
+"expected": 10.13085849043409,
 "lost_rent": 0,
 "lost_return": 5
 },
 "true_count": {
 "start": 5,
-"expected": 9.41354925904986,
+"expected": 9.413549259049784,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1370,31 +1370,31 @@
 "2018-12-07": {
 "overall_ha": {
 "start": 2,
-"expected": 52.98094819310538,
+"expected": 52.98094819310442,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 7,
-"expected": 8.366181471349282,
+"expected": 8.366181471349313,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 10,
-"expected": 7.536135983578047,
+"expected": 7.536135983578021,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 13,
-"expected": 8.507451864157849,
+"expected": 8.50745186415779,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 9,
-"expected": 8.220237981149204,
+"expected": 8.220237981149223,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1408,31 +1408,31 @@
 "2018-12-08": {
 "overall_ha": {
 "start": 10,
-"expected": 14.708982926583374,
+"expected": 14.708982926583364,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 14,
-"expected": 5.568014256028358,
+"expected": 5.568014256028386,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 11,
-"expected": 5.590107102672624,
+"expected": 5.590107102672634,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 19,
-"expected": 3.920286375547848,
+"expected": 3.9202863755478177,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 13,
-"expected": 4.622199678253881,
+"expected": 4.622199678253865,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1446,31 +1446,31 @@
 "2018-12-09": {
 "overall_ha": {
 "start": 10,
-"expected": 14.595562824652546,
+"expected": 14.595562824652548,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 13,
-"expected": 5.412650710040973,
+"expected": 5.412650710041039,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 13,
-"expected": 4.0636597531066325,
+"expected": 4.063659753106597,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 17,
-"expected": 3.404915207149723,
+"expected": 3.404915207149725,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 8,
-"expected": 4.092474167721246,
+"expected": 4.092474167721269,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1484,31 +1484,31 @@
 "2018-12-10": {
 "overall_ha": {
 "start": 2,
-"expected": 52.683590476025714,
+"expected": 52.68359047602519,
 "lost_rent": 5,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 8,
-"expected": 7.970869394291871,
+"expected": 7.97086939429193,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 20,
-"expected": 11.818789600805172,
+"expected": 11.81878960080522,
 "lost_rent": 0,
 "lost_return": 6
 },
 "mo_vp_rnn": {
 "start": 16,
-"expected": 9.476876970763579,
+"expected": 9.4768769707635,
 "lost_rent": 0,
 "lost_return": 2
 },
 "true_count": {
 "start": 13,
-"expected": 10.013165470230621,
+"expected": 10.01316547023055,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1522,31 +1522,31 @@
 "2018-12-11": {
 "overall_ha": {
 "start": 2,
-"expected": 52.399599469664416,
+"expected": 52.39959946966361,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 8,
-"expected": 7.973357800206193,
+"expected": 7.973357800206228,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 11,
-"expected": 12.535408797315599,
+"expected": 12.535408797315633,
 "lost_rent": 0,
 "lost_return": 3
 },
 "mo_vp_rnn": {
 "start": 11,
-"expected": 9.200263253478482,
+"expected": 9.200263253478342,
 "lost_rent": 0,
 "lost_return": 3
 },
 "true_count": {
 "start": 2,
-"expected": 10.889308852866161,
+"expected": 10.889308852866094,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1560,31 +1560,31 @@
 "2018-12-12": {
 "overall_ha": {
 "start": 2,
-"expected": 52.16649466720112,
+"expected": 52.166494667200865,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 8,
-"expected": 7.993665558015197,
+"expected": 7.993665558015298,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 13,
-"expected": 21.873051438368798,
+"expected": 21.873051438368734,
 "lost_rent": 0,
 "lost_return": 1
 },
 "mo_vp_rnn": {
 "start": 10,
-"expected": 9.136350864381539,
+"expected": 9.13635086438157,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 5,
-"expected": 10.867362704979648,
+"expected": 10.867362704979623,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1598,31 +1598,31 @@
 "2018-12-13": {
 "overall_ha": {
 "start": 2,
-"expected": 51.893274132875696,
+"expected": 51.893274132875135,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 7,
-"expected": 7.772028753284655,
+"expected": 7.772028753284612,
 "lost_rent": 0,
 "lost_return": 5
 },
 "vp_rnn": {
 "start": 2,
-"expected": 7.389824749928694,
+"expected": 7.389824749928758,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 14,
-"expected": 9.729036672513098,
+"expected": 9.729036672513185,
 "lost_rent": 0,
 "lost_return": 12
 },
 "true_count": {
 "start": 2,
-"expected": 10.8542981646848,
+"expected": 10.854298164684852,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1636,31 +1636,31 @@
 "2018-12-14": {
 "overall_ha": {
 "start": 2,
-"expected": 51.63274850996116,
+"expected": 51.63274850996061,
 "lost_rent": 17,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 7,
-"expected": 7.648386031541467,
+"expected": 7.648386031541488,
 "lost_rent": 12,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 18,
-"expected": 14.935915673957767,
+"expected": 14.935915673957648,
 "lost_rent": 1,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 13,
-"expected": 6.199444394065438,
+"expected": 6.199444394065425,
 "lost_rent": 6,
 "lost_return": 0
 },
 "true_count": {
 "start": 21,
-"expected": 10.526859144131311,
+"expected": 10.526859144131404,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1674,31 +1674,31 @@
 "2018-12-15": {
 "overall_ha": {
 "start": 10,
-"expected": 14.47882030002322,
+"expected": 14.478820300023566,
 "lost_rent": 0,
 "lost_return": 6
 },
 "specific_ha": {
 "start": 13,
-"expected": 4.952717950645711,
+"expected": 4.952717950645708,
 "lost_rent": 0,
 "lost_return": 9
 },
 "vp_rnn": {
 "start": 20,
-"expected": 6.159015947848619,
+"expected": 6.159015947848639,
 "lost_rent": 0,
 "lost_return": 16
 },
 "mo_vp_rnn": {
 "start": 21,
-"expected": 6.568866001441326,
+"expected": 6.568866001441448,
 "lost_rent": 0,
 "lost_return": 17
 },
 "true_count": {
 "start": 5,
-"expected": 11.703859229085527,
+"expected": 11.703859229085399,
 "lost_rent": 0,
 "lost_return": 1
 },
@@ -1712,31 +1712,31 @@
 "2018-12-16": {
 "overall_ha": {
 "start": 10,
-"expected": 14.417471259836066,
+"expected": 14.417471259836153,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 12,
-"expected": 5.238998129441061,
+"expected": 5.238998129441027,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 20,
-"expected": 0.37931445328622293,
+"expected": 0.3793144532862225,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 14,
-"expected": 0.34059739155380336,
+"expected": 0.34059739155380425,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 13,
-"expected": 0.23385511098932937,
+"expected": 0.23385511098932815,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1750,31 +1750,31 @@
 "2018-12-17": {
 "overall_ha": {
 "start": 2,
-"expected": 51.345260559484515,
+"expected": 51.345260559484316,
 "lost_rent": 2,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 8,
-"expected": 7.715820110830627,
+"expected": 7.715820110830711,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 21,
-"expected": 7.9482288647300745,
+"expected": 7.948228864730072,
 "lost_rent": 0,
 "lost_return": 7
 },
 "mo_vp_rnn": {
 "start": 19,
-"expected": 11.596577150072072,
+"expected": 11.596577150072065,
 "lost_rent": 0,
 "lost_return": 5
 },
 "true_count": {
 "start": 7,
-"expected": 9.454650295517897,
+"expected": 9.45465029551786,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1788,31 +1788,31 @@
 "2018-12-18": {
 "overall_ha": {
 "start": 2,
-"expected": 51.107780331666554,
+"expected": 51.10778033166647,
 "lost_rent": 2,
 "lost_return": 2
 },
 "specific_ha": {
 "start": 8,
-"expected": 7.733171365002164,
+"expected": 7.733171365002157,
 "lost_rent": 0,
 "lost_return": 6
 },
 "vp_rnn": {
 "start": 4,
-"expected": 7.614598545224613,
+"expected": 7.6145985452246325,
 "lost_rent": 0,
 "lost_return": 2
 },
 "mo_vp_rnn": {
 "start": 11,
-"expected": 8.39943374987876,
+"expected": 8.399433749878721,
 "lost_rent": 0,
 "lost_return": 9
 },
 "true_count": {
 "start": 5,
-"expected": 10.259030008552859,
+"expected": 10.25903000855284,
 "lost_rent": 0,
 "lost_return": 3
 },
@@ -1826,31 +1826,31 @@
 "2018-12-19": {
 "overall_ha": {
 "start": 2,
-"expected": 50.88013754533545,
+"expected": 50.880137545335636,
 "lost_rent": 5,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 7,
-"expected": 7.642191019566457,
+"expected": 7.642191019566415,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 9,
-"expected": 11.563454729671808,
+"expected": 11.563454729671726,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 16,
-"expected": 9.724679156234732,
+"expected": 9.724679156234693,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 8,
-"expected": 11.84598540247002,
+"expected": 11.845985402469804,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1864,31 +1864,31 @@
 "2018-12-20": {
 "overall_ha": {
 "start": 2,
-"expected": 50.63984255346905,
+"expected": 50.63984255346831,
 "lost_rent": 0,
 "lost_return": 11
 },
 "specific_ha": {
 "start": 7,
-"expected": 7.314985066844346,
+"expected": 7.314985066844365,
 "lost_rent": 0,
 "lost_return": 16
 },
 "vp_rnn": {
 "start": 16,
-"expected": 9.327095608541729,
+"expected": 9.32709560854171,
 "lost_rent": 0,
 "lost_return": 25
 },
 "mo_vp_rnn": {
 "start": 14,
-"expected": 9.697104922760541,
+"expected": 9.69710492276057,
 "lost_rent": 0,
 "lost_return": 23
 },
 "true_count": {
 "start": 2,
-"expected": 17.730914796851685,
+"expected": 17.730914796851618,
 "lost_rent": 0,
 "lost_return": 11
 },
@@ -1902,31 +1902,31 @@
 "2018-12-21": {
 "overall_ha": {
 "start": 2,
-"expected": 50.37274274892353,
+"expected": 50.372742748924026,
 "lost_rent": 13,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 7,
-"expected": 7.009126382187213,
+"expected": 7.009126382187247,
 "lost_rent": 8,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 25,
-"expected": 5.099042854677759,
+"expected": 5.0990428546777595,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 19,
-"expected": 2.6567828012475276,
+"expected": 2.6567828012475507,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 23,
-"expected": 2.684496194591943,
+"expected": 2.6844961945919543,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1940,31 +1940,31 @@
 "2018-12-22": {
 "overall_ha": {
 "start": 10,
-"expected": 14.254481634959298,
+"expected": 14.254481634959493,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 12,
-"expected": 4.206895798918942,
+"expected": 4.20689579891894,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 13,
-"expected": 4.1149876549009035,
+"expected": 4.114987654900892,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 18,
-"expected": 2.901733071022779,
+"expected": 2.9017330710227784,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 16,
-"expected": 2.9304018720182263,
+"expected": 2.9304018720182032,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -1978,31 +1978,31 @@
 "2018-12-23": {
 "overall_ha": {
 "start": 10,
-"expected": 14.13020839780384,
+"expected": 14.130208397803838,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 12,
-"expected": 4.015826663102706,
+"expected": 4.015826663102711,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 9,
-"expected": 2.6367507660773164,
+"expected": 2.636750766077309,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 16,
-"expected": 2.2685026174878398,
+"expected": 2.268502617487812,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 13,
-"expected": 2.87699837952825,
+"expected": 2.876998379528232,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -2016,31 +2016,31 @@
 "2018-12-24": {
 "overall_ha": {
 "start": 2,
-"expected": 50.0100990117689,
+"expected": 50.010099011769526,
 "lost_rent": 17,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 7,
-"expected": 7.484864436943758,
+"expected": 7.484864436943756,
 "lost_rent": 12,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 20,
-"expected": 2.924203474374478,
+"expected": 2.9242034743744822,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 17,
-"expected": 1.7894200683333414,
+"expected": 1.7894200683333423,
 "lost_rent": 2,
 "lost_return": 0
 },
 "true_count": {
 "start": 26,
-"expected": 1.8848033927591321,
+"expected": 1.8848033927591308,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -2054,31 +2054,31 @@
 "2018-12-25": {
 "overall_ha": {
 "start": 2,
-"expected": 49.66984404256927,
+"expected": 49.66984404256883,
 "lost_rent": 1,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 8,
-"expected": 7.17173165539319,
+"expected": 7.171731655393156,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 4,
-"expected": 2.048247800011545,
+"expected": 2.0482478000115467,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 17,
-"expected": 1.000127379117179,
+"expected": 1.0001273791171787,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 7,
-"expected": 0.3367852601366035,
+"expected": 0.3367852601366047,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -2092,31 +2092,31 @@
 "2018-12-26": {
 "overall_ha": {
 "start": 2,
-"expected": 49.36257331181426,
+"expected": 49.36257331181402,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 8,
-"expected": 6.766818530137552,
+"expected": 6.766818530137556,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 11,
-"expected": 2.4753775359866617,
+"expected": 2.475377535986664,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 20,
-"expected": 2.97581424125459,
+"expected": 2.975814241254576,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 14,
-"expected": 2.3593094827546754,
+"expected": 2.3593094827546635,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -2130,31 +2130,31 @@
 "2018-12-27": {
 "overall_ha": {
 "start": 2,
-"expected": 49.059758836023775,
+"expected": 49.05975883602474,
 "lost_rent": 4,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 8,
-"expected": 6.673527839567933,
+"expected": 6.673527839567896,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 10,
-"expected": 3.8536977341870986,
+"expected": 3.8536977341871017,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 18,
-"expected": 4.716099964304501,
+"expected": 4.716099964304452,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 15,
-"expected": 4.129881793831572,
+"expected": 4.129881793831565,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -2168,31 +2168,31 @@
 "2018-12-28": {
 "overall_ha": {
 "start": 2,
-"expected": 48.784126241832894,
+"expected": 48.78412624183295,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 8,
-"expected": 6.393325900552911,
+"expected": 6.393325900552867,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 14,
-"expected": 0.3079261235990981,
+"expected": 0.307926123599098,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 15,
-"expected": 0.328252846836824,
+"expected": 0.32825284683682354,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 11,
-"expected": 0.1758961086432705,
+"expected": 0.1758961086432701,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -2206,31 +2206,31 @@
 "2018-12-29": {
 "overall_ha": {
 "start": 10,
-"expected": 14.000868374447064,
+"expected": 14.000868374447215,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 11,
-"expected": 3.3794238183173992,
+"expected": 3.3794238183173952,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 6,
-"expected": 6.466582703638122,
+"expected": 6.466582703638075,
 "lost_rent": 3,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 19,
-"expected": 5.726347286151036,
+"expected": 5.726347286151034,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 14,
-"expected": 7.544679515539699,
+"expected": 7.54467951553965,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -2244,31 +2244,31 @@
 "2018-12-30": {
 "overall_ha": {
 "start": 10,
-"expected": 13.923479994922712,
+"expected": 13.923479994922925,
 "lost_rent": 0,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 11,
-"expected": 3.7719535699438387,
+"expected": 3.7719535699438307,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 19,
-"expected": 3.396268613966848,
+"expected": 3.396268613966866,
 "lost_rent": 0,
 "lost_return": 0
 },
 "mo_vp_rnn": {
 "start": 14,
-"expected": 2.395109851088206,
+"expected": 2.3951098510881996,
 "lost_rent": 0,
 "lost_return": 0
 },
 "true_count": {
 "start": 18,
-"expected": 3.437621567250545,
+"expected": 3.4376215672505177,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -2282,19 +2282,19 @@
 "2018-12-31": {
 "overall_ha": {
 "start": 2,
-"expected": 48.45650261487008,
+"expected": 48.456502614869905,
 "lost_rent": 4,
 "lost_return": 0
 },
 "specific_ha": {
 "start": 8,
-"expected": 5.653840926250349,
+"expected": 5.6538409262503055,
 "lost_rent": 0,
 "lost_return": 0
 },
 "vp_rnn": {
 "start": 17,
-"expected": 3.0422976967831508,
+"expected": 3.042297696783148,
 "lost_rent": 0,
 "lost_return": 0
 },
@@ -2306,7 +2306,7 @@
 },
 "true_count": {
 "start": 16,
-"expected": 2.1710355523533162,
+"expected": 2.1710355523533087,
 "lost_rent": 0,
 "lost_return": 0
 },

@@ -5,6 +5,14 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- `twins/battery/scripts/baseline.py` writes the five columns `plot_tradeoff.py` needs (`x_global`, `u_global`,
+  `u_twin_true`, `regret_global`, `too_late`); before, the committed `baseline.csv` and `tradeoff_baseline.png` could
+  not be regenerated from the repository. The rebuilt columns equal the committed ones in all 1,230 rows.
+- All committed results regenerated in one environment, so rerunning the scripts now reproduces them byte for byte.
+  Against the previous files only floating-point noise changed (at most 2e-11); every decision, count and figure value
+  is the same.
+
 ## [0.2.0] - 2026-10-17
 
 ### Added
