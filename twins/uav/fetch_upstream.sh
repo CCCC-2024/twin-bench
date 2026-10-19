@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Kapteyn et al. UAV digital twin (BSD 3-Clause). Per-file checksums: upstream_sources.json.
+# Kapteyn et al. UAV digital twin (BSD 3-Clause), pinned to commits.
 set -euo pipefail
 cd "$(dirname "$0")"
 ../../tools/fetch_github.sh michaelkapteyn/UAV-Digital-Twin b51e42dfaadd35fbf6e17327fa1588bd73c1f975 \

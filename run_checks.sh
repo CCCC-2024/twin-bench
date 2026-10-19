@@ -20,7 +20,6 @@ check() {   # check <text the last line must contain> <command...>
 check "passed"              $PY -m pytest -q
 check "REPRO OK"            $PY twins/battery/scripts/check_repro.py
 check "BATTERY DTCORE OK"   $PY twins/battery/scripts/check_dtcore.py 27 4 24
-check "UAV DTCORE OK"       $PY twins/uav/scripts/check_dtcore.py
 
 if command -v node > /dev/null; then
   # the incubator replay reference is built locally from the (unlicensed, not committed) upstream data

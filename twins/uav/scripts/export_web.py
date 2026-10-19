@@ -5,17 +5,15 @@ Reference run: ControlledUAV (seed 3) on the skeleton, 120 turns; region 1 damag
 region 2 +20 % at turn 70; at turn 90 the twin's policy is switched to alpha2 = 0.5.
 """
 import json
-import sys
 from pathlib import Path
 
 import numpy as np
 
+from dtcore import Recorder, run
+from twins.uav import ControlledUAV, UAVModel, UAVTwin
+from twins.uav.model import SIG_ASSET, SIG_TWIN
+
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-from udt.assets import ControlledUAV  # noqa: E402
-from udt.model import SIG_ASSET, SIG_TWIN, UAVModel  # noqa: E402
-from udt.twin import UAVTwin  # noqa: E402
-from dtcore import Recorder, run  # noqa: E402
 
 mod = UAVModel()
 web = dict(S=[list(s) for s in mod.S], C=mod.C, p=mod.p, gamma=mod.gamma, sigTwin=SIG_TWIN, sigAsset=SIG_ASSET,

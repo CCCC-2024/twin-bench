@@ -1,7 +1,7 @@
 """Physical side: the UAV (simulated; the authors also simulate it).
 
 ScriptedUAV    the authors' default asset ('custom' damage script, independent of the maneuvers)
-               with their measurement generator: used to check we reproduce their run exactly.
+               with their measurement generator: the asset their results, and tests/test_uav.py, use.
 ControlledUAV  our closed-loop asset for the page: damage on the 20 % grid grows with the maneuver
                (each region +20 % with probability 0.05 per 2g turn, 0.10 per 3g turn: the same rates
                the twin assumes), and can be damaged on purpose. Strain = table mean + N(0, 150), >= 1,

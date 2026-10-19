@@ -1,4 +1,4 @@
-/* UAV twin for the page, ported from twins/uav/udt (model.py, twin.py, assets.ControlledUAV).
+/* UAV twin for the page, ported from twins/uav (model.py, twin.py, sources.ControlledUAV).
  * Needs window.UAV_MODEL (uav_model.js). check_uav.js compares this file with Python.
  */
 (function (root) {

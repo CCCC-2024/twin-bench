@@ -19,10 +19,15 @@ versions follow [Semantic Versioning](https://semver.org/).
   renamed to match) and `export_web.py` (was `export_reference.py`), like the other twins, and its outputs take the
   conventions' names (`ref_web_incubator.json`; locally `ref_web_incubator_replay.json`, `web/incubator_replay.js`).
   `scripts/check_dtcore.py`, which compared `dtcore.run` with a hand-written loop, became `tests/test_incubator.py`,
-  which tests the README's results instead: model RMSE 0.46 °C on the real data, the controller against the recorded
-  heater, an alarm 9 s after the lid opens and none from a new set point or on the real empty-box run, the alarm on
-  half the tempeh run. `scripts/crosscheck_upstream.py`, a one-time comparison that needs a full clone of the
-  authors' repository, is removed; its result stays in the README.
+  which tests the README's results instead (the model against the real data, the controller against the recorded
+  heater, the lid alarm, the alarm on the real runs). `scripts/crosscheck_upstream.py`, a one-time comparison that
+  needs a full clone of the authors' repository, is removed; its result stays in the README.
+- uav moved to that layout (`from twins.uav import UAVTwin, ScriptedUAV, ControlledUAV, UAVModel`; `udt/` is gone,
+  `assets.py` is `sources.py`, and `twins/uav/__init__.py` is the one place the authors' package is put on the import
+  path). `scripts/check_dtcore.py` ran the frozen study in `experiments/` as a subprocess to compare with it; it became
+  `tests/test_uav.py`, which tests the README's results through the twin itself (the authors' planner policy; the
+  study's error and maneuver rates on the authors' asset, which the twin reproduces exactly). The study stays as it
+  is; `upstream_sources.json` (checksums of a snapshot, now pinned by commit) is removed.
 - `dtcore.Source.act` raises `NotImplementedError` unless a source overrides it: a decision sent to a source that does
   not handle actions used to be dropped without notice. Every source in the repository already overrides it.
 - `dtcore` and `docs/architecture.md` state what `t` and `kind` promise: the meaning and unit of `t` belong to each

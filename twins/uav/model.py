@@ -11,7 +11,7 @@ import numpy as np
 from digitaltwin.planner import Planner
 from digitaltwin.utils import flatten_list, read_json_file
 
-CFG = Path(__file__).resolve().parents[1] / "upstream/UAV-Digital-Twin/src/digitaltwin/inputfiles/UAVconfig.json"
+CFG = Path(__file__).resolve().parent / "upstream/UAV-Digital-Twin/src/digitaltwin/inputfiles/UAVconfig.json"
 LOAD = {"2g": 2.0, "3g": 3.0}
 SIG_TWIN = 125.0           # twin's noise model: N(mean/load, 125/sqrt(load))  (noros repro, as the authors' GM)
 SIG_ASSET = 150.0          # authors' measurement generator noise (before dividing by load)

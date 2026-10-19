@@ -52,8 +52,8 @@ Create only the folders you use; delete empty ones.
 | Results | `results/` | say what it is, no dates: `baseline.csv`, `step1_decisions.json`; dates go on experiment folders |
 | Runtime databases | `results/*.db` by default, `DT_DB` to move | not results; git-ignored |
 
-Being migrated (October 2026): `_template`, bikeshare and incubator follow this layout; uav and battery still have a
-`<x>dt/` subpackage and `scripts/check_*.py` until they are moved.
+Being migrated (October 2026): `_template`, bikeshare, incubator and uav follow this layout; battery still has a
+`bdt/` subpackage and `scripts/check_*.py` until it is moved.
 
 Scripts find their files from their own location (`Path(__file__)`), so they run from any directory.
 Commands in READMEs are written from the repository root, except inside experiments.
