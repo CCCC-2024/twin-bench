@@ -7,7 +7,7 @@ The goal: someone opening the repository finds things without asking, can run th
 
 ```
 README.md  LICENSE  THIRD_PARTY_NOTICES.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md  CHANGELOG.md  CITATION.cff
-pyproject.toml     dtcore is a package; optional dependencies per use: twins, live, dev
+pyproject.toml     packages dtcore and twins; optional dependencies per use: twins, live, dev
 run_checks.sh      every check, the same list CI runs
 dtcore/            the skeleton; no domain concepts
 twins/<name>/      one folder per twin
@@ -44,7 +44,7 @@ Create only the folders you use; delete empty ones.
 
 | What | Where | Name |
 |---|---|---|
-| Twin folder | `twins/<name>/` | the physical asset, lower case, no author or paper name: `incubator`, `battery`, `uav` |
+| Twin folder | `twins/<name>/` | the physical asset or domain, lower case, no author or paper name: `incubator`, `bikeshare` |
 | Package | `twins/<name>/` | imported as `twins.<name>`, never through `sys.path` |
 | Twin / Sources | `twin.py` / `sources.py` | `<Asset>Twin`; Sources named for what they are (`SimMug`, `CellReplay`) |
 | Tests | `tests/test_<name>.py` | what the twin must do and the published numbers it reproduces |
@@ -82,13 +82,16 @@ One or two sentences: what it does, reproduced from whom or built from what desc
 
 ## Sources       papers, upstream repositories @ commit, licenses, where the data come from
 ## Six elements  S O D Q U R table
+### Observations and actions
+                 every field a Source returns: meaning and unit (including what `t` counts), whether the real
+                 asset has it, whether `update` reads it; what an action changes
 ## Files         one line per folder or key file
-## Run           commands from the repository root, with rough run times
-## Results       numbers, pointing at files in results/
-## Notes         data problems, differences from the original, pitfalls
+## Run           commands from the repository root, with rough run times, including the twin's test and page check
+## Results       numbers, each with a source: a file in results/, a test (marked *(test)*), or a named frozen study
+## Notes         data problems, differences from the original, pitfalls (numbers sourced the same way)
 ```
 
-English, plain sentences. Each check command appears in the twin README and in `run_checks.sh`, nowhere else.
+English, plain sentences. A number goes in one place: the twin README; other documents link to it.
 
 ## 5. web/
 
@@ -96,7 +99,8 @@ English, plain sentences. Each check command appears in the twin README and in `
 web/page.html                the page (hand-written; the only page source)
 web/index.html               built by build.py; git-ignored
 web/<name>_core.js           the twin's computations, ported line by line from Python; hand-written
-web/<name>_*.js              data written by export_web.py (battery_cells.js, uav_model.js); committed, never hand-edited
+web/<name>_*.js              data written by export_web.py (battery_cells.js, uav_model.js); committed, not hand-edited
+web/<name>_replay.js         recorded data that may not be published; written by export_web.py, git-ignored
 web/checks/check_<name>.js   compares the page's JS with the Python reference
 ```
 

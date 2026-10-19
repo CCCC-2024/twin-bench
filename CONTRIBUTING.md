@@ -30,7 +30,7 @@ contributions are one of: a new twin, an improvement to an existing twin, a fix 
 ## Adding a twin
 
 Follow [docs/adding-a-twin.md](docs/adding-a-twin.md). Start from `twins/_template`, describe the six elements, and add
-one element per step with a check for each. Reproductions should name the paper and the upstream commit and show
+one element per step with a test for each. Reproductions should name the paper and the upstream commit and show
 that the authors' numbers come out.
 
 ## Style
@@ -42,8 +42,9 @@ that the authors' numbers come out.
 
 ## Releases
 
-Versions follow [Semantic Versioning](https://semver.org/). A release bumps `version` in `pyproject.toml` and
-`dtcore.__version__`, moves *Unreleased* in `CHANGELOG.md` under the new version, and is tagged `vX.Y.Z`.
+Versions follow [Semantic Versioning](https://semver.org/). A release bumps the version in `pyproject.toml`,
+`dtcore.__version__` and `CITATION.cff` (with its `date-released`), moves *Unreleased* in `CHANGELOG.md` under the new
+version, and is tagged `vX.Y.Z`.
 
 ## Conduct
 

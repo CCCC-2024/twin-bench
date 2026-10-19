@@ -16,18 +16,9 @@ a template only; we do not implement the paper's full probabilistic graphical mo
 | **U** actions | what the twin decides from D and Q and sends back to the physical side |
 | **R** reward | how good an action is |
 
-The twins in this repository:
-
-| | incubator | battery | uav | tumor |
-|---|---|---|---|---|
-| S | air and heater-plate temperature (plate not measured) | true capacity | damage in two wing regions | 3D tumor cell density |
-| O | 2 box + 1 room temperature sensors every 3 s; heater on/off | capacity per measured cycle | 24 strain gauges (divided by load) | MRI (ADC → cellularity), 10 visits |
-| D | two temperatures + 4 thermal parameters | fade-model parameters (log10 a, b), 200 particles | probabilities over 25 damage states | calibrated (d, k, α_RT, α_CT), point estimate |
-| Q | future temperature curve | capacity curve, end of life with interval | predicted strain, structural health | total tumor cell count over time |
-| U | heater on / off (set point) | retirement cycle | 2g / 3g turn | chemotherapy dose |
-| R | ours: stay in the band, use little energy | multi-attribute utility: total Ah + mean discharge time | health reward + maneuver reward, value iteration | none (no toxicity cost) |
-| Update | Kalman filter; least-squares calibration | particle filter each cycle | discrete Bayes filter | Levenberg–Marquardt recalibration |
-| Data | real experiments (public); simulated box for closed loop | real measurements (Severson et al.), replayed | simulation: precomputed strain table + noise | synthetic, noise-free |
+Each twin's README has its own six-element table and lists every field its Sources return, whether the real asset
+has it, and what an action changes: [incubator](../twins/incubator/README.md), [battery](../twins/battery/README.md),
+[uav](../twins/uav/README.md), [bikeshare](../twins/bikeshare/README.md). That table is the one place for those facts.
 
 ## The skeleton: dtcore
 
@@ -35,12 +26,12 @@ Only what all twins share went into the skeleton; anything used by one twin stay
 
 **Twin** (`dtcore.Twin`)
 
-| Method | Does | incubator | battery | uav | tumor |
+| Method | Does | incubator | battery | uav | bikeshare |
 |---|---|---|---|---|---|
-| `update(obs)` | uses one observation to update D; returns the estimate (with uncertainty if available) | Kalman step | particle-filter step | Bayes step | recalibration |
-| `predict(horizon, **scenario)` | forecasts Q; a non-empty scenario makes it a what-if | simulate a heating plan | power-law extrapolation | belief roll-out per maneuver | solve per dose plan |
-| `decide()` | chooses U, or returns None | (human decides) | retirement utility | policy | not supported |
-| `capabilities` | which of the above the twin supports | | | | |
+| `update(obs)` | uses one observation to update D; returns the estimate (with uncertainty if available) | Kalman step | particle-filter step | Bayes step | Gamma–Poisson step |
+| `predict(horizon, **scenario)` | forecasts Q; a non-empty scenario makes it a what-if | simulate a set point (takes the box's controller) | power-law extrapolation; what-if on the decision weights | belief roll-out; what-if on the maneuver weight | bikes over the next hours; what-if: a truck sets s bikes now |
+| `decide()` | chooses U, or returns None | none: a person decides with the what-if | retirement, once, at 95 % capacity | 2g or 3g, every turn | bikes for tomorrow, every night |
+| `capabilities` | which of the above the twin supports; `run()` reads `"decide"` | | | | |
 
 **Source** (`dtcore.Source`), the physical side: `observe()` returns the next observation as a dict with at least
 `t` (or None when finished); what `t` means and its unit belong to the twin (seconds, cycles, hours, steps), and
@@ -62,16 +53,21 @@ each twin's page module.
 
 ## What the four twins show about the loop
 
-- **incubator** is the only one with a true closed loop: with the simulated box as the physical side, the heater
-  decision changes the temperature.
+- **incubator**: with the simulated box as the physical side the loop is closed: a set point sent to the box changes
+  its temperature, which the twin then sees. The twin itself does not decide; a person uses its what-if. Replaying the
+  real experiment, actions are only recorded.
 - **battery** replays measurements: retirement cannot change the cell, it only decides where the replay stops.
 - **uav**: in the authors' setup damage follows a fixed script regardless of maneuvers, so the loop closes on the
   twin's side only; the page's asset makes damage grow with the maneuvers chosen.
-- **tumor** has no reward (higher dose is always better) and no parameter uncertainty yet, so it is not a decision
-  problem; one calibration takes about half an hour.
+- **bikeshare** replays the recorded demand but simulates the bikes: the nightly decision changes the inventory and so
+  the shortages, while the demand stays as recorded. The twin never sees the demand it loses (censored demand).
+
+The tumor reproduction (`twins/tumor`) is not on `dtcore`: it has no reward (a higher dose is always better), no
+parameter uncertainty yet, and one calibration takes about half an hour.
 
 ## Where AI can attach
 
-- **Q**: a learned surrogate in place of a slow model (the tumor twin's Gaussian-process surrogate).
+- **Q**: a learned forecast in place of a statistical one (bikeshare: the paper's RNN demand forecast would replace
+  `StationTwin.rate`), or a learned surrogate in place of a slow model (the tumor reproduction's Gaussian process).
 - **D**: a learned estimator (e.g. damage straight from strain readings).
 - **U**: a policy trained inside the twin, or an LLM agent that calls `predict` / what-if as tools.

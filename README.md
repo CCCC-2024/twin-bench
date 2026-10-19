@@ -3,7 +3,7 @@
 [![checks](https://github.com/CCCC-2024/twin-bench/actions/workflows/checks.yml/badge.svg)](https://github.com/CCCC-2024/twin-bench/actions/workflows/checks.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**One small skeleton, many digital twins.** Twin Bench is a ~110-line Python skeleton (`dtcore`) for the loop every
+**One small skeleton, many digital twins.** Twin Bench is a ~120-line Python skeleton (`dtcore`) for the loop every
 digital twin shares — observe, update, predict, decide, act — and a growing set of twins from different domains built
 on it. Each twin is either a faithful reproduction of a published digital twin, checked against the authors' code, or
 built from a paper's description and checked against real data.

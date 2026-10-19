@@ -9,7 +9,8 @@ Open an issue with the **New twin** template. A good candidate:
 
 - can be described in a paragraph (the physical asset, what is measured, what decision is made);
 - has public data or a simulator whose license allows use, or data you can collect;
-- has a decision to make (otherwise it is a model, not a twin);
+- has a decision to make, by the twin or by a person using its what-if (a rule of this repository: without one it is
+  a model, which can live here as a reproduction, like `twins/tumor`);
 - adds something the existing twins do not (a new domain, a new kind of update or decision).
 
 ## 1. Copy the template
@@ -37,7 +38,7 @@ rewrite the README following [conventions.md](conventions.md#4-readme-structure)
 7. **Page.** `scripts/export_web.py`, `web/<name>_core.js`, `web/checks/check_<name>.js`, and a module in
    `web/page.html`. Python is the reference; the JavaScript is checked against it.
 
-## 3. Checks
+## 3. Tests
 
 `tests/test_<name>.py` runs the twin through `dtcore.run` and asserts what it must do (see `tests/test_template.py`);
 a reproduction also asserts the published numbers it reproduces. Compare with results computed in the same run, not
@@ -58,7 +59,8 @@ out of `run_checks.sh`.
 
 ## Checklist for the pull request
 
-- [ ] README with the six elements, sources, how to run, results, notes
+- [ ] README with the six elements, the observations-and-actions table, sources, how to run, results (each number
+  sourced), notes
 - [ ] `tests/test_<name>.py` passes
 - [ ] `fetch_upstream.sh` pinned to commits; licenses in THIRD_PARTY_NOTICES.md
 - [ ] new dependencies in `pyproject.toml`
