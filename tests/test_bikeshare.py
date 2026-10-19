@@ -1,6 +1,7 @@
 """Bike-share twin: what it reproduces of Gammelli et al. 2022. Needs twins/bikeshare/fetch_upstream.sh."""
 import datetime
 import json
+import re
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -72,6 +73,55 @@ def test_decisions_equal_the_authors_code_except_one_numerical_tie(paper):
     assert round(float(max(differences)), 5) == 0.00092 < TOL         # the authors' Runge-Kutta error
     assert [(day, source, round(float(gap), 7)) for day, source, gap in ties] == [("2018-11-02", "vp_rnn", 3.5e-6)]
 
+
+
+@pytest.fixture(scope="module")
+def rnn_year(paper):
+    """The twin with the paper's trained VP-RNN as its rate model replays 2018, deciding every night. The weather
+    file ends with the year, so the last hour (whose next hour is in 2019) is not played. At the start of every
+    test day it also keeps the 24 rates it has for that day."""
+    pytest.importorskip("torch", reason='the RNN rate model needs torch: pip install -e ".[rnn]"')
+    from twins.bikeshare import RNNRates
+    assert data.RNN_MODELS.exists(), "run twins/bikeshare/fetch_upstream.sh first"
+    twin, rec, day_ahead = StationTwin(paper["C"], RNNRates()), Recorder("bikeshare-rnn"), {}
+
+    def at_midnight(k, source, twin):
+        day = JAN1 + datetime.timedelta(days=k // 24)
+        if k % 24 == 0 and day in experiment.TEST_DAYS:
+            day_ahead[day] = np.stack(twin.rates.ahead(24), axis=1)        # (24, rentals / returns)
+    run(ReplayStation(paper["C"], data.events(), JAN1, 365), twin, max_steps=365 * 24 - 1, recorder=rec,
+        before_step=at_midnight)
+    return SimpleNamespace(rows=rec.rows, day_ahead=day_ahead)
+
+
+def test_rnn_next_hour_rates_have_the_accuracy_the_authors_recorded(rnn_year):
+    """The twin's next-hour rates are the paper's one-step forecasts: with the authors' weights they have the
+    accuracy the authors recorded for their model (output_st426_so_rnn.txt), all 18 numbers, on their train /
+    validation / test split."""
+    recorded = (data.RNN_ACCURACY / "output_st426_so_rnn.txt").read_text()
+    counts = data.hourly()
+    n = len(counts)
+    train, test = int(n * 0.7), n - 61 * 24                       # the authors' split; test = Nov-Dec
+    splits = dict(TRAIN=slice(1, train), VALIDATION=slice(train, test), TEST=slice(test, n))
+    for kind, column, field in (("return", "returns", "next_return_rate"), ("pickup", "pickups", "next_rent_rate")):
+        forecast = np.array([np.nan] + [r["est"][field] for r in rnn_year.rows])   # row t forecasts hour t + 1
+        block = recorded.split(f"STATION 426 - {kind}")[1]
+        rows = re.findall(r"\| (\w+) \|\s+RMSE: ([\d.]+), MAE: ([\d.]+), R\^2: ([\d.]+)", block)[:3]
+        for split, rmse, mae, r2 in rows:
+            y, f = counts[column].to_numpy(float)[splits[split]], forecast[splits[split]]
+            r2_ours = 1 - np.sum((y - f) ** 2) / np.sum((y - y.mean()) ** 2)
+            ours = (np.sqrt(np.mean((y - f) ** 2)), np.mean(np.abs(y - f)), r2_ours)
+            assert [f"{v:.2f}" for v in ours] == [rmse, mae, r2], (kind, split)
+
+
+def test_rnn_forecasts_from_what_is_known_at_midnight_are_less_accurate(rnn_year):
+    """At midnight the twin has seen only the counts before the day, so its 24-hour forecast feeds the network its own
+    forecasts. It is less accurate than the one-step forecasts the paper decided with (test RMSE 3.82 / 3.79, test
+    above), and more accurate than the last-30-days average (the paper's better benchmark)."""
+    test = data.hourly()[lambda h: h.date >= experiment.TEST_DAYS[0]]
+    rmse = lambda f: tuple(np.round(np.sqrt(np.mean((f - test[["pickups", "returns"]].to_numpy()) ** 2, axis=0)), 2))
+    assert rmse(np.concatenate([rnn_year.day_ahead[day] for day in experiment.TEST_DAYS])) == (4.69, 4.67)
+    assert rmse(test[["ha30_pickup", "ha30_return"]].to_numpy()) == (6.17, 6.04)
 
 @pytest.fixture(scope="module")
 def nightly():

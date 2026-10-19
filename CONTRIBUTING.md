@@ -20,7 +20,7 @@ contributions are one of: a new twin, an improvement to an existing twin, a fix 
 2. Fork, create a branch (`twin/<name>`, `fix/<what>`, `docs/<what>`).
 3. Set up and run the checks:
    ```bash
-   pip install -e ".[twins,dev]"
+   pip install -e ".[twins,rnn,dev]"
    for t in incubator battery uav bikeshare; do twins/$t/fetch_upstream.sh; done
    ./run_checks.sh                    # must end with ALL CHECKS OK
    ```

@@ -53,7 +53,7 @@ is described in [docs/architecture.md](docs/architecture.md).
 ```bash
 git clone https://github.com/CCCC-2024/twin-bench.git && cd twin-bench
 python -m venv .venv && source .venv/bin/activate          # Python 3.10+
-pip install -e ".[twins,dev]"
+pip install -e ".[twins,rnn,dev]"                          # rnn: PyTorch, for the bike-share RNN rate model
 pytest tests/test_template.py                               # the template twin, no downloads needed
 
 for t in incubator battery uav bikeshare; do twins/$t/fetch_upstream.sh; done   # third-party code and data, pinned commits

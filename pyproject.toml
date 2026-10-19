@@ -14,6 +14,7 @@ dependencies = []                      # dtcore itself needs only the standard l
 
 [project.optional-dependencies]
 twins = ["numpy", "scipy", "pandas", "openpyxl", "matplotlib"]   # all twins on dtcore (battery reads .xlsx)
+rnn = ["torch"]                                             # bikeshare learned rate model (twins/bikeshare/rnn.py)
 live = ["paho-mqtt", "amqtt", "streamlit"]                  # battery real-time demo (twins/battery/live)
 dev = ["pytest"]
 

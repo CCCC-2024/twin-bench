@@ -7,7 +7,7 @@ The goal: someone opening the repository finds things without asking, can run th
 
 ```
 README.md  LICENSE  THIRD_PARTY_NOTICES.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md  CHANGELOG.md  CITATION.cff
-pyproject.toml     packages dtcore and twins; optional dependencies per use: twins, live, dev
+pyproject.toml     packages dtcore and twins; optional dependencies per use: twins, rnn, live, dev
 run_checks.sh      every check, the same list CI runs
 dtcore/            the skeleton; no domain concepts
 twins/<name>/      one folder per twin

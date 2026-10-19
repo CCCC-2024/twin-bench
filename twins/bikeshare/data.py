@@ -1,5 +1,6 @@
-"""Read one Citi Bike station: dock capacity, every recorded rental / return, hourly counts and the
-paper's demand forecasts. The files come from fetch_upstream.sh (Gammelli et al. 2022 repository).
+"""Read one Citi Bike station: dock capacity, every recorded rental / return, hourly counts, the paper's
+demand forecasts, and its trained VP-RNN with the weather it reads. The files come from fetch_upstream.sh
+(Gammelli et al. 2022 repository).
 
 Two benchmark rates in the hourly file are decoded here (checked to 1e-14 on station 426):
   historical_average_*          mean of ALL earlier days, same hour, same weekday/weekend type
@@ -13,6 +14,8 @@ import pandas as pd
 UPSTREAM = Path(__file__).resolve().parent / "upstream" / "variational-poisson-rnn"
 DATA = UPSTREAM / "data"
 FORECASTS = UPSTREAM / "saved_files" / "60min" / "predicted_demand"
+RNN_MODELS = UPSTREAM / "saved_files" / "60min" / "trained_models" / "rnn"
+RNN_ACCURACY = UPSTREAM / "saved_files" / "60min" / "results" / "prediction"
 
 
 def capacity(station=426):
@@ -59,3 +62,14 @@ def rnn_rates(model="so_rnn", station=426):
         idx = [h + 24 * (doy - 1) - 1 for h in hours]
         return out["pickup"][idx], out["return"][idx]
     return rates
+
+
+def precip():
+    """The recorded precipitation probability of every hour of 2018 (New York), as precip(date, hour).
+
+    Row k of the authors' weather file is the same date and hour as row k of the hourly counts; they align them by row.
+    """
+    w = pd.read_csv(DATA / "raw" / "weather2018_60min.csv")
+    p = dict(zip(zip(pd.to_datetime(w["date"], format="%m/%d/%Y").dt.date, w["hour"].astype(int)),
+                 w["precip_prob"].astype(float)))
+    return lambda date, hour: p[(date, hour)]

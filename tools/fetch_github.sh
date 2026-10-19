@@ -5,11 +5,14 @@
 #   tools/fetch_github.sh <owner/repo> <commit> <dest>               whole repository (tarball)
 #   tools/fetch_github.sh <owner/repo> <commit> <dest> <path>...     only these files
 #
-# Skips the download when <dest>/.fetched already records the same commit.
+# Skips the download when <dest>/.fetched already records the same commit and every listed file is there
+# (a file added to a twin's fetch_upstream.sh is then fetched on the next run).
 set -euo pipefail
 REPO=$1; COMMIT=$2; DEST=$3; shift 3
 if [ -f "$DEST/.fetched" ] && [ "$(cat "$DEST/.fetched")" = "$REPO@$COMMIT" ]; then
-  echo "up to date: $DEST ($REPO@${COMMIT:0:7})"; exit 0
+  missing=0
+  for f in "$@"; do [ -e "$DEST/$f" ] || missing=1; done
+  if [ $missing -eq 0 ]; then echo "up to date: $DEST ($REPO@${COMMIT:0:7})"; exit 0; fi
 fi
 mkdir -p "$DEST"
 if [ $# -eq 0 ]; then

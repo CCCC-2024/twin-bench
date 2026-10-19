@@ -5,6 +5,16 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- bikeshare: `RNNRates`, the paper's trained VP-RNN as a rate model of the twin (`StationTwin(C, RNNRates())`).
+  It runs the authors' weights (fetched) in a copy of their inference network, needs the new `rnn` extra (PyTorch;
+  CI installs the CPU build), and forecasts the next day from what the twin has seen. Tests: its next-hour rates
+  have the accuracy the authors recorded (18 numbers); its 24-hour forecast at midnight is less accurate.
+
+### Fixed
+- `tools/fetch_github.sh` skipped a repository already fetched at the same commit even when a twin's
+  `fetch_upstream.sh` had added files; it now fetches when a listed file is missing.
+
 ### Changed
 - bikeshare: `StationTwin` takes its rate model as an argument, `StationTwin(C, rates)`; the Gamma–Poisson rates
   moved unchanged to `rates.py` as `HistoricalRates`, the default. `StationTwin(C, window_days=30)` is now

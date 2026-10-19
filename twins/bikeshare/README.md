@@ -11,7 +11,8 @@ and answers "what if a truck sets s bikes now".
 - Gammelli, Wang, Prak, Rodrigues, Minner & Pereira 2022, *Predictive and prescriptive performance of bike-sharing
   demand forecasts for inventory management*, Transportation Research Part C 138, 103571: the experiment reproduced
   here. Code: [DanieleGammelli/variational-poisson-rnn](https://github.com/DanieleGammelli/variational-poisson-rnn)
-  @ `abf77f7` (MIT): the decision code, per-station events and hourly counts, the authors' saved forecasts.
+  @ `abf77f7` (MIT): the decision code, per-station events and hourly counts, the authors' saved forecasts, and
+  their trained VP-RNN for this station with the hourly weather it reads (origin not stated).
 - Data: Citi Bike System Data 2018 (NYC Bike Share), as aggregated per station in that repository. The NYCBS Data
   Use Policy forbids redistribution as a stand-alone dataset, so `fetch_upstream.sh` downloads it and nothing that
   reproduces it is committed.
@@ -43,10 +44,11 @@ Action `{"set_bikes": s}`: a truck brings the station to s bikes (clipped to 0â€
 `decide()` also returns `expected_lost`, the twin's own forecast; the Source ignores it.
 
 ## Files
-- `__init__.py`: public names, `from twins.bikeshare import StationTwin, HistoricalRates, ReplayStation, SimStation`.
+- `__init__.py`: the public names: `StationTwin`, its rate models `HistoricalRates` and `RNNRates`, `ReplayStation`,
+  `SimStation`, `experiment`.
 - `twin.py`: `StationTwin` with update, predict / what-if and decide; it takes its rate model as an argument.
 - `rates.py`: rate models, what the twin knows about demand: `HistoricalRates` (Gamma posterior per hour and day
-  type, the default).
+  type, the default); `rnn.py`: `RNNRates`, the paper's trained VP-RNN (needs the `rnn` extra, PyTorch).
 - `sources.py`: `ReplayStation` (recorded events, hour by hour) and `SimStation` (Poisson demand).
 - `model.py`: the number of bikes as a birthâ€“death chain; one hour is a matrix exponential, and the time spent
   empty / full comes from the same exponential (Van Loan); expected shortages for every start; replay of events.
@@ -62,7 +64,7 @@ Action `{"set_bikes": s}`: a truck brings the station to s bikes (clipped to 0â€
 ## Run
 ```bash
 twins/bikeshare/fetch_upstream.sh                    # about 11 MB
-pytest tests/test_bikeshare.py                       # what the twin reproduces of the paper, a few seconds
+pytest tests/test_bikeshare.py                       # what the twin reproduces of the paper, ~7 s (RNN tests: .[rnn])
 python twins/bikeshare/scripts/step1_model.py        # model only -> results/step1_*, a few seconds
 python twins/bikeshare/scripts/step5_whatif.py       # daytime-truck what-if -> results/step5_*, a few seconds
 python twins/bikeshare/scripts/export_web.py         # page data and reference run, a few seconds
@@ -117,7 +119,7 @@ Station 426, 1 Nov â€“ 31 Dec 2018 (61 days), one decision per night (`results/s
   simulated station uses the Novâ€“Dec average, so the gap shows there.
 - The capacity (30) comes from the station table in the upstream repository; its date is unknown.
 - Where a learned forecast plugs in: every rate the twin uses comes from its rate model (`StationTwin(C, rates)`,
-  `rates.py`), which `predict` and `decide` ask for the hours ahead. The paper's RNN forecasts are read by
-  `data.rnn_rates` and used only in `experiment.py`; they are not yet a rate model of the twin.
+  `rates.py`), which `predict` and `decide` ask for the hours ahead. `RNNRates` runs the authors' trained VP-RNN
+  there; the forecasts they saved (`data.rnn_rates`) are used only in `experiment.py`, the paper's set-up.
 - "Twin expects" is the twin's forecast with its own rates. The paper's evaluation code instead computes expected cost
   with the day's true counts.
