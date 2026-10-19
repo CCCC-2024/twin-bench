@@ -45,13 +45,16 @@ ref.rows.forEach((r, k) => {
 });
 
 // the recorded days: with each rate model the page's replay takes the nightly decisions, and loses the rentals and
-// returns, of the Python twin with the same rate model (results/compare_rates.json, the README's table)
+// returns, of the Python twin with the same rate model (results/compare_rates.json, the README's table), every day.
+// The VP-RNN's rates are float32, computed by the machine running this check while compare_rates.json may come from
+// another; one float32 step moves an expected cost by about 2e-7 relative, so those costs get their own tolerance.
 global.window = {};
 eval(fs.readFileSync(path.join(webDir, 'bikeshare_replay.js'), 'utf8'));
 const R = window.BIKESHARE_REPLAY, cmp = JSON.parse(fs.readFileSync(path.join(refDir, 'compare_rates.json')));
 const days = Object.keys(cmp.days).sort();
-function recordedDays(name, rates, start, nHours) {
-  const s = new B.Station({ C, day0: R.day0, bikes: start, events: k => k < nHours ? R.hours[k] : null });
+let rnnRel = 0;
+function recordedDays(name, rates, start, nDays) {
+  const s = new B.Station({ C, day0: R.day0, bikes: start, events: k => k < 24 * nDays ? R.hours[k] : null });
   const twin = new B.Twin(C, rates), starts = [start], expected = [null], lost = [];
   for (let o; (o = s.observe()); s.advance()) {
     if (o.hour === 0) lost.push(0);
@@ -59,19 +62,24 @@ function recordedDays(name, rates, start, nHours) {
     twin.update(o); const a = twin.decide();
     if (a) { s.act(a); starts.push(a.set_bikes); expected.push(a.expected_lost); }
   }
+  if (lost.length !== nDays || starts.length < days.length) bad(`${name}: ${lost.length} days replayed, ${starts.length} starts`);
   days.forEach((day, i) => {
     const c = cmp.days[day][name];
     if (i < starts.length && starts[i] !== c.start) bad(`${name} ${day}: start ${starts[i]} vs ${c.start}`);
-    if (i > 0 && i < expected.length) d(expected[i], c.expected);
+    if (i > 0 && i < expected.length) {
+      if (name === 'rnn') rnnRel = Math.max(rnnRel, Math.abs(expected[i] - c.expected) / c.expected); else d(expected[i], c.expected);
+    }
     if (i < lost.length && lost[i] !== c.lost_rent + c.lost_return) bad(`${name} ${day}: lost ${lost[i]} vs ${c.lost_rent + c.lost_return}`);
   });
   return `${name} ${lost.length} days`;
 }
-const replays = [recordedDays('historical_all', new B.HistoricalRates(M.base), M.start_bikes, R.hours.length)];
-if (R.rnn) replays.push(recordedDays('rnn', new B.PrecomputedRates(R.rnn.table), R.rnn.start_bikes, R.rnn.table.length));
+const replays = [recordedDays('historical_all', new B.HistoricalRates(M.base), M.start_bikes, days.length)];
+if (R.rnn)                // the VP-RNN's weather input ends with 2018: its replay stops after the decision for 31 Dec
+  replays.push(recordedDays('rnn', new B.PrecomputedRates(R.rnn.table), R.rnn.start_bikes, days.length - 1));
 else console.log('bikeshare_replay.js has no VP-RNN rates (export_web.py ran without the rnn extra): rnn not checked');
 
 const nDec = ref.rows.filter(r => r.set_bikes !== null).length;
 console.log(`${ref.cases.length} model cases (ties ${ties}), ${ref.rows.length} simulated hours, ${nDec} nightly decisions, ${ref.preds.length} forecasts, ` +
-            `recorded: ${replays.join(', ')}: exact mismatches ${fails}; max |difference| ${diff.toExponential(2)}`);
-console.log(fails === 0 && diff < 1e-9 ? 'BIKESHARE WEB CHECK OK' : 'BIKESHARE WEB CHECK FAILED');
+            `recorded: ${replays.join(', ')}: exact mismatches ${fails}; max |difference| ${diff.toExponential(2)}` +
+            (R.rnn ? `; VP-RNN expected cost max relative difference ${rnnRel.toExponential(2)}` : ''));
+console.log(fails === 0 && diff < 1e-9 && rnnRel < 1e-5 ? 'BIKESHARE WEB CHECK OK' : 'BIKESHARE WEB CHECK FAILED');

@@ -68,11 +68,13 @@ A twin's estimator, forecaster or policy is a part (`docs/architecture.md`). Whe
   shared base class: parts of different twins do different jobs.
 - A part gets data only through the twin's `update`, in time order, so it cannot use what the twin has not yet seen.
   Anything else it reads is an argument too, with its assumption stated (bike share: the weather, a perfect forecast).
-- One implementation stays inside the twin; the table in `docs/architecture.md` says where its part is.
+- A part with one implementation stays inside the twin, unless something else must use the same object (uav: the
+  simulated asset runs the twin's `UAVModel`); the table in `docs/architecture.md` says where each part is.
 - The implementations are compared by `scripts/compare_<part>.py`: same twin, same Source, only the part changes. The
   page lets a person choose the part where its module offers one (`web/README.md`, `renderParts`).
 - A dependency that only one part needs (PyTorch for the VP-RNN) is its own extra in `pyproject.toml`, imported only
-  where that part is built; its tests skip with the reason when it is missing, and CI installs every extra.
+  where that part is built; its tests skip with the reason when it is missing, and CI installs it
+  (`.github/workflows/checks.yml`).
 
 ### Upstream
 

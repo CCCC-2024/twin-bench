@@ -61,7 +61,8 @@ else:
     replay["rnn"] = rnn_replay(RNNRates())
 (WEB / "bikeshare_replay.js").write_text("window.BIKESHARE_REPLAY = " + json.dumps(replay) + ";\n")
 if "--replay-only" in sys.argv:
-    sys.exit(print(f"wrote {WEB / 'bikeshare_replay.js'} (local only)"))
+    print(f"wrote {WEB / 'bikeshare_replay.js'} (local only)")
+    sys.exit()
 
 # 1. the twin learns from the real record, 1 Jan - 31 Oct, deciding every night
 st, tw = ReplayStation(C, ev, JAN1, DAY0), StationTwin(C)

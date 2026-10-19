@@ -1111,7 +1111,7 @@ const Bike = (function () {
         rnnEnd: 'End of the VP-RNN’s forecasts: the weather it reads ends with 2018, so the replay stops after the decision for 31 Dec.' },
       forecastBy: 'Demand forecast', rateModel: { historical: 'Historical average', rnn: 'VP-RNN (paper’s network)' }, rnnSays: 'VP-RNN forecast',
       rnnOff: 'VP-RNN runs only on the recorded days in the local copy: its forecasts for those days are computed in Python (export_web.py with the rnn extra).',
-      about: 'The queueing model and the nightly decision reproduce Gammelli et al. 2022 (the station model of Raviv & Kolka 2013) on Citi Bike station 426: 365 of 366 decisions match the authors’ code, the other is a numerical tie. The twin learned its rental and return rates from the real 2018 record up to 31 Oct; this page holds only their totals per hour and day type. In “Simulated station” the demand is the Nov–Dec 2018 average, about half of what the twin learned (its all-history average includes busier months), so the twin over-predicts lost rentals and returns: one of the problems we record. “Recorded days” replays the real rentals and returns (local copy only): demand is fixed by the record, the number of bikes follows the twin and your trucks. There the demand forecast can be switched to the paper’s trained VP-RNN, run in Python for those days: knowing only what is known each night, it forecasts better than the historical average, yet its nightly decisions lose about as many rentals and returns (8.8 against 8.4 a day; see the bike-share README). The page’s numbers match the Python code to about 1e-11.',
+      about: 'The queueing model and the nightly decision reproduce Gammelli et al. 2022 (the station model of Raviv & Kolka 2013) on Citi Bike station 426: 365 of 366 decisions match the authors’ code, the other is a numerical tie. The twin learned its rental and return rates from the real 2018 record up to 31 Oct; this page holds only their totals per hour and day type. In “Simulated station” the demand is the Nov–Dec 2018 average, about half of what the twin learned (its all-history average includes busier months), so the twin over-predicts lost rentals and returns: one of the problems we record. “Recorded days” replays the real rentals and returns (local copy only): demand is fixed by the record, the number of bikes follows the twin and your trucks. There the demand forecast can be switched to the paper’s trained VP-RNN, run in Python for those days: knowing only what is known each night, it forecasts better than the historical average, yet its nightly decisions lose about as many rentals and returns (see the bike-share README). The page’s numbers match the Python code to about 1e-11.',
       els: [['S', 'Physical state', 'Bikes in the station (0–30). The true hourly demand for rentals and returns is not observed.'],
             ['O', 'Observations', 'Each hour: rentals and returns recorded at the docks, and the bike count.'],
             ['D', 'Digital state', 'For every hour of a weekday or weekend day, a Gamma posterior over the rental and return rates; with VP-RNN chosen, the state of the paper’s trained network.'],
@@ -1142,7 +1142,7 @@ const Bike = (function () {
         rnnEnd: 'VP-RNN 的预测到此为止：它读的天气数据只到 2018 年底，所以回放在定好 12 月 31 日的车数后结束。' },
       forecastBy: '需求预测', rateModel: { historical: '历史平均', rnn: 'VP-RNN（论文的网络）' }, rnnSays: 'VP-RNN 预测',
       rnnOff: 'VP-RNN 只能用在本地版本的真实记录上：这些天的预测是用 Python 预先算好的（export_web.py，需要 rnn 依赖）。',
-      about: '排队模型和每晚的决策复现 Gammelli 等 2022（站点模型来自 Raviv & Kolka 2013），用的是 Citi Bike 426 号站：366 个决定里 365 个和作者代码相同，另 1 个是数值上的平手。孪生的借车、还车速度是从 2018 年到 10 月 31 日的真实记录学来的；页面里只有按小时和日类型汇总的总数。“模拟的站点”里，需求取 2018 年 11–12 月的平均，大约是孪生学到的一半（全部历史平均包含更忙的月份），所以孪生会高估借不到和还不了的人数：这是记录下来的问题之一。“真实记录”回放真实的借车和还车（仅本地版本）：需求由记录决定，站里的车数跟着孪生和你派的车走。这时可以把需求预测换成论文训练好的 VP-RNN（用 Python 针对这些天预先算好）：只用每晚已知的数据时，它预测得比历史平均准，但每晚的决定损失的人数差不多（每天 8.8 对 8.4，见单车 README）。页面的数字和 Python 相差约 1e-11。',
+      about: '排队模型和每晚的决策复现 Gammelli 等 2022（站点模型来自 Raviv & Kolka 2013），用的是 Citi Bike 426 号站：366 个决定里 365 个和作者代码相同，另 1 个是数值上的平手。孪生的借车、还车速度是从 2018 年到 10 月 31 日的真实记录学来的；页面里只有按小时和日类型汇总的总数。“模拟的站点”里，需求取 2018 年 11–12 月的平均，大约是孪生学到的一半（全部历史平均包含更忙的月份），所以孪生会高估借不到和还不了的人数：这是记录下来的问题之一。“真实记录”回放真实的借车和还车（仅本地版本）：需求由记录决定，站里的车数跟着孪生和你派的车走。这时可以把需求预测换成论文训练好的 VP-RNN（用 Python 针对这些天预先算好）：只用每晚已知的数据时，它预测得比历史平均准，但每晚的决定损失的人数差不多（见单车 README）。页面的数字和 Python 相差约 1e-11。',
       els: [['S', '物理状态', '站里的车数（0–30）。每小时真实的借车、还车需求看不到。'],
             ['O', '观测', '每小时车位记录的借车数、还车数，以及当前车数。'],
             ['D', '数字状态', '工作日和周末的每个小时各一个伽马后验，估计借车、还车的速度；选 VP-RNN 时，是论文训练好的网络的状态。'],
@@ -1154,7 +1154,7 @@ const Bike = (function () {
   const M = window.BIKESHARE_MODEL, CAP = M ? M.C : 30, HZ = 12;
   const replayData = () => window.BIKESHARE_REPLAY || null;
   const rnnData = () => (replayData() || {}).rnn || null;            // VP-RNN rates for the recorded days (Python)
-  const S = { mode: 'sim', rates: 'historical', demand: 1, st: null, tw: null, hist: [], last: null, est: null, night: null, known: null,
+  const S = { mode: 'sim', rateModel: 'historical', demand: 1, st: null, tw: null, hist: [], last: null, est: null, night: null, known: null,
               lostDay: [0, 0], tryS: 15, fcNow: null, fcTry: null, stale: true, shown: 0, ghost: 0 };
   const WD = { en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], zh: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'] };
   const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -1168,7 +1168,7 @@ const Bike = (function () {
   const pct = v => Math.round(v * 100) + ' %';
   const twinBikes = () => S.known !== null ? S.known : S.tw.bikes;   // the twin knows the bikes its own trucks set
 
-  const useRnn = () => S.mode === 'replay' && S.rates === 'rnn' && !!rnnData();
+  const useRnn = () => S.mode === 'replay' && S.rateModel === 'rnn' && !!rnnData();
   function init() {
     const rep = S.mode === 'replay' && !!replayData(), rnn = useRnn() ? rnnData() : null, start = rnn ? rnn.start_bikes : M.start_bikes;
     S.tw = new BIKE.Twin(CAP, rnn ? new BIKE.PrecomputedRates(rnn.table) : new BIKE.HistoricalRates(M.base));
@@ -1213,10 +1213,10 @@ const Bike = (function () {
   }
   // ---------- the twin's parts: its rate model (rates.py), chosen by a person; switching restarts the run ----------
   function renderParts(el) {
-    const can = S.mode === 'replay' && !!rnnData(), cur = can ? S.rates : 'historical';
+    const can = S.mode === 'replay' && !!rnnData(), cur = can ? S.rateModel : 'historical';
     el.innerHTML = `<span class="meta">${t('forecastBy')}</span><span class="seg" id="bkRates">` + ['historical', 'rnn'].map(v =>
       `<button data-v="${v}" aria-pressed="${cur === v}" ${v === 'rnn' && !can ? 'disabled title="' + t('rnnOff') + '"' : ''}>${t('rateModel')[v]}</button>`).join('') + '</span>';
-    el.querySelectorAll('#bkRates button').forEach(b => b.onclick = () => { if (b.dataset.v !== cur) { S.rates = b.dataset.v; SH.log = []; SH.running = true; init(); SH.refreshAll(); } });
+    el.querySelectorAll('#bkRates button').forEach(b => b.onclick = () => { if (b.dataset.v !== cur) { S.rateModel = b.dataset.v; SH.log = []; SH.running = true; init(); SH.refreshAll(); } });
   }
   // ---------- panel ----------
   function readouts() {

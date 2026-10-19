@@ -28,7 +28,7 @@ Only what all twins share went into the skeleton; anything used by one twin stay
 
 | Method | Does | incubator | battery | uav | bikeshare |
 |---|---|---|---|---|---|
-| `update(obs)` | uses one observation to update D; returns the estimate (with uncertainty if available) | Kalman step | particle-filter step | Bayes step | Gamma–Poisson step |
+| `update(obs)` | uses one observation to update D; returns the estimate (with uncertainty if available) | Kalman step | particle-filter step | Bayes step | rate-model step (Gamma–Poisson by default) |
 | `predict(horizon, **scenario)` | forecasts Q; a non-empty scenario makes it a what-if | simulate a set point (takes the box's controller) | power-law extrapolation; what-if on the decision weights | belief roll-out; what-if on the maneuver weight | bikes over the next hours; what-if: a truck sets s bikes now |
 | `decide()` | chooses U, or returns None | none: a person decides with the what-if | retirement, once, at 95 % capacity | 2g or 3g, every turn | bikes for tomorrow, every night |
 | `capabilities` | which of the above the twin supports; `run()` reads `"decide"` | | | | |
@@ -77,7 +77,8 @@ dtcore has no class for parts: what a twin asks of a part differs from twin to t
 | bikeshare | rate model (Q) | argument: `StationTwin(C, rates)` | each hour's counts (`update`); mean rental and return rates for the hours ahead (`ahead`) | `HistoricalRates` (default), `RNNRates` (the paper's VP-RNN); compared by `scripts/compare_rates.py` |
 | uav | model (D, Q, U) | argument: `UAVTwin(model)`, shared with the simulated asset | strain likelihood, damage transitions, damage states, the policy for a reward weight, a roll-out | `UAVModel` (the authors' configuration) |
 | battery | particle filter (D, Q) | built in `BatteryTwin` at first-prediction time | a step per cycle giving `log10_a`, `b`, `eol_pred` (the decision's inputs), and a capacity band | `ParticleFilter` |
-| incubator | Kalman filter (D); model and controller (Q) | built in `IncubatorTwin`; `predict` takes the controller | a step per sample giving the state and the innovation (the lid alarm); a forward simulation | `Kalman`, `Stepper`, `Controller` |
+| incubator | Kalman filter (D); model and controller (Q) | built in `IncubatorTwin`; `predict` takes the controller (open: the twin should keep its own copy) | a step per sample giving the state and the innovation (the lid alarm); a forward simulation | `Kalman`, `Stepper`, `Controller` |
+| _template | scalar Kalman filter (D); heater rule (U) | written inside `MugTwin` | a filter step per reading; heater on if the mug would cool below the target within the look-ahead | one each |
 | every twin | policy (U) | `decide()` (incubator: a person) | the twin's what-if, `predict(horizon, **scenario)`, as its tools | each twin's rule; an LLM agent would be a second |
 
 A learned part must give what the twin asks of it: a battery predictor that only estimates the end of life cannot

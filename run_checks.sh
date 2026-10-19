@@ -2,7 +2,7 @@
 # Run every check: the tests in tests/ (dtcore and each twin) and the web page against Python.
 # Prints one line per check and exits non-zero if any is not OK. CI runs exactly this.
 #
-#   ./run_checks.sh            needs: pip install -e ".[twins,dev]"  and  twins/*/fetch_upstream.sh
+#   ./run_checks.sh            needs: pip install -e ".[twins,rnn,dev]"  and  twins/*/fetch_upstream.sh
 #   PYTHON=... ./run_checks.sh to choose the interpreter
 cd "$(dirname "$0")"
 PY=${PYTHON:-python}

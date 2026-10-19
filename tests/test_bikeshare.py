@@ -15,6 +15,11 @@ JAN1 = datetime.date(2018, 1, 1)
 TOL = 1e-3          # the authors integrate with Runge-Kutta: relative error up to ~1e-3
 
 
+def mean_and_se(d):
+    """Mean and standard error of paired daily differences, rounded as the README reports them."""
+    return round(float(d.mean()), 2), round(float(d.std(ddof=1) / np.sqrt(len(d))), 2)
+
+
 @pytest.fixture(scope="module")
 def paper():
     assert data.DATA.exists(), "run twins/bikeshare/fetch_upstream.sh first"
@@ -148,15 +153,17 @@ def test_in_the_twin_the_rnn_forecasts_better_but_does_not_decide_better(compare
     """Knowing only what is known at 23:00, the RNN loses about as many as the last-30-days average; the paper's
     protocol with the same network, which uses each hour's previous count, loses fewer. Without any weather the
     forecast is worse but the decisions lose the same."""
-    def paired(a, b):
-        d = compared.lost[a] - compared.lost[b]
-        return round(float(d.mean()), 2), round(float(d.std(ddof=1) / np.sqrt(len(d))), 2)
+    paired = lambda a, b: mean_and_se(compared.lost[a] - compared.lost[b])
     assert {m: round(float(v.mean()), 2) for m, v in compared.lost.items()} == dict(
         historical_all=8.43, historical_30=7.79, rnn=8.80, rnn_one_step=5.80, rnn_no_weather=8.80)
     assert paired("historical_30", "rnn") == (-1.02, 0.96)
     assert paired("rnn", "rnn_one_step") == (3.00, 0.64)
     assert paired("rnn_no_weather", "rnn") == (0.0, 0.16)
     assert [round(x, 2) for x in compared.saved["forecast_rmse"]["rnn_no_weather"]] == [5.13, 5.01]
+    days = compared.saved["days"].values()                           # the README table's rows marked †
+    start = lambda m: int(np.median([d[m]["start"] for d in days]))
+    expects = lambda m: round(float(np.mean([d[m]["expected"] for d in days])), 1)
+    assert (start("rnn"), expects("rnn"), start("rnn_one_step"), expects("rnn_one_step")) == (17, 16.2, 13, 13.7)
 
 
 def test_two_training_runs_of_the_rnn_decide_differently(compared):
@@ -168,7 +175,7 @@ def test_two_training_runs_of_the_rnn_decide_differently(compared):
     d = np.array([saved[day]["vp_rnn"]["lost_rent"] + saved[day]["vp_rnn"]["lost_return"] for day in days]) \
         - compared.lost["rnn_one_step"]
     assert same == 5 and len(days) == 61
-    assert (round(float(d.mean()), 2), round(float(d.std(ddof=1) / np.sqrt(len(d))), 2)) == (0.97, 0.29)
+    assert mean_and_se(d) == (0.97, 0.29)
 
 @pytest.fixture(scope="module")
 def nightly():
@@ -179,9 +186,7 @@ def nightly():
 
 
 def test_rnn_forecasts_lose_fewer_than_the_all_history_average(nightly):
-    def paired(a, b):                                                # mean and standard error of the daily difference
-        d = nightly[a] - nightly[b]
-        return round(float(d.mean()), 2), round(float(d.std(ddof=1) / np.sqrt(len(d))), 2)
+    paired = lambda a, b: mean_and_se(nightly[a] - nightly[b])
     assert paired("overall_ha", "vp_rnn") == (1.66, 0.76)
     assert paired("mo_vp_rnn", "vp_rnn") == (0.34, 0.42)             # the multi-output RNN does not decide better
 

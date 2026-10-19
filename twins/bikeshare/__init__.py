@@ -11,11 +11,12 @@ from .rates import HistoricalRates
 from .sources import ReplayStation, SimStation
 from .twin import StationTwin
 
-__all__ = ["StationTwin", "HistoricalRates", "RNNRates", "ReplayStation", "SimStation", "experiment"]
+__all__ = ["StationTwin", "HistoricalRates", "ReplayStation", "SimStation", "experiment"]   # and RNNRates, below
 
 
 def __getattr__(name):
-    """RNNRates needs torch (pip install -e ".[rnn]"), so it is imported only when asked for."""
+    """RNNRates needs torch (pip install -e ".[rnn]"), so it is imported only when asked for (it is not in __all__,
+    so `from twins.bikeshare import *` works without torch)."""
     if name == "RNNRates":
         from .rnn import RNNRates
         return RNNRates

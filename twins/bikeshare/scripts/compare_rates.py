@@ -9,7 +9,7 @@ scored by replaying the next day's recorded events, as in step1_model.py. Rate m
 and, outside the twin, the paper's protocol with the same network:
   rnn_one_step     each hour's one-step forecast, which needs the count of the hour before, on the same day
 Also each forecast's accuracy over the test days (RMSE against the recorded counts, rentals and returns).
-Writes results/compare_rates.json. Needs the rnn extra (PyTorch); about 20 s.
+Writes results/compare_rates.json. Needs the rnn extra (PyTorch); about 10 s.
 """
 import datetime
 import json

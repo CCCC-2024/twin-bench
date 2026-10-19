@@ -87,10 +87,10 @@ class RNNRates:
         for k, net in self.nets.items():
             (mean, _), h = self.next[k], self.h[k]
             day, hour = next_hour(self.date, self.hour)              # the hour `mean` forecasts
-            rates = [mean]
+            means = [mean]
             for _ in range(horizon - 1):
                 day, hour = next_hour(day, hour)
                 mean, _, h = net.step(self._features(day, hour), mean, h)   # its own forecast as the count
-                rates.append(mean)
-            out[k] = np.array(rates)
+                means.append(mean)
+            out[k] = np.array(means)
         return out["pickup"], out["return"]
