@@ -1430,7 +1430,7 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
-$('play').onclick = () => { SH.running = !SH.running; syncPlay(); };
+$('play').onclick = () => { SH.running = !SH.running; syncPlay(); if (!SH.running) { SH.dom.forecast(); refreshPanel(); } };   // paused: show the last hour
 $('reset').onclick = () => { SH.log = []; SH.dom.init(); SH.running = true; refreshAll(); };
 document.querySelectorAll('#sysSeg button').forEach(b => b.onclick = () => { if (b.dataset.sys !== SH.key) { SH.running = true; switchDomain(b.dataset.sys); } });
 document.querySelectorAll('#langSeg button').forEach(b => b.onclick = () => { SH.lang = b.dataset.lang; store.set('twb-lang', SH.lang); refreshAll(); });
