@@ -1,4 +1,4 @@
-/* Bike-share station twin for the page, ported from twins/bikeshare (model.py, twin.py, sources.py).
+/* Bike-share station twin for the page, ported from twins/bikeshare (model.py, twin.py, rates.py, sources.py).
  * Needs window.BIKESHARE_MODEL (bikeshare_model.js) for the learned totals and the simulated demand.
  * check_bikeshare.js compares this file with Python.
  */
@@ -101,7 +101,7 @@
     return [lp, lr, bikes];
   }
 
-  // ---------- twin (twin.py) ----------
+  // ---------- twin (twin.py, with HistoricalRates from rates.py) ----------
   const weekday = day => day % 7 < 5;                 // day index from 1 Jan 2018, a Monday
   class Twin {
     /* base: totals per day type and hour learned before the page starts: [n days, rentals, returns] */

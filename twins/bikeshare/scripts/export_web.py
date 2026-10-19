@@ -34,7 +34,7 @@ base = {}
 for wk in (True, False):
     rows = []
     for hr in range(24):
-        dates, cp, cr = tw.hist[(wk, hr)]
+        dates, cp, cr = tw.rates.hist[(wk, hr)]
         assert dates[-1] < NOV1
         rows.append([len(dates), cp[-1], cr[-1]])
     base["weekday" if wk else "weekend"] = rows

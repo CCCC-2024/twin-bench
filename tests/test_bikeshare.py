@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 
 from dtcore import Recorder, run
-from twins.bikeshare import ReplayStation, StationTwin, data, experiment, model
+from twins.bikeshare import HistoricalRates, ReplayStation, StationTwin, data, experiment, model
 
 JAN1 = datetime.date(2018, 1, 1)
 TOL = 1e-3          # the authors integrate with Runge-Kutta: relative error up to ~1e-3
@@ -25,7 +25,7 @@ def paper():
 def year(request, paper):
     """The twin starts knowing nothing on 1 Jan 2018 and replays the year hour by hour, deciding every night."""
     source, window, column = request.param
-    twin = StationTwin(paper["C"], window_days=window)
+    twin = StationTwin(paper["C"], HistoricalRates(window_days=window))
     rec = Recorder(f"bikeshare-{source}")
     run(ReplayStation(paper["C"], data.events(), JAN1, 365), twin, recorder=rec)
     return SimpleNamespace(source=source, column=column, twin=twin, by_hour={r["obs"]["t"]: r for r in rec.rows})
@@ -33,7 +33,7 @@ def year(request, paper):
 
 def test_learned_rates_equal_the_papers_benchmarks(year):
     hours = data.hourly().dropna(subset=[f"{year.column}_pickup"])
-    learned = np.array([year.twin.rate(day, hour)[0] for day, hour in zip(hours["date"], hours["hour"])])
+    learned = np.array([year.twin.rates.rate(day, hour)[0] for day, hour in zip(hours["date"], hours["hour"])])
     benchmark = hours[[f"{year.column}_pickup", f"{year.column}_return"]].to_numpy()
     assert np.abs(learned - benchmark).max() < 1e-9                  # equal up to rounding
     assert len(hours) == {"ha": 8712, "ha30": 8016}[year.column]       # every hour the paper's column is defined

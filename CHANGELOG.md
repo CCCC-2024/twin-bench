@@ -5,6 +5,11 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- bikeshare: `StationTwin` takes its rate model as an argument, `StationTwin(C, rates)`; the Gamma–Poisson rates
+  moved unchanged to `rates.py` as `HistoricalRates`, the default. `StationTwin(C, window_days=30)` is now
+  `StationTwin(C, HistoricalRates(window_days=30))`. Results are unchanged.
+
 ## [0.3.0] - 2026-10-19
 
 The four twins on dtcore and the template share one layout, and every result their READMEs state has a source.

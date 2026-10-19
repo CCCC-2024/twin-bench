@@ -43,8 +43,10 @@ Action `{"set_bikes": s}`: a truck brings the station to s bikes (clipped to 0�
 `decide()` also returns `expected_lost`, the twin's own forecast; the Source ignores it.
 
 ## Files
-- `__init__.py`: the public names, `from twins.bikeshare import StationTwin, ReplayStation, SimStation`.
-- `twin.py`: `StationTwin` with update, predict / what-if and decide.
+- `__init__.py`: public names, `from twins.bikeshare import StationTwin, HistoricalRates, ReplayStation, SimStation`.
+- `twin.py`: `StationTwin` with update, predict / what-if and decide; it takes its rate model as an argument.
+- `rates.py`: rate models, what the twin knows about demand: `HistoricalRates` (Gamma posterior per hour and day
+  type, the default).
 - `sources.py`: `ReplayStation` (recorded events, hour by hour) and `SimStation` (Poisson demand).
 - `model.py`: the number of bikes as a birth–death chain; one hour is a matrix exponential, and the time spent
   empty / full comes from the same exponential (Van Loan); expected shortages for every start; replay of events.
@@ -114,8 +116,8 @@ Station 426, 1 Nov – 31 Dec 2018 (61 days), one decision per night (`results/s
   day), and after 218 weekdays each new one moves them by about 1/220, so the twin adapts slowly *(test)*. The page's
   simulated station uses the Nov–Dec average, so the gap shows there.
 - The capacity (30) comes from the station table in the upstream repository; its date is unknown.
-- Where a learned forecast would plug in: every rate the twin uses comes from `StationTwin.rate(day, hour)` (through
-  `rates_ahead`, used by `predict` and `decide`). The paper's RNN forecasts are read by `data.rnn_rates` and used only
-  in `experiment.py`; they are not yet a rate source of the twin.
+- Where a learned forecast plugs in: every rate the twin uses comes from its rate model (`StationTwin(C, rates)`,
+  `rates.py`), which `predict` and `decide` ask for the hours ahead. The paper's RNN forecasts are read by
+  `data.rnn_rates` and used only in `experiment.py`; they are not yet a rate model of the twin.
 - "Twin expects" is the twin's forecast with its own rates. The paper's evaluation code instead computes expected cost
   with the day's true counts.

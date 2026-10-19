@@ -67,7 +67,8 @@ parameter uncertainty yet, and one calibration takes about half an hour.
 
 ## Where AI can attach
 
-- **Q**: a learned forecast in place of a statistical one (bikeshare: the paper's RNN demand forecast would replace
-  `StationTwin.rate`), or a learned surrogate in place of a slow model (the tumor reproduction's Gaussian process).
+- **Q**: a learned forecast in place of a statistical one (bikeshare: the paper's RNN demand forecast would be a
+  second rate model passed to `StationTwin`), or a learned surrogate in place of a slow model (the tumor
+  reproduction's Gaussian process).
 - **D**: a learned estimator (e.g. damage straight from strain readings).
 - **U**: a policy trained inside the twin, or an LLM agent that calls `predict` / what-if as tools.
