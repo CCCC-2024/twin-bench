@@ -5,6 +5,11 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-19
+
+The four twins on dtcore and the template share one layout, and every result their READMEs state has a source.
+Imports change: `from twins.<name> import …` replaces the per-twin packages (`idt`, `bdt`, `udt`, `sdt`, `mdt`).
+
 ### Changed
 - Twins are importable as `twins.<name>` (`pip install -e .` now installs `twins` next to `dtcore`). The template
   shows the layout every twin moves to: public names in `__init__.py`, the Twin in `twin.py`, the Sources in
