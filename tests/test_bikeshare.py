@@ -123,6 +123,53 @@ def test_rnn_forecasts_from_what_is_known_at_midnight_are_less_accurate(rnn_year
     assert rmse(np.concatenate([rnn_year.day_ahead[day] for day in experiment.TEST_DAYS])) == (4.69, 4.67)
     assert rmse(test[["ha30_pickup", "ha30_return"]].to_numpy()) == (6.17, 6.04)
 
+
+@pytest.fixture(scope="module")
+def compared():
+    """Lost rentals + returns per test day for each rate model in the twin (scripts/compare_rates.py)."""
+    saved = json.loads((Path(data.__file__).parent / "results" / "compare_rates.json").read_text())
+    lost = {m: np.array([saved["days"][day][m]["lost_rent"] + saved["days"][day][m]["lost_return"]
+                         for day in sorted(saved["days"])]) for m in saved["forecast_rmse"]}
+    return SimpleNamespace(saved=saved, lost=lost)
+
+
+def test_compared_rnn_decisions_are_what_the_code_decides(rnn_year, compared, paper):
+    """The RNN twin's nightly decisions are those in results/compare_rates.json, and so are the paper's protocol's with
+    the same network (each test day decided from that day's one-step forecasts)."""
+    for day in experiment.TEST_DAYS:
+        k0, saved = (day - JAN1).days * 24, compared.saved["days"][str(day)]
+        assert rnn_year.rows[k0 - 1]["action"]["set_bikes"] == saved["rnn"]["start"]
+        rows = rnn_year.rows[k0 - 1:k0 + 23]                         # row t holds the forecast of hour t + 1
+        f = np.array([[r["est"]["next_rent_rate"], r["est"]["next_return_rate"]] for r in rows])
+        assert model.best_start(f[:, 0], f[:, 1], paper["C"])[0] == saved["rnn_one_step"]["start"]
+
+
+def test_in_the_twin_the_rnn_forecasts_better_but_does_not_decide_better(compared):
+    """Knowing only what is known at 23:00, the RNN loses about as many as the last-30-days average; the paper's
+    protocol with the same network, which uses each hour's previous count, loses fewer. Without any weather the
+    forecast is worse but the decisions lose the same."""
+    def paired(a, b):
+        d = compared.lost[a] - compared.lost[b]
+        return round(float(d.mean()), 2), round(float(d.std(ddof=1) / np.sqrt(len(d))), 2)
+    assert {m: round(float(v.mean()), 2) for m, v in compared.lost.items()} == dict(
+        historical_all=8.43, historical_30=7.79, rnn=8.80, rnn_one_step=5.80, rnn_no_weather=8.80)
+    assert paired("historical_30", "rnn") == (-1.02, 0.96)
+    assert paired("rnn", "rnn_one_step") == (3.00, 0.64)
+    assert paired("rnn_no_weather", "rnn") == (0.0, 0.16)
+    assert [round(x, 2) for x in compared.saved["forecast_rmse"]["rnn_no_weather"]] == [5.13, 5.01]
+
+
+def test_two_training_runs_of_the_rnn_decide_differently(compared):
+    """The authors' saved forecasts come from another training run than their saved weights. Same protocol, about the
+    same accuracy (test RMSE 3.85 / 3.78 against 3.82 / 3.79), yet they rarely choose the same start."""
+    saved = json.loads((Path(data.__file__).parent / "results" / "step1_decisions.json").read_text())
+    days = sorted(saved)
+    same = sum(saved[day]["vp_rnn"]["start"] == compared.saved["days"][day]["rnn_one_step"]["start"] for day in days)
+    d = np.array([saved[day]["vp_rnn"]["lost_rent"] + saved[day]["vp_rnn"]["lost_return"] for day in days]) \
+        - compared.lost["rnn_one_step"]
+    assert same == 5 and len(days) == 61
+    assert (round(float(d.mean()), 2), round(float(d.std(ddof=1) / np.sqrt(len(d))), 2)) == (0.97, 0.29)
+
 @pytest.fixture(scope="module")
 def nightly():
     """Lost rentals + returns per test day for each rate source (scripts/step1_model.py)."""

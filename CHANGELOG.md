@@ -10,6 +10,10 @@ versions follow [Semantic Versioning](https://semver.org/).
   It runs the authors' weights (fetched) in a copy of their inference network, needs the new `rnn` extra (PyTorch;
   CI installs the CPU build), and forecasts the next day from what the twin has seen. Tests: its next-hour rates
   have the accuracy the authors recorded (18 numbers); its 24-hour forecast at midnight is less accurate.
+- bikeshare: `scripts/compare_rates.py` runs the twin with each rate model on the test days
+  (`results/compare_rates.json`). In the twin, knowing only what is known at 23:00, the VP-RNN forecasts better than
+  the last-30-days average but does not decide better; the paper's protocol owes its advantage to forecasts that use
+  the same day's earlier counts. The README's results and notes say so, with tests.
 
 ### Fixed
 - `tools/fetch_github.sh` skipped a repository already fetched at the same commit even when a twin's

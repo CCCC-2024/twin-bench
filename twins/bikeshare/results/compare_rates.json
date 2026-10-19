@@ -1,0 +1,1978 @@
+{
+"forecast_rmse": {
+"historical_all": [
+10.1199413957444,
+9.87782285452934
+],
+"historical_30": [
+6.174678263443675,
+6.039992471092704
+],
+"rnn": [
+4.693404353455689,
+4.67441816913962
+],
+"rnn_one_step": [
+3.821831521698942,
+3.792950684533811
+],
+"rnn_no_weather": [
+5.132358310011188,
+5.005572631334596
+]
+},
+"days": {
+"2018-11-01": {
+"historical_all": {
+"start": 2,
+"expected": 59.45352367869077,
+"lost_rent": 39,
+"lost_return": 52
+},
+"historical_30": {
+"start": 2,
+"expected": 99.24414830942885,
+"lost_rent": 39,
+"lost_return": 52
+},
+"rnn": {
+"start": 2,
+"expected": 58.422456567024014,
+"lost_rent": 39,
+"lost_return": 52
+},
+"rnn_one_step": {
+"start": 2,
+"expected": 101.08077262667587,
+"lost_rent": 39,
+"lost_return": 52
+},
+"rnn_no_weather": {
+"start": 2,
+"expected": 58.487240628417695,
+"lost_rent": 39,
+"lost_return": 52
+}
+},
+"2018-11-02": {
+"historical_all": {
+"start": 2,
+"expected": 59.63011359158949,
+"lost_rent": 34,
+"lost_return": 88
+},
+"historical_30": {
+"start": 2,
+"expected": 98.89057600596382,
+"lost_rent": 34,
+"lost_return": 88
+},
+"rnn": {
+"start": 1,
+"expected": 52.90349255135332,
+"lost_rent": 34,
+"lost_return": 87
+},
+"rnn_one_step": {
+"start": 1,
+"expected": 100.9245995061451,
+"lost_rent": 34,
+"lost_return": 87
+},
+"rnn_no_weather": {
+"start": 1,
+"expected": 58.29537942977784,
+"lost_rent": 34,
+"lost_return": 87
+}
+},
+"2018-11-03": {
+"historical_all": {
+"start": 9,
+"expected": 15.566562610643249,
+"lost_rent": 6,
+"lost_return": 0
+},
+"historical_30": {
+"start": 13,
+"expected": 15.224103902365012,
+"lost_rent": 2,
+"lost_return": 0
+},
+"rnn": {
+"start": 10,
+"expected": 21.12545749125373,
+"lost_rent": 5,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 6,
+"expected": 14.234990678946048,
+"lost_rent": 9,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 7,
+"expected": 26.188595029773253,
+"lost_rent": 8,
+"lost_return": 0
+}
+},
+"2018-11-04": {
+"historical_all": {
+"start": 9,
+"expected": 15.481774157463548,
+"lost_rent": 3,
+"lost_return": 32
+},
+"historical_30": {
+"start": 13,
+"expected": 14.610403860646343,
+"lost_rent": 0,
+"lost_return": 33
+},
+"rnn": {
+"start": 9,
+"expected": 9.150004511848643,
+"lost_rent": 3,
+"lost_return": 32
+},
+"rnn_one_step": {
+"start": 15,
+"expected": 25.875593444354603,
+"lost_rent": 0,
+"lost_return": 35
+},
+"rnn_no_weather": {
+"start": 10,
+"expected": 8.712338029339715,
+"lost_rent": 2,
+"lost_return": 32
+}
+},
+"2018-11-05": {
+"historical_all": {
+"start": 2,
+"expected": 59.93732349962353,
+"lost_rent": 6,
+"lost_return": 11
+},
+"historical_30": {
+"start": 2,
+"expected": 97.26207791576836,
+"lost_rent": 6,
+"lost_return": 11
+},
+"rnn": {
+"start": 2,
+"expected": 28.696767688652386,
+"lost_rent": 6,
+"lost_return": 11
+},
+"rnn_one_step": {
+"start": 4,
+"expected": 31.23817525682202,
+"lost_rent": 4,
+"lost_return": 11
+},
+"rnn_no_weather": {
+"start": 2,
+"expected": 37.56497283917179,
+"lost_rent": 6,
+"lost_return": 11
+}
+},
+"2018-11-06": {
+"historical_all": {
+"start": 2,
+"expected": 59.69117386810553,
+"lost_rent": 0,
+"lost_return": 13
+},
+"historical_30": {
+"start": 2,
+"expected": 92.80312772001426,
+"lost_rent": 0,
+"lost_return": 13
+},
+"rnn": {
+"start": 1,
+"expected": 39.69388682992784,
+"lost_rent": 0,
+"lost_return": 12
+},
+"rnn_one_step": {
+"start": 2,
+"expected": 23.07074124212746,
+"lost_rent": 0,
+"lost_return": 13
+},
+"rnn_no_weather": {
+"start": 1,
+"expected": 50.60526816204606,
+"lost_rent": 0,
+"lost_return": 12
+}
+},
+"2018-11-07": {
+"historical_all": {
+"start": 2,
+"expected": 59.439635449862706,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 88.24628918099506,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 2,
+"expected": 21.276625343014842,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 2,
+"expected": 26.834961812350752,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 2,
+"expected": 17.128709823839657,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-08": {
+"historical_all": {
+"start": 2,
+"expected": 59.102963469958155,
+"lost_rent": 28,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 84.3678049062626,
+"lost_rent": 28,
+"lost_return": 0
+},
+"rnn": {
+"start": 24,
+"expected": 4.768611567138172,
+"lost_rent": 6,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 22,
+"expected": 36.63379542150379,
+"lost_rent": 8,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 24,
+"expected": 4.746224907748691,
+"lost_rent": 6,
+"lost_return": 0
+}
+},
+"2018-11-09": {
+"historical_all": {
+"start": 2,
+"expected": 58.83207262586639,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 75.33362684847233,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 2,
+"expected": 27.854565834193497,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 2,
+"expected": 25.604209008607935,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 2,
+"expected": 39.038591608838075,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-10": {
+"historical_all": {
+"start": 9,
+"expected": 15.577994118334118,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 12,
+"expected": 14.761275108977225,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 27,
+"expected": 13.740552816862666,
+"lost_rent": 0,
+"lost_return": 12
+},
+"rnn_one_step": {
+"start": 14,
+"expected": 8.046577349182938,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 25,
+"expected": 10.584090390990863,
+"lost_rent": 0,
+"lost_return": 10
+}
+},
+"2018-11-11": {
+"historical_all": {
+"start": 9,
+"expected": 15.486832147279308,
+"lost_rent": 4,
+"lost_return": 0
+},
+"historical_30": {
+"start": 11,
+"expected": 14.059257382915826,
+"lost_rent": 2,
+"lost_return": 0
+},
+"rnn": {
+"start": 19,
+"expected": 3.502979979546846,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 24,
+"expected": 5.870203667594522,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 19,
+"expected": 3.5137807065873368,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-12": {
+"historical_all": {
+"start": 2,
+"expected": 58.53652340895732,
+"lost_rent": 17,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 64.37011593714463,
+"lost_rent": 17,
+"lost_return": 0
+},
+"rnn": {
+"start": 22,
+"expected": 15.365220392838474,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 22,
+"expected": 33.71097471489352,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 22,
+"expected": 15.375309290846056,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-13": {
+"historical_all": {
+"start": 2,
+"expected": 58.21971843597013,
+"lost_rent": 7,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 60.60157688947949,
+"lost_rent": 7,
+"lost_return": 0
+},
+"rnn": {
+"start": 23,
+"expected": 19.258129672319054,
+"lost_rent": 0,
+"lost_return": 5
+},
+"rnn_one_step": {
+"start": 17,
+"expected": 10.020706342713288,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 11,
+"expected": 36.40589516144963,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-14": {
+"historical_all": {
+"start": 2,
+"expected": 57.90724966206368,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 57.13634365547105,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 24,
+"expected": 28.13398869592025,
+"lost_rent": 0,
+"lost_return": 20
+},
+"rnn_one_step": {
+"start": 4,
+"expected": 11.657763850961667,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 24,
+"expected": 28.176841871052364,
+"lost_rent": 0,
+"lost_return": 20
+}
+},
+"2018-11-15": {
+"historical_all": {
+"start": 2,
+"expected": 57.662101392634334,
+"lost_rent": 0,
+"lost_return": 2
+},
+"historical_30": {
+"start": 2,
+"expected": 52.182372525070264,
+"lost_rent": 0,
+"lost_return": 2
+},
+"rnn": {
+"start": 13,
+"expected": 27.030818285715654,
+"lost_rent": 0,
+"lost_return": 13
+},
+"rnn_one_step": {
+"start": 3,
+"expected": 7.335008075159008,
+"lost_rent": 0,
+"lost_return": 3
+},
+"rnn_no_weather": {
+"start": 12,
+"expected": 32.11715381645656,
+"lost_rent": 0,
+"lost_return": 12
+}
+},
+"2018-11-16": {
+"historical_all": {
+"start": 2,
+"expected": 57.34944617731219,
+"lost_rent": 13,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 45.41364305134865,
+"lost_rent": 13,
+"lost_return": 0
+},
+"rnn": {
+"start": 23,
+"expected": 3.7463524194968203,
+"lost_rent": 0,
+"lost_return": 3
+},
+"rnn_one_step": {
+"start": 22,
+"expected": 10.556202415727459,
+"lost_rent": 0,
+"lost_return": 2
+},
+"rnn_no_weather": {
+"start": 22,
+"expected": 7.707880132857603,
+"lost_rent": 0,
+"lost_return": 2
+}
+},
+"2018-11-17": {
+"historical_all": {
+"start": 9,
+"expected": 15.3835596165884,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 11,
+"expected": 11.913039478742565,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 5,
+"expected": 12.287499219556729,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 7,
+"expected": 11.142051566158852,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 10,
+"expected": 7.554405287972914,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-18": {
+"historical_all": {
+"start": 9,
+"expected": 15.290983303586149,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 10,
+"expected": 10.918015840048966,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 24,
+"expected": 5.361956153237716,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 21,
+"expected": 5.962403242819088,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 25,
+"expected": 5.589983564664864,
+"lost_rent": 0,
+"lost_return": 1
+}
+},
+"2018-11-19": {
+"historical_all": {
+"start": 2,
+"expected": 57.03017288183647,
+"lost_rent": 3,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 39.248863027551614,
+"lost_rent": 3,
+"lost_return": 0
+},
+"rnn": {
+"start": 15,
+"expected": 18.37491168942514,
+"lost_rent": 0,
+"lost_return": 7
+},
+"rnn_one_step": {
+"start": 5,
+"expected": 24.32009479363057,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 15,
+"expected": 18.49655769281529,
+"lost_rent": 0,
+"lost_return": 7
+}
+},
+"2018-11-20": {
+"historical_all": {
+"start": 2,
+"expected": 56.82605195562037,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 38.03462592532449,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 7,
+"expected": 48.94618629502868,
+"lost_rent": 0,
+"lost_return": 4
+},
+"rnn_one_step": {
+"start": 3,
+"expected": 27.511838413633647,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 7,
+"expected": 48.994921686784274,
+"lost_rent": 0,
+"lost_return": 4
+}
+},
+"2018-11-21": {
+"historical_all": {
+"start": 2,
+"expected": 56.55095526061656,
+"lost_rent": 2,
+"lost_return": 2
+},
+"historical_30": {
+"start": 2,
+"expected": 36.29021626765761,
+"lost_rent": 2,
+"lost_return": 2
+},
+"rnn": {
+"start": 13,
+"expected": 21.74471928596656,
+"lost_rent": 0,
+"lost_return": 11
+},
+"rnn_one_step": {
+"start": 4,
+"expected": 10.986471307247028,
+"lost_rent": 0,
+"lost_return": 2
+},
+"rnn_no_weather": {
+"start": 13,
+"expected": 21.76878403525898,
+"lost_rent": 0,
+"lost_return": 11
+}
+},
+"2018-11-22": {
+"historical_all": {
+"start": 2,
+"expected": 56.240838632808234,
+"lost_rent": 5,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 32.43433240866704,
+"lost_rent": 5,
+"lost_return": 0
+},
+"rnn": {
+"start": 19,
+"expected": 11.041775951493364,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 15,
+"expected": 0.9831010908858597,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 19,
+"expected": 11.042983090501249,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-23": {
+"historical_all": {
+"start": 2,
+"expected": 55.8307885878955,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 26.04462004761288,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 25,
+"expected": 4.587609585107322,
+"lost_rent": 0,
+"lost_return": 8
+},
+"rnn_one_step": {
+"start": 13,
+"expected": 2.396143906679066,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 25,
+"expected": 4.58761282129949,
+"lost_rent": 0,
+"lost_return": 8
+}
+},
+"2018-11-24": {
+"historical_all": {
+"start": 10,
+"expected": 15.185805334400357,
+"lost_rent": 1,
+"lost_return": 0
+},
+"historical_30": {
+"start": 11,
+"expected": 8.991105847626862,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 11,
+"expected": 3.1639365856680657,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 18,
+"expected": 3.9353047241565635,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 11,
+"expected": 3.2489263505555104,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-25": {
+"historical_all": {
+"start": 10,
+"expected": 15.045927713197976,
+"lost_rent": 2,
+"lost_return": 0
+},
+"historical_30": {
+"start": 11,
+"expected": 8.197730349677874,
+"lost_rent": 1,
+"lost_return": 0
+},
+"rnn": {
+"start": 14,
+"expected": 4.3526929542379165,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 18,
+"expected": 7.461001523523783,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 19,
+"expected": 2.438874044329931,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-26": {
+"historical_all": {
+"start": 2,
+"expected": 55.5092828870613,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 2,
+"expected": 22.222250185307637,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 11,
+"expected": 14.875071379777822,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 5,
+"expected": 5.896927642960693,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 11,
+"expected": 23.294438839680762,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-27": {
+"historical_all": {
+"start": 2,
+"expected": 55.157577973664786,
+"lost_rent": 14,
+"lost_return": 0
+},
+"historical_30": {
+"start": 3,
+"expected": 20.597620921086552,
+"lost_rent": 13,
+"lost_return": 0
+},
+"rnn": {
+"start": 19,
+"expected": 16.952045234295394,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 20,
+"expected": 13.77388553645811,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 17,
+"expected": 12.730890050016948,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-28": {
+"historical_all": {
+"start": 2,
+"expected": 54.834697558668516,
+"lost_rent": 4,
+"lost_return": 0
+},
+"historical_30": {
+"start": 3,
+"expected": 19.44601566126115,
+"lost_rent": 3,
+"lost_return": 0
+},
+"rnn": {
+"start": 23,
+"expected": 31.51470868432181,
+"lost_rent": 0,
+"lost_return": 10
+},
+"rnn_one_step": {
+"start": 15,
+"expected": 11.098783027011088,
+"lost_rent": 0,
+"lost_return": 2
+},
+"rnn_no_weather": {
+"start": 23,
+"expected": 32.989236570789814,
+"lost_rent": 0,
+"lost_return": 10
+}
+},
+"2018-11-29": {
+"historical_all": {
+"start": 2,
+"expected": 54.5864846493491,
+"lost_rent": 9,
+"lost_return": 0
+},
+"historical_30": {
+"start": 3,
+"expected": 16.35574778340022,
+"lost_rent": 8,
+"lost_return": 0
+},
+"rnn": {
+"start": 12,
+"expected": 30.539387923622957,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 13,
+"expected": 14.466002219166674,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 12,
+"expected": 30.668773712747665,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-11-30": {
+"historical_all": {
+"start": 2,
+"expected": 54.29174330958086,
+"lost_rent": 15,
+"lost_return": 0
+},
+"historical_30": {
+"start": 3,
+"expected": 13.819679383081013,
+"lost_rent": 14,
+"lost_return": 0
+},
+"rnn": {
+"start": 16,
+"expected": 16.71550845466654,
+"lost_rent": 1,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 9,
+"expected": 13.118929145697765,
+"lost_rent": 8,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 16,
+"expected": 17.99178605744468,
+"lost_rent": 1,
+"lost_return": 0
+}
+},
+"2018-12-01": {
+"historical_all": {
+"start": 10,
+"expected": 14.963408537151029,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 12,
+"expected": 8.862086381060116,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 27,
+"expected": 23.235752149662787,
+"lost_rent": 0,
+"lost_return": 9
+},
+"rnn_one_step": {
+"start": 18,
+"expected": 7.013572626750532,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 27,
+"expected": 25.38404568450865,
+"lost_rent": 0,
+"lost_return": 9
+}
+},
+"2018-12-02": {
+"historical_all": {
+"start": 10,
+"expected": 14.87240391524286,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 11,
+"expected": 8.560763227739452,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 19,
+"expected": 0.8849790864397117,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 14,
+"expected": 0.9999826709493222,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 22,
+"expected": 3.1684281395105875,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-12-03": {
+"historical_all": {
+"start": 2,
+"expected": 54.04228315186088,
+"lost_rent": 4,
+"lost_return": 0
+},
+"historical_30": {
+"start": 7,
+"expected": 8.331119237369498,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 18,
+"expected": 9.043803603345921,
+"lost_rent": 0,
+"lost_return": 4
+},
+"rnn_one_step": {
+"start": 6,
+"expected": 21.996525235514817,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 21,
+"expected": 9.363729231903115,
+"lost_rent": 0,
+"lost_return": 7
+}
+},
+"2018-12-04": {
+"historical_all": {
+"start": 2,
+"expected": 53.80957332891441,
+"lost_rent": 0,
+"lost_return": 3
+},
+"historical_30": {
+"start": 7,
+"expected": 8.602764218387211,
+"lost_rent": 0,
+"lost_return": 8
+},
+"rnn": {
+"start": 15,
+"expected": 44.87130764335272,
+"lost_rent": 0,
+"lost_return": 16
+},
+"rnn_one_step": {
+"start": 3,
+"expected": 11.675842478690083,
+"lost_rent": 0,
+"lost_return": 4
+},
+"rnn_no_weather": {
+"start": 14,
+"expected": 43.8035244346924,
+"lost_rent": 0,
+"lost_return": 15
+}
+},
+"2018-12-05": {
+"historical_all": {
+"start": 2,
+"expected": 53.5752848994413,
+"lost_rent": 5,
+"lost_return": 0
+},
+"historical_30": {
+"start": 6,
+"expected": 8.543937817148663,
+"lost_rent": 1,
+"lost_return": 0
+},
+"rnn": {
+"start": 19,
+"expected": 13.762399255051795,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 20,
+"expected": 7.138946270962444,
+"lost_rent": 0,
+"lost_return": 1
+},
+"rnn_no_weather": {
+"start": 19,
+"expected": 13.561550377235855,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-12-06": {
+"historical_all": {
+"start": 2,
+"expected": 53.22898871652664,
+"lost_rent": 1,
+"lost_return": 0
+},
+"historical_30": {
+"start": 7,
+"expected": 8.36682822952605,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 17,
+"expected": 18.439921590549908,
+"lost_rent": 0,
+"lost_return": 7
+},
+"rnn_one_step": {
+"start": 10,
+"expected": 7.67182808987665,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 17,
+"expected": 18.437176998946086,
+"lost_rent": 0,
+"lost_return": 7
+}
+},
+"2018-12-07": {
+"historical_all": {
+"start": 2,
+"expected": 52.98094819310431,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 7,
+"expected": 8.36618147134932,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 10,
+"expected": 16.667301659844288,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 11,
+"expected": 9.103065359641107,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 10,
+"expected": 16.667235897606467,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-12-08": {
+"historical_all": {
+"start": 10,
+"expected": 14.708982926583365,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 14,
+"expected": 5.568014256028386,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 16,
+"expected": 5.995854701838773,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 13,
+"expected": 4.718160706015731,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 16,
+"expected": 5.995853373013244,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-12-09": {
+"historical_all": {
+"start": 10,
+"expected": 14.595562824652589,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 13,
+"expected": 5.412650710041044,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 26,
+"expected": 4.867722748294075,
+"lost_rent": 0,
+"lost_return": 7
+},
+"rnn_one_step": {
+"start": 11,
+"expected": 4.301829701591202,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 26,
+"expected": 4.867730399382795,
+"lost_rent": 0,
+"lost_return": 7
+}
+},
+"2018-12-10": {
+"historical_all": {
+"start": 2,
+"expected": 52.683590476025074,
+"lost_rent": 5,
+"lost_return": 0
+},
+"historical_30": {
+"start": 8,
+"expected": 7.97086939429193,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 15,
+"expected": 9.763119287458974,
+"lost_rent": 0,
+"lost_return": 1
+},
+"rnn_one_step": {
+"start": 18,
+"expected": 10.211203622982795,
+"lost_rent": 0,
+"lost_return": 4
+},
+"rnn_no_weather": {
+"start": 15,
+"expected": 9.763112611653938,
+"lost_rent": 0,
+"lost_return": 1
+}
+},
+"2018-12-11": {
+"historical_all": {
+"start": 2,
+"expected": 52.399599469663386,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 8,
+"expected": 7.973357800206196,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 19,
+"expected": 31.096752408585843,
+"lost_rent": 0,
+"lost_return": 11
+},
+"rnn_one_step": {
+"start": 8,
+"expected": 10.80846640329221,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 19,
+"expected": 31.096766483628695,
+"lost_rent": 0,
+"lost_return": 11
+}
+},
+"2018-12-12": {
+"historical_all": {
+"start": 2,
+"expected": 52.16649466720061,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 8,
+"expected": 7.993665558015335,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 18,
+"expected": 20.329111376887017,
+"lost_rent": 0,
+"lost_return": 6
+},
+"rnn_one_step": {
+"start": 8,
+"expected": 15.021880376341223,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 18,
+"expected": 20.32911478496693,
+"lost_rent": 0,
+"lost_return": 6
+}
+},
+"2018-12-13": {
+"historical_all": {
+"start": 2,
+"expected": 51.89327413287513,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 7,
+"expected": 7.772028753284605,
+"lost_rent": 0,
+"lost_return": 5
+},
+"rnn": {
+"start": 13,
+"expected": 21.025962753110775,
+"lost_rent": 0,
+"lost_return": 11
+},
+"rnn_one_step": {
+"start": 3,
+"expected": 7.71225532949602,
+"lost_rent": 0,
+"lost_return": 1
+},
+"rnn_no_weather": {
+"start": 13,
+"expected": 21.025964655494224,
+"lost_rent": 0,
+"lost_return": 11
+}
+},
+"2018-12-14": {
+"historical_all": {
+"start": 2,
+"expected": 51.63274850996065,
+"lost_rent": 17,
+"lost_return": 0
+},
+"historical_30": {
+"start": 7,
+"expected": 7.648386031541501,
+"lost_rent": 12,
+"lost_return": 0
+},
+"rnn": {
+"start": 12,
+"expected": 13.829124064994852,
+"lost_rent": 7,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 19,
+"expected": 17.41732607108149,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 12,
+"expected": 14.143417048398634,
+"lost_rent": 7,
+"lost_return": 0
+}
+},
+"2018-12-15": {
+"historical_all": {
+"start": 10,
+"expected": 14.478820300023603,
+"lost_rent": 0,
+"lost_return": 6
+},
+"historical_30": {
+"start": 13,
+"expected": 4.952717950645708,
+"lost_rent": 0,
+"lost_return": 9
+},
+"rnn": {
+"start": 27,
+"expected": 11.761728513090262,
+"lost_rent": 0,
+"lost_return": 23
+},
+"rnn_one_step": {
+"start": 13,
+"expected": 6.6673822157715605,
+"lost_rent": 0,
+"lost_return": 9
+},
+"rnn_no_weather": {
+"start": 27,
+"expected": 11.049609104176815,
+"lost_rent": 0,
+"lost_return": 23
+}
+},
+"2018-12-16": {
+"historical_all": {
+"start": 10,
+"expected": 14.417471259836166,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 12,
+"expected": 5.238998129441017,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 18,
+"expected": 0.8806618179131971,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 14,
+"expected": 0.4709390286998093,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 20,
+"expected": 5.556539643031222,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-12-17": {
+"historical_all": {
+"start": 2,
+"expected": 51.345260559484316,
+"lost_rent": 2,
+"lost_return": 0
+},
+"historical_30": {
+"start": 8,
+"expected": 7.715820110830711,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 23,
+"expected": 5.934852669695765,
+"lost_rent": 0,
+"lost_return": 9
+},
+"rnn_one_step": {
+"start": 15,
+"expected": 7.19278241448451,
+"lost_rent": 0,
+"lost_return": 1
+},
+"rnn_no_weather": {
+"start": 23,
+"expected": 4.623365813364215,
+"lost_rent": 0,
+"lost_return": 9
+}
+},
+"2018-12-18": {
+"historical_all": {
+"start": 2,
+"expected": 51.10778033166637,
+"lost_rent": 2,
+"lost_return": 2
+},
+"historical_30": {
+"start": 8,
+"expected": 7.7331713650021605,
+"lost_rent": 0,
+"lost_return": 6
+},
+"rnn": {
+"start": 6,
+"expected": 17.939974297677125,
+"lost_rent": 0,
+"lost_return": 4
+},
+"rnn_one_step": {
+"start": 4,
+"expected": 8.809367404782648,
+"lost_rent": 0,
+"lost_return": 2
+},
+"rnn_no_weather": {
+"start": 3,
+"expected": 15.683132077974882,
+"lost_rent": 1,
+"lost_return": 2
+}
+},
+"2018-12-19": {
+"historical_all": {
+"start": 2,
+"expected": 50.88013754533575,
+"lost_rent": 5,
+"lost_return": 0
+},
+"historical_30": {
+"start": 7,
+"expected": 7.642191019566406,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 16,
+"expected": 5.22870085629159,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 9,
+"expected": 9.86016824944498,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 14,
+"expected": 5.061692682828032,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-12-20": {
+"historical_all": {
+"start": 2,
+"expected": 50.63984255346854,
+"lost_rent": 0,
+"lost_return": 11
+},
+"historical_30": {
+"start": 7,
+"expected": 7.31498506684435,
+"lost_rent": 0,
+"lost_return": 16
+},
+"rnn": {
+"start": 23,
+"expected": 28.704700862474688,
+"lost_rent": 0,
+"lost_return": 32
+},
+"rnn_one_step": {
+"start": 14,
+"expected": 7.197649519060622,
+"lost_rent": 0,
+"lost_return": 23
+},
+"rnn_no_weather": {
+"start": 23,
+"expected": 38.68647642844206,
+"lost_rent": 0,
+"lost_return": 32
+}
+},
+"2018-12-21": {
+"historical_all": {
+"start": 2,
+"expected": 50.372742748923784,
+"lost_rent": 13,
+"lost_return": 0
+},
+"historical_30": {
+"start": 7,
+"expected": 7.009126382187249,
+"lost_rent": 8,
+"lost_return": 0
+},
+"rnn": {
+"start": 20,
+"expected": 2.9089926574443137,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 23,
+"expected": 3.3452514948272283,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 14,
+"expected": 8.28550732282136,
+"lost_rent": 1,
+"lost_return": 0
+}
+},
+"2018-12-22": {
+"historical_all": {
+"start": 10,
+"expected": 14.254481634959493,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 12,
+"expected": 4.20689579891894,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 5,
+"expected": 10.997617486873617,
+"lost_rent": 4,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 9,
+"expected": 3.5420544217433685,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 6,
+"expected": 7.704578774988171,
+"lost_rent": 3,
+"lost_return": 0
+}
+},
+"2018-12-23": {
+"historical_all": {
+"start": 10,
+"expected": 14.13020839780392,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 12,
+"expected": 4.015826663102712,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 19,
+"expected": 2.9649132069609947,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 12,
+"expected": 2.662244609351853,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 19,
+"expected": 2.9494114717879003,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-12-24": {
+"historical_all": {
+"start": 2,
+"expected": 50.01009901176875,
+"lost_rent": 17,
+"lost_return": 0
+},
+"historical_30": {
+"start": 7,
+"expected": 7.484864436943756,
+"lost_rent": 12,
+"lost_return": 0
+},
+"rnn": {
+"start": 19,
+"expected": 8.5700888056983,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 22,
+"expected": 3.7805802561359565,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 13,
+"expected": 8.993416473805247,
+"lost_rent": 6,
+"lost_return": 0
+}
+},
+"2018-12-25": {
+"historical_all": {
+"start": 2,
+"expected": 49.66984404256883,
+"lost_rent": 1,
+"lost_return": 0
+},
+"historical_30": {
+"start": 8,
+"expected": 7.171731655393157,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 17,
+"expected": 9.266737552689577,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 8,
+"expected": 1.4201909730279016,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 17,
+"expected": 9.272072769845288,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-12-26": {
+"historical_all": {
+"start": 2,
+"expected": 49.36257331181418,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 8,
+"expected": 6.766818530137549,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 25,
+"expected": 3.329930853730783,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 15,
+"expected": 2.4320077298110987,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 25,
+"expected": 3.3300192023859028,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-12-27": {
+"historical_all": {
+"start": 2,
+"expected": 49.05975883602477,
+"lost_rent": 4,
+"lost_return": 0
+},
+"historical_30": {
+"start": 8,
+"expected": 6.673527839567907,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 18,
+"expected": 9.162790177222622,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 15,
+"expected": 4.2070070025487265,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 18,
+"expected": 9.163056011926242,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-12-28": {
+"historical_all": {
+"start": 2,
+"expected": 48.78412624183308,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 8,
+"expected": 6.393325900552847,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 20,
+"expected": 1.3465497559451687,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 12,
+"expected": 0.3865603426649704,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 25,
+"expected": 12.725444239054667,
+"lost_rent": 0,
+"lost_return": 1
+}
+},
+"2018-12-29": {
+"historical_all": {
+"start": 10,
+"expected": 14.000868374447103,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 11,
+"expected": 3.3794238183173952,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 4,
+"expected": 9.699404058002312,
+"lost_rent": 5,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 9,
+"expected": 6.331908224036978,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 6,
+"expected": 5.930489053495499,
+"lost_rent": 3,
+"lost_return": 0
+}
+},
+"2018-12-30": {
+"historical_all": {
+"start": 10,
+"expected": 13.923479994922815,
+"lost_rent": 0,
+"lost_return": 0
+},
+"historical_30": {
+"start": 11,
+"expected": 3.771953569943827,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 22,
+"expected": 4.785410744298998,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 17,
+"expected": 3.1319274583298835,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 22,
+"expected": 4.788139975899346,
+"lost_rent": 0,
+"lost_return": 0
+}
+},
+"2018-12-31": {
+"historical_all": {
+"start": 2,
+"expected": 48.45650261486986,
+"lost_rent": 4,
+"lost_return": 0
+},
+"historical_30": {
+"start": 8,
+"expected": 5.6538409262503055,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn": {
+"start": 13,
+"expected": 6.7042367293418685,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_one_step": {
+"start": 14,
+"expected": 3.0876333881568145,
+"lost_rent": 0,
+"lost_return": 0
+},
+"rnn_no_weather": {
+"start": 14,
+"expected": 9.732239923148548,
+"lost_rent": 0,
+"lost_return": 0
+}
+}
+}
+}
