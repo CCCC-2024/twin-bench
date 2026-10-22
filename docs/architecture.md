@@ -99,5 +99,5 @@ in place of a slow model, is a Q part outside dtcore.
 
 A policy part splits the decision: the twin decides when to decide and whether it can (bike share: at 23:00, once its
 rate model covers the next day); the policy, `decide(twin) -> action`, chooses what. Making a routine decision is only
-one use of the LLM agent, and where the twin's rule is exact for its own forecast (bike share) the agent can at best
-equal it; what a rule cannot do is take a new condition stated in words and try it out on the twin's what-if.
+one use of the LLM agent. Where the twin's rule is exact for its own forecast (bike share), the agent can at best
+equal the rule's expected shortages; in a replay of real data either can do better, through the forecast's errors.
