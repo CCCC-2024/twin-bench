@@ -49,7 +49,8 @@ experiment change the world at step k (open a lid, damage a wing) without touchi
 `records(system, run, k, t, kind, data)`.
 
 Deliberately *not* in the skeleton (one twin uses each so far): MQTT transport (battery live demo), specific filters,
-each twin's page module.
+each twin's page module, the LLM agent's conversation with a language model (`twins/bikeshare/agent.py`, which knows
+nothing about bike share and moves here when a second twin uses it).
 
 ## What the four twins show about the loop
 
@@ -75,14 +76,22 @@ dtcore has no class for parts: what a twin asks of a part differs from twin to t
 | Twin | Part | Now | What the twin asks of it | Implementations |
 |---|---|---|---|---|
 | bikeshare | rate model (Q) | argument: `StationTwin(C, rates)` | each hour's counts (`update`); mean rental and return rates for the hours ahead (`ahead`) | `HistoricalRates` (default), `RNNRates` (the paper's VP-RNN); compared by `scripts/compare_rates.py` |
+| bikeshare | policy (U) | argument: `StationTwin(C, rates, policy)` | at 23:00, once the next day can be forecast: the bikes to start it with (`decide(twin)`); it may ask the what-if | `RulePolicy` (default, the paper's decision), `AgentPolicy` (a language model); compared by `scripts/compare_policy.py` |
 | uav | model (D, Q, U) | argument: `UAVTwin(model)`, shared with the simulated asset | strain likelihood, damage transitions, damage states, the policy for a reward weight, a roll-out | `UAVModel` (the authors' configuration) |
 | battery | particle filter (D, Q) | built in `BatteryTwin` at first-prediction time | a step per cycle giving `log10_a`, `b`, `eol_pred` (the decision's inputs), and a capacity band | `ParticleFilter` |
 | incubator | Kalman filter (D); model and controller (Q) | built in `IncubatorTwin`; `predict` takes the controller (open: the twin should keep its own copy) | a step per sample giving the state and the innovation (the lid alarm); a forward simulation | `Kalman`, `Stepper`, `Controller` |
 | _template | scalar Kalman filter (D); heater rule (U) | written inside `MugTwin` | a filter step per reading; heater on if the mug would cool below the target within the look-ahead | one each |
-| every twin | policy (U) | `decide()` (incubator: a person) | the twin's what-if, `predict(horizon, **scenario)`, as its tools | each twin's rule; an LLM agent would be a second |
+| every twin | policy (U) | `decide()` (incubator: a person) | the twin's what-if, `predict(horizon, **scenario)`, as its tools | each twin's rule; an LLM agent is the second (so far in bikeshare) |
 
 A learned part must give what the twin asks of it: a battery predictor that only estimates the end of life cannot
 replace the filter without a capacity band and the decision's inputs. The one learned part so far shows why the
 comparison runs inside the twin: given only what the twin has seen, the VP-RNN forecasts better than the historical
 average but does not decide better (`twins/bikeshare/README.md`). The tumor reproduction's Gaussian-process surrogate,
 in place of a slow model, is a Q part outside dtcore.
+
+A policy part splits the decision: the twin decides when to decide and whether it can (bike share: at 23:00, once its
+rate model covers the next day); the policy chooses what. So an LLM agent can stand in for any twin's rule without
+learning the twin's schedule: `agent.ask(llm, task, options, whatif)` gives a language model the twin's task, the
+allowed choices and its what-if, and returns the model's choice (or none, with the reason). Each twin writes only its
+task text and the numbers its what-if reports (bike share: `policies.py`). The language model is any function
+`llm(messages) -> reply`; `agent.chat_model` reaches a model served with the OpenAI chat API (Ollama, LM Studio).

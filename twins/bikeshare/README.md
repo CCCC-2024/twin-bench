@@ -4,7 +4,8 @@ One Citi Bike station (West St & Chambers St, 30 docks). Reproduces the overnigh
 Gammelli et al. 2022 (the queueing model of Raviv & Kolka 2013) and runs it as a twin on dtcore: it learns hourly
 rental and return rates from the record, forecasts an empty or full station, sets the number of bikes each night,
 and answers "what if a truck sets s bikes now". Its rate model can be swapped: the paper's trained RNN (VP-RNN)
-runs in the twin too, forecasting from what the twin has seen.
+runs in the twin too, forecasting from what the twin has seen. So can its nightly decision: an LLM agent chooses by
+asking the twin's what-if.
 
 ## Sources
 - Raviv & Kolka 2013, *Optimal inventory management of a bike-sharing station*, IISE Transactions 45(10),
@@ -22,7 +23,7 @@ runs in the twin too, forecasting from what the twin has seen.
 
 | S | O | D | Q | U | R |
 |---|---|---|---|---|---|
-| bikes in the station (0–30); true hourly rental and return demand (not observed) | rentals and returns recorded each hour; bikes now | bikes now; the rate model: a Gamma posterior over rental and return rates for each hour × weekday / weekend (default), or the VP-RNN's state | distribution of bikes over the next hours, chance of empty / full, expected lost rentals and returns | each night: the number of bikes for the next day (automatic, as in the paper); a daytime truck setting s bikes (what-if, a person decides) | fewest expected lost rentals + lost returns (weight 1 each, as in the paper) |
+| bikes in the station (0–30); true hourly rental and return demand (not observed) | rentals and returns recorded each hour; bikes now | bikes now; the rate model: a Gamma posterior over rental and return rates for each hour × weekday / weekend (default), or the VP-RNN's state | distribution of bikes over the next hours, chance of empty / full, expected lost rentals and returns | each night: the number of bikes for the next day (automatic: the paper's rule by default, or an LLM agent asking the what-if); a daytime truck setting s bikes (what-if, a person decides) | fewest expected lost rentals + lost returns (weight 1 each, as in the paper) |
 
 Update: Gamma–Poisson conjugate update (add each hour's counts). With a flat prior the posterior mean is exactly the
 paper's two benchmarks (all earlier days, or the last 30, same hour and day type), so the twin learns the paper's
@@ -42,7 +43,9 @@ One step is one hour. What a Source returns, and what the twin uses:
 | `lost_rent`, `lost_return` | rentals and returns that failed at our station in that hour | no: people who leave are not recorded | no; for scoring only |
 
 Action `{"set_bikes": s}`: a truck brings the station to s bikes (clipped to 0–30). The demand stays as recorded.
-`decide()` also returns `expected_lost`, the twin's own forecast; the Source ignores it.
+`decide()` also returns `expected_lost`, the twin's own forecast; the Source ignores it. With the LLM agent as the
+policy the action also records the numbers of bikes it asked the what-if about (`asked`) and its `reason`; when the
+model gives no valid choice the action has no `set_bikes` and the reason says why: no truck goes out.
 
 ## Files
 - `__init__.py`: the public names: `StationTwin`, its rate models `HistoricalRates` and `RNNRates`, `ReplayStation`,
@@ -50,13 +53,17 @@ Action `{"set_bikes": s}`: a truck brings the station to s bikes (clipped to 0�
 - `twin.py`: `StationTwin` with update, predict / what-if and decide; it takes its rate model as an argument.
 - `rates.py`: rate models, what the twin knows about demand: `HistoricalRates` (Gamma posterior per hour and day
   type, the default); `rnn.py`: `RNNRates`, the paper's trained VP-RNN (needs the `rnn` extra, PyTorch).
+- `policies.py`: policies, how the twin chooses the nightly number of bikes: `RulePolicy` (the paper's decision, the
+  default) and `AgentPolicy` (a language model asking the twin's what-if); `agent.py`: the agent's conversation with
+  the model, which knows nothing about bike share, and `chat_model`, a model served with the OpenAI chat API.
 - `sources.py`: `ReplayStation` (recorded events, hour by hour) and `SimStation` (Poisson demand).
 - `model.py`: the number of bikes as a birth–death chain; one hour is a matrix exponential, and the time spent
   empty / full comes from the same exponential (Van Loan); expected shortages for every start; replay of events.
 - `data.py` reads the upstream files; `experiment.py` is the paper's set-up (Nov–Dec 2018, five rate sources).
 - `scripts/step1_model.py`: model only, the paper's table and a Monte Carlo check of the model;
   `scripts/step5_whatif.py`: the daytime-truck what-if;
-  `scripts/compare_rates.py`: the twin with each rate model on the test days (needs the `rnn` extra).
+  `scripts/compare_rates.py`: the twin with each rate model on the test days (needs the `rnn` extra);
+  `scripts/compare_policy.py`: the twin with the rule and with the LLM agent on the test days (needs a model server).
 - `scripts/export_web.py` writes the page data (`web/bikeshare_model.js`, and the local-only `web/bikeshare_replay.js`) and
   the reference run `results/ref_web_bikeshare.json` that `web/checks/check_bikeshare.js` replays.
 - `scripts/crosscheck_upstream.py` runs the authors' decision code on the same inputs and saves its answers in
@@ -70,6 +77,8 @@ pytest tests/test_bikeshare.py                       # what the twin reproduces 
 python twins/bikeshare/scripts/step1_model.py        # model only -> results/step1_*, a few seconds
 python twins/bikeshare/scripts/step5_whatif.py       # daytime-truck what-if -> results/step5_*, a few seconds
 python twins/bikeshare/scripts/compare_rates.py      # rate models in the twin -> results/compare_rates.json, ~10 s
+python twins/bikeshare/scripts/compare_policy.py MODEL  # rule vs LLM agent -> results/compare_policy.json; needs MODEL
+                                                     # served with the OpenAI chat API (default Ollama's, --url)
 python twins/bikeshare/scripts/export_web.py         # page data and reference run, ~10 s (--replay-only: local file only)
 python twins/bikeshare/scripts/crosscheck_upstream.py  # the authors' code -> results/ref_upstream.json, ~1 min
 node web/checks/check_bikeshare.js twins/bikeshare/results web    # BIKESHARE WEB CHECK OK

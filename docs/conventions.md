@@ -66,6 +66,8 @@ A twin's estimator, forecaster or policy is a part (`docs/architecture.md`). Whe
 - The default is the twin's own physical or statistical model: the baseline every other implementation is compared with.
 - What the twin asks of the part is its interface, written where the part is defined (bike share: `rates.py`). No
   shared base class: parts of different twins do different jobs.
+- A policy is asked only when the twin decides: the twin keeps when and whether, the policy chooses what (bike share:
+  `policies.py`). So one LLM agent can be every twin's second policy (`docs/architecture.md`).
 - A part gets data only through the twin's `update`, in time order, so it cannot use what the twin has not yet seen.
   Anything else it reads is an argument too, with its assumption stated (bike share: the weather, a perfect forecast).
 - A part with one implementation stays inside the twin, unless something else must use the same object (uav: the

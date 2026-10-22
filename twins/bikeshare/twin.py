@@ -7,22 +7,25 @@ update(obs)        keeps the bikes and the hour, and feeds the hour's counts to 
 predict(h, ...)    distribution of bikes over the next h hours, chance of being empty / full and the
                    expected lost rentals / returns; set_bikes=s makes it a what-if (a truck now).
 decide()           before midnight: the number of bikes to start the next day with (the paper's
-                   overnight rebalancing, minimising expected lost rentals + returns).
+                   overnight rebalancing), chosen by a policy (policies.py). Default RulePolicy, the paper's
+                   decision: the fewest expected lost rentals + returns.
 """
 import numpy as np
 
 from dtcore import Twin
 
 from . import model
+from .policies import RulePolicy
 from .rates import HistoricalRates
 
 
 class StationTwin(Twin):
     capabilities = ("update", "predict", "whatif", "decide")
 
-    def __init__(self, C, rates=None):
+    def __init__(self, C, rates=None, policy=None):
         self.C = C
         self.rates = HistoricalRates() if rates is None else rates
+        self.policy = RulePolicy() if policy is None else policy
         self.bikes, self.hour = None, None
 
     # ---- update ---------------------------------------------------------------------------------
@@ -48,11 +51,10 @@ class StationTwin(Twin):
 
     # ---- decide -----------------------------------------------------------------------------------
     def decide(self):
-        """At the last hour of a day: bikes to start tomorrow with. Otherwise no action."""
+        """At the last hour of a day: the policy's action, bikes to start tomorrow with. Otherwise no action."""
         if self.hour != 23:
             return None
         lp, lr = self.rates.ahead(24)
         if np.isnan(lp).any() or np.isnan(lr).any():      # no history yet for some hour
             return None
-        s, cost = model.best_start(lp, lr, self.C)
-        return dict(set_bikes=s, expected_lost=cost)
+        return self.policy.decide(self)
