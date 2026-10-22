@@ -5,6 +5,12 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-22
+
+AI attached to a twin: the bike-share twin runs the paper's trained VP-RNN as its rate model and compares it
+with the historical averages inside the twin. A twin's parts, and where AI attaches, are a rule for every twin.
+`StationTwin(C, window_days=30)` is now `StationTwin(C, HistoricalRates(window_days=30))`.
+
 ### Added
 - bikeshare: `RNNRates`, the paper's trained VP-RNN as a rate model of the twin (`StationTwin(C, RNNRates())`).
   It runs the authors' weights (fetched) in a copy of their inference network, needs the new `rnn` extra (PyTorch;
