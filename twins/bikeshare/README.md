@@ -44,18 +44,17 @@ One step is one hour. What a Source returns, and what the twin uses:
 
 Action `{"set_bikes": s}`: a truck brings the station to s bikes (clipped to 0–30). The demand stays as recorded.
 `decide()` also returns `expected_lost`, the twin's own forecast; the Source ignores it. With the LLM agent as the
-policy the action also records the numbers of bikes it asked the what-if about (`asked`) and its `reason`; when the
-model gives no valid choice the action has no `set_bikes` and the reason says why: no truck goes out.
+policy the action also records the scenarios it ran on the what-if (`asked`) and its `reason`; when the model gives
+no valid choice the action has no `set_bikes` and the reason says why: no truck goes out.
 
 ## Files
-- `__init__.py`: the public names: `StationTwin`, its rate models `HistoricalRates` and `RNNRates`, `ReplayStation`,
-  `SimStation`, `experiment`.
-- `twin.py`: `StationTwin` with update, predict / what-if and decide; it takes its rate model as an argument.
+- `__init__.py`: the public names: `StationTwin`, its rate models `HistoricalRates` and `RNNRates`, its policies
+  `RulePolicy` and `AgentPolicy`, `ReplayStation`, `SimStation`, `experiment`.
+- `twin.py`: `StationTwin` with update, predict / what-if and decide, and `brief` / `whatif` for the LLM agent; it
+  takes its rate model and its policy as arguments: `RulePolicy` (the paper's decision, the default) or `AgentPolicy`
+  (the LLM agent of `dtcore.agent`).
 - `rates.py`: rate models, what the twin knows about demand: `HistoricalRates` (Gamma posterior per hour and day
   type, the default); `rnn.py`: `RNNRates`, the paper's trained VP-RNN (needs the `rnn` extra, PyTorch).
-- `policies.py`: policies, how the twin chooses the nightly number of bikes: `RulePolicy` (the paper's decision, the
-  default) and `AgentPolicy` (a language model asking the twin's what-if); `agent.py`: the agent's conversation with
-  the model, which knows nothing about bike share, and `chat_model`, a model served with the OpenAI chat API.
 - `sources.py`: `ReplayStation` (recorded events, hour by hour) and `SimStation` (Poisson demand).
 - `model.py`: the number of bikes as a birth–death chain; one hour is a matrix exponential, and the time spent
   empty / full comes from the same exponential (Van Loan); expected shortages for every start; replay of events.
@@ -63,7 +62,8 @@ model gives no valid choice the action has no `set_bikes` and the reason says wh
 - `scripts/step1_model.py`: model only, the paper's table and a Monte Carlo check of the model;
   `scripts/step5_whatif.py`: the daytime-truck what-if;
   `scripts/compare_rates.py`: the twin with each rate model on the test days (needs the `rnn` extra);
-  `scripts/compare_policy.py`: the twin with the rule and with the LLM agent on the test days (needs a model server).
+  `scripts/compare_policy.py`: the twin with the rule and with the LLM agent on the test days (needs a model
+  server).
 - `scripts/export_web.py` writes the page data (`web/bikeshare_model.js`, and the local-only `web/bikeshare_replay.js`) and
   the reference run `results/ref_web_bikeshare.json` that `web/checks/check_bikeshare.js` replays.
 - `scripts/crosscheck_upstream.py` runs the authors' decision code on the same inputs and saves its answers in
@@ -77,8 +77,8 @@ pytest tests/test_bikeshare.py                       # what the twin reproduces 
 python twins/bikeshare/scripts/step1_model.py        # model only -> results/step1_*, a few seconds
 python twins/bikeshare/scripts/step5_whatif.py       # daytime-truck what-if -> results/step5_*, a few seconds
 python twins/bikeshare/scripts/compare_rates.py      # rate models in the twin -> results/compare_rates.json, ~10 s
-python twins/bikeshare/scripts/compare_policy.py MODEL  # rule vs LLM agent -> results/compare_policy.json; needs MODEL
-                                                     # served with the OpenAI chat API (default Ollama's, --url)
+python twins/bikeshare/scripts/compare_policy.py MODEL  # rule vs LLM agent -> results/compare_policy.json; MODEL served
+                                                     # with the OpenAI chat API (Ollama's by default); 61 nights of it
 python twins/bikeshare/scripts/export_web.py         # page data and reference run, ~10 s (--replay-only: local file only)
 python twins/bikeshare/scripts/crosscheck_upstream.py  # the authors' code -> results/ref_upstream.json, ~1 min
 node web/checks/check_bikeshare.js twins/bikeshare/results web    # BIKESHARE WEB CHECK OK

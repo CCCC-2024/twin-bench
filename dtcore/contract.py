@@ -42,3 +42,14 @@ class Twin:
     def decide(self):
         """Return an action for the physical side, or None (no automatic decision)."""
         return None
+
+    # For an LLM agent (agent.py); a twin implements these only if an agent is to work with it.
+    def brief(self):
+        """The system and its state now, in words, and what whatif() takes (each scenario keyword: meaning, unit,
+        allowed values) and returns."""
+        raise NotImplementedError
+
+    def whatif(self, **scenario):
+        """The what-if for an agent: predict() for one scenario, reduced to a few named numbers {name: number}.
+        Raise ValueError for a scenario the twin cannot simulate."""
+        raise NotImplementedError

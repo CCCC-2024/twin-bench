@@ -7,16 +7,43 @@ update(obs)        keeps the bikes and the hour, and feeds the hour's counts to 
 predict(h, ...)    distribution of bikes over the next h hours, chance of being empty / full and the
                    expected lost rentals / returns; set_bikes=s makes it a what-if (a truck now).
 decide()           before midnight: the number of bikes to start the next day with (the paper's
-                   overnight rebalancing), chosen by a policy (policies.py). Default RulePolicy, the paper's
-                   decision: the fewest expected lost rentals + returns.
+                   overnight rebalancing), chosen by the twin's policy:
+                     RulePolicy   the paper's decision, the fewest expected lost rentals + returns (default)
+                     AgentPolicy  the LLM agent (dtcore.agent) chooses, running the twin's what-if
+                   A policy is asked only at 23:00 once the next day can be forecast: decide(twin) -> action.
+brief(), whatif()  the twin for an LLM agent: the station in words, and the what-if of a truck as three numbers.
 """
 import numpy as np
 
-from dtcore import Twin
+from dtcore import Twin, agent
 
 from . import model
-from .policies import RulePolicy
 from .rates import HistoricalRates
+
+NIGHTLY = ("Tonight a truck sets the number of bikes the station starts tomorrow with. Choose it so that tomorrow has "
+           "the fewest expected lost rentals plus returns.")
+
+
+class RulePolicy:
+    def decide(self, twin):
+        s, cost = model.best_start(*twin.rates.ahead(24), twin.C)       # every start at once
+        return dict(set_bikes=s, expected_lost=cost)
+
+
+class AgentPolicy:
+    def __init__(self, llm, turns=10):
+        """llm(messages) -> reply, a language model (dtcore.agent); turns: the most replies it may give a night."""
+        self.llm, self.turns = llm, turns
+
+    def decide(self, twin):
+        """The agent's choice, with the scenarios it ran and its reason. With no valid choice the action records why
+        and has no set_bikes: no truck goes out."""
+        a = agent.ask(self.llm, twin, NIGHTLY, [dict(set_bikes=s) for s in range(twin.C + 1)], self.turns)
+        if a["choice"] is None:
+            return dict(asked=a["asked"], reason=a["error"])
+        s = a["choice"]["set_bikes"]
+        return dict(set_bikes=s, expected_lost=twin.predict(24, set_bikes=s)["expected_lost"], asked=a["asked"],
+                    reason=a["answer"])
 
 
 class StationTwin(Twin):
@@ -58,3 +85,17 @@ class StationTwin(Twin):
         if np.isnan(lp).any() or np.isnan(lr).any():      # no history yet for some hour
             return None
         return self.policy.decide(self)
+
+    # ---- for an LLM agent -------------------------------------------------------------------------
+    def brief(self):
+        return (f"A bike-share station with {self.C} docks. It is {self.hour}:00 and the station has {self.bikes} "
+                "bikes. A rental at an empty station or a return at a full station is lost. whatif(set_bikes=s): a truck "
+                f"sets the station to s bikes now, a whole number from 0 to {self.C}; it returns the expected lost "
+                "rentals, lost returns and their sum, expected_lost, over the next 24 hours.")
+
+    def whatif(self, set_bikes):
+        if type(set_bikes) is not int or not 0 <= set_bikes <= self.C:
+            raise ValueError(f"set_bikes must be a whole number from 0 to {self.C}")
+        p = self.predict(24, set_bikes=set_bikes)
+        return dict(lost_rentals=round(float(p["lost_rent"].sum()), 2),
+                    lost_returns=round(float(p["lost_return"].sum()), 2), expected_lost=round(p["expected_lost"], 2))

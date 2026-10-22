@@ -44,7 +44,8 @@ print(rec.rows[-1]["est"])                    # the twin's last estimate: temper
 ```
 
 `dtcore` knows nothing about temperatures, batteries or drones. A twin plugs in by implementing `Source` and `Twin`;
-`Recorder` keeps every observation, estimate and action (in memory and optionally SQLite). The six-element view
+`Recorder` keeps every observation, estimate and action (in memory and optionally SQLite); `dtcore.agent` lets an LLM
+agent work with any twin through the twin's what-if. The six-element view
 behind it (physical state, observations, digital state, quantities of interest, actions, reward; Kapteyn et al. 2021)
 is described in [docs/architecture.md](docs/architecture.md).
 
@@ -66,7 +67,7 @@ The tumor twin needs PyTorch and its own environment; see [twins/tumor](twins/tu
 ## Repository layout
 
 ```
-dtcore/            the skeleton: Source, Twin, run(), Recorder
+dtcore/            the skeleton: Source, Twin, run(), Recorder; agent (an LLM agent for any twin)
 twins/<name>/      one folder per twin, importable as twins.<name>: README, code, scripts/, results/, fetch_upstream.sh
 web/               the shared page: one shell, one module per twin, JS checked against Python
 docs/              architecture, adding a twin, file conventions

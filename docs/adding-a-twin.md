@@ -41,7 +41,8 @@ rewrite the README following [conventions.md](conventions.md#4-readme-structure)
 Steps 4–6 write the twin's parts: its estimator, forecaster and policy. Keep each one inside the twin until a second
 implementation of it arrives, often a learned one. Then make that part an argument of the twin, keep the first as the
 default and baseline, and compare the two with `scripts/compare_<part>.py`
-([conventions](conventions.md#parts-of-a-twin); bike share's `rates.py` and `RNNRates` are the example).
+([conventions](conventions.md#parts-of-a-twin); bike share's `rates.py` and `RNNRates` are the example). For the LLM
+agent (`dtcore.agent`) to work with the twin, write `brief()` and `whatif(**scenario)` (bike share's `twin.py`).
 
 ## 3. Tests
 

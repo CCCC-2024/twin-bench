@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 from dtcore import Recorder, run
-from twins.bikeshare import HistoricalRates, ReplayStation, StationTwin, data, experiment, model
+from twins.bikeshare import AgentPolicy, HistoricalRates, ReplayStation, StationTwin, data, experiment, model
 
 JAN1 = datetime.date(2018, 1, 1)
 TOL = 1e-3          # the authors integrate with Runge-Kutta: relative error up to ~1e-3
@@ -223,65 +223,27 @@ def test_rates_learned_by_october_are_twice_the_test_period_demand():
     assert before.date.nunique() == 218                               # each new weekday moves a rate by about 1/220
 
 
-class FixedModel:
-    """A fake language model with fixed answers: its i-th reply in every conversation is answers[i]. It keeps every
-    conversation it was sent."""
 
-    def __init__(self, *answers):
-        self.answers, self.sent = answers, []
-
-    def __call__(self, messages):
-        self.sent.append(list(messages))
-        return self.answers[len(messages) // 2 - 1]                  # system + task, then one exchange per reply
-
-
-def test_the_agent_asks_the_whatif_then_chooses():
-    from twins.bikeshare import agent
-    llm = FixedModel('{"whatif": 3}', '{"choose": 3, "reason": "fewest lost"}')
-    answer = agent.ask(llm, "Choose a number.", range(5), lambda n: {"lost": abs(n - 3)})
-    assert answer == dict(choice=3, reason="fewest lost", whatifs=[(3, {"lost": 0})])
-    assert '"lost": 0' in llm.sent[1][-1]["content"]                   # the model was told the what-if's answer
-
-
-def test_the_agent_is_told_what_was_wrong_with_a_reply_and_tries_again():
-    from twins.bikeshare import agent
-    llm = FixedModel("Three looks best.", '{"choose": 7}', '```json\n{"choose": 3}\n```')
-    answer = agent.ask(llm, "Choose a number.", range(5), lambda n: {})
-    assert answer["choice"] == 3 and answer["whatifs"] == []            # a model may wrap its JSON in a code block
-    told = [conversation[-1]["content"] for conversation in llm.sent[1:]]
-    assert "not a JSON object" in told[0] and "7 is not one of the choices" in told[1]
-
-
-def test_the_agent_makes_no_choice_when_its_turns_run_out():
-    from twins.bikeshare import agent
-    llm = FixedModel(*['{"whatif": 1}'] * 4)
-    answer = agent.ask(llm, "Choose a number.", range(5), lambda n: {}, turns=4)
-    assert answer["choice"] is None and answer["reason"] == "no valid choice in 4 replies"
-    assert len(llm.sent) == 4 and len(answer["whatifs"]) == 4
+def fixed_model(*answers):
+    """A fake language model: its i-th reply in every conversation is answers[i] (tests/test_dtcore.py)."""
+    return lambda messages: answers[len(messages) // 2 - 1]
 
 
 def test_in_the_twin_the_agent_decides_each_night_with_the_twins_whatif(paper):
     """The twin asks its policy at 23:00 once it can forecast the next day: not on Friday 5 Jan, before any Saturday."""
-    from twins.bikeshare import AgentPolicy
-    llm = FixedModel('{"whatif": 10}', '{"choose": 10, "reason": "tried 10"}')
-    rec = Recorder("bikeshare-agent")
-    twin = StationTwin(paper["C"], policy=AgentPolicy(llm))
+    llm = fixed_model('{"whatif": {"set_bikes": 10}}', '{"answer": "tried 10", "choice": {"set_bikes": 10}}')
+    twin, rec = StationTwin(paper["C"], policy=AgentPolicy(llm)), Recorder("bikeshare-agent")
     run(ReplayStation(paper["C"], data.events(), JAN1, 7), twin, recorder=rec)
     decided = {r["obs"]["date"]: r["action"] for r in rec.rows if r["action"] is not None}
-    assert {r["obs"]["hour"] for r in rec.rows if r["action"] is not None} == {23}
     assert sorted(decided) == ["2018-01-01", "2018-01-02", "2018-01-03", "2018-01-04", "2018-01-06", "2018-01-07"]
-    assert len(llm.sent) == 2 * 6
     jan1 = data.hourly()[lambda h: h.date == JAN1]                     # Tuesday's rates: Monday's counts
     expected = model.udf(jan1.pickups.to_numpy(float), jan1.returns.to_numpy(float), paper["C"])[10]
-    told = json.loads(llm.sent[1][-1]["content"])                       # what the what-if answered on the first night
-    assert told["whatif"] == 10 and told["expected_lost"] == round(expected, 2)
-    assert decided["2018-01-01"] == dict(set_bikes=10, expected_lost=pytest.approx(expected), asked=[10],
-                                         reason="tried 10")
+    assert decided["2018-01-01"] == dict(set_bikes=10, expected_lost=pytest.approx(expected),
+                                         asked=[{"set_bikes": 10}], reason="tried 10")
 
 
 def test_when_the_model_gives_no_valid_choice_no_truck_goes_out(paper):
-    from twins.bikeshare import AgentPolicy
     station, rec = ReplayStation(paper["C"], data.events(), JAN1, 2), Recorder("bikeshare-agent")
-    run(station, StationTwin(paper["C"], policy=AgentPolicy(FixedModel(*["About 12."] * 3), turns=3)), recorder=rec)
-    assert rec.rows[23]["action"] == dict(asked=[], reason="no valid choice in 3 replies")
+    run(station, StationTwin(paper["C"], policy=AgentPolicy(fixed_model(*["About 12."] * 3), turns=3)), recorder=rec)
+    assert rec.rows[23]["action"] == dict(asked=[], reason="no valid answer in 3 replies")
     assert station.moved == 0                                          # bikes added or removed by actions
