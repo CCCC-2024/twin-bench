@@ -9,15 +9,14 @@ versions follow [Semantic Versioning](https://semver.org/).
 - dtcore: `agent`, an LLM agent that works with any twin through the twin's what-if: `agent.ask(llm, twin, request,
   choices=None)` answers a request in words (a decision, or a question about a new condition) after running
   `twin.whatif(**scenario)`; `agent.chat_model` reaches a model served with the OpenAI chat API (Ollama, LM Studio),
-  not yet run against a real server. `Twin` gains two optional methods for it, `brief()` and `whatif(**scenario)`.
+  capping each reply and taking a server error as an empty reply. `Twin` gains two optional methods for it, `brief()` and `whatif(**scenario)`.
   Tests use a fake model with fixed answers.
 - bikeshare: the nightly decision is a part of the twin, `StationTwin(C, rates, policy)`: `RulePolicy`, the paper's
   decision, is the default (results unchanged), and `AgentPolicy(llm)` lets the LLM agent choose. The twin still
   decides when (23:00, once it can forecast the next day); the policy decides what. With no valid choice from the
   model, no truck goes out and the action records why. `brief()` and `whatif(set_bikes)` describe the station to the
-  agent.
-- bikeshare: `scripts/compare_policy.py` runs the twin with the rule and with the agent on the test days
-  (`results/compare_policy.json`).
+  agent. `scripts/compare_policy.py` ran it with Qwen3.5-9B and gpt-oss-20b (`results/compare_policy.json`): neither
+  beats the rule; Qwen finds the rule's choice on 16 of 61 nights, gpt-oss rarely runs the what-if.
 
 ## [0.4.0] - 2026-10-22
 

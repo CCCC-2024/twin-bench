@@ -122,6 +122,14 @@ from `results/compare_rates.json`):
   they recorded matches the weights). With about the same accuracy (3.85 / 3.78 against 3.82 / 3.79), the two
   choose the same start on 5 of 61 days, and the saved forecasts lose 0.97 ± 0.29 more per day *(test)*. The VP-RNN
   rows describe one trained network, not the method.
+- LLM agent as the nightly policy (`AgentPolicy`, `results/compare_policy.json`), two local models through Ollama,
+  at most 10 replies a night, same twin and same days as the rule. The rule is exact for the twin's forecast, so an
+  agent can at best equal its expected shortages. Qwen3.5-9B ran the what-if 6 times a night on average and chose the
+  rule's start on 16 of 61 nights; on 17 nights it was still exploring when its replies ran out, so no truck went
+  out. gpt-oss-20b ran no what-if on 43 nights and mostly chose 15 bikes ("the midpoint of capacity"), calling it
+  optimal; it never chose the rule's start. In the replay neither differs from the rule beyond noise (Qwen −0.13 ±
+  0.73, gpt-oss +0.79 ± 1.05 lost per day) *(test)*. About 1 h 20 min (Qwen) and 30 min (gpt-oss) on an Apple-silicon
+  Mac with 24 GB.
 - What-if (`results/step5_whatif.json`, `.png`): on 2 Nov, the worst day for the overnight decision, the station holds
   14 bikes at 06:59. A truck setting 1 bike: predicted 65.7 → 54.0 lost for the rest of the day; replay 99 → 86.
 - Page (Twin Bench, `web/`): a simulated station online, the recorded Nov–Dec days in the local copy. The JavaScript
@@ -154,5 +162,10 @@ from `results/compare_rates.json`):
 - `RNNRates` reads the recorded precipitation probability of the hours ahead, i.e. a perfect weather forecast.
   Without any weather (probability 0) its test RMSE is 5.13 / 5.01 and its decisions lose the same (0.00 ± 0.16 per
   day) *(test)*.
+- Running the local models: Qwen3.5-9B once thought for over 30,000 tokens without answering, so each reply is capped
+  (`chat_model`, 4,096 tokens) and a cut reply costs a turn; Ollama could not parse some of gpt-oss-20b's output (it
+  writes OpenAI's harmony format) and answered with a server error, which also costs a turn. A model's reply at
+  temperature 0 can still change between runs, so `results/compare_policy.json` is a record of one run, not
+  regenerable exactly.
 - "Twin expects" is the twin's forecast with its own rates. The paper's evaluation code instead computes expected cost
   with the day's true counts.

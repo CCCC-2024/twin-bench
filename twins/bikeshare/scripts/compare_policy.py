@@ -10,7 +10,7 @@ The rule is exact for the twin's own forecast, so an agent can at best equal its
 above them measures its search. The replay also counts the twin's forecast errors: on these days the all-history
 rates are about twice the demand (README, Notes), and a fixed start can lose fewer than the rule.
 The models are served with the OpenAI chat API, by default Ollama's (--url http://localhost:1234/v1 for LM Studio);
-not yet run against a real model server. Writes results/compare_policy.json.
+results/compare_policy.json keeps every policy run so far; a run adds or replaces the rule and the models named.
 
 Usage: python twins/bikeshare/scripts/compare_policy.py MODEL [MODEL ...] [--url URL]
 """
@@ -59,23 +59,27 @@ args = parser.parse_args()
 
 agents = {name: AgentPolicy(chat_model(name, args.url), args.turns) for name in args.models}
 policies = dict(rule=RulePolicy(), **agents)
-res = dict(url=args.url, turns=args.turns, days={str(day): {} for day in experiment.TEST_DAYS})
+out = ROOT / "results" / "compare_policy.json"
+res = json.loads(out.read_text()) if out.exists() else dict(models={}, days={str(d): {} for d in experiment.TEST_DAYS})
 for name, policy in policies.items():
     for day, scored in on_the_test_days(policy).items():
         res["days"][day][name] = scored
-json.dump(res, open(ROOT / "results" / "compare_policy.json", "w"), indent=0)
+    if name != "rule":
+        res["models"][name] = dict(url=args.url, turns=args.turns)
+    json.dump(res, open(out, "w"), indent=0)                        # after each policy: a slow run keeps what it has
 
 days = list(res["days"].values())
-lost = {p: np.array([d[p]["lost_rent"] + d[p]["lost_return"] for d in days]) for p in policies}
+names = ["rule", *res["models"]]
+lost = {p: np.array([d[p]["lost_rent"] + d[p]["lost_return"] for d in days]) for p in names}
 print(f"{'policy':<20}{'start (median)':>16}{'expects':>9}{'lost/day':>10}{'no truck':>10}{'what-ifs/night':>16}")
-for p in policies:
+for p in names:
     rows = [d[p] for d in days]
     expected = [r["expected"] for r in rows if r["expected"] is not None]          # nights a truck went out
     asked = np.mean([len(r.get("asked", [])) for r in rows])
     print(f"{p:<20}{np.median([r['start'] for r in rows]):>16.0f}{np.mean(expected) if expected else np.nan:>9.1f}"
           f"{lost[p].mean():>10.2f}{len(rows) - len(expected):>10}{asked:>16.1f}")
 print("\nagainst the rule, 61 days: paired daily difference in lost rentals + returns (mean +/- standard error)")
-for p in args.models:
+for p in res["models"]:
     d = lost[p] - lost["rule"]
     same = sum(row[p]["start"] == row["rule"]["start"] for row in days)
     above = [row[p]["expected"] - row["rule"]["expected"] for row in days if row[p]["expected"] is not None]

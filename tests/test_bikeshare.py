@@ -247,3 +247,19 @@ def test_when_the_model_gives_no_valid_choice_no_truck_goes_out(paper):
     run(station, StationTwin(paper["C"], policy=AgentPolicy(fixed_model(*["About 12."] * 3), turns=3)), recorder=rec)
     assert rec.rows[23]["action"] == dict(asked=[], reason="no valid answer in 3 replies")
     assert station.moved == 0                                          # bikes added or removed by actions
+
+
+def test_llm_agents_choose_no_better_than_the_rule_by_the_twins_forecast():
+    """scripts/compare_policy.py with two local models (results/compare_policy.json). The rule column is the twin's
+    run of compare_rates.py; no agent expects fewer shortages than the rule; in the replay neither differs from it."""
+    saved = json.loads((Path(data.__file__).parent / "results" / "compare_policy.json").read_text())
+    rates = json.loads((Path(data.__file__).parent / "results" / "compare_rates.json").read_text())
+    days = [saved["days"][d] for d in sorted(saved["days"])]
+    assert [d["rule"]["start"] for d in days] == [rates["days"][d]["historical_all"]["start"] for d in sorted(rates["days"])]
+    lost = lambda m: np.array([d[m]["lost_rent"] + d[m]["lost_return"] for d in days])
+    for m, optimal, no_truck, paired in (("qwen3.5:9b", 16, 17, (-0.13, 0.73)), ("gpt-oss:20b", 0, 4, (0.79, 1.05))):
+        chose = [d for d in days if d[m]["expected"] is not None]
+        assert all(d[m]["expected"] >= d["rule"]["expected"] - 1e-9 for d in chose)
+        assert sum(d[m]["expected"] - d["rule"]["expected"] < 1e-9 for d in chose) == optimal
+        assert len(days) - len(chose) == no_truck and mean_and_se(lost(m) - lost("rule")) == paired
+    assert sum(len(d["gpt-oss:20b"]["asked"]) == 0 for d in days) == 43               # no what-if run at all

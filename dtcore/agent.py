@@ -12,6 +12,7 @@ The model may run the what-if as often as its turns allow, then answers. Returns
 its answer in words, the scenario it chose (with choices), the scenarios it ran, and why there is no answer, if so.
 """
 import json
+import urllib.error
 import urllib.request
 
 PROTOCOL = """You work with a digital twin of a real system: a model kept in step with the system's data that can \
@@ -64,12 +65,17 @@ def _key(scenario):
     return json.dumps(scenario, sort_keys=True)                         # so 3.0 or true is not the setting 3 or 1
 
 
-def chat_model(name, url):
+def chat_model(name, url, max_tokens=4096):
     """llm(messages) -> reply from the model `name` served with the OpenAI chat API at `url` (Ollama:
-    http://localhost:11434/v1), with temperature 0: its most likely reply."""
+    http://localhost:11434/v1), with temperature 0: its most likely reply. max_tokens caps each reply, thinking
+    included: Qwen3.5-9B once thought for over 30,000 tokens. A reply cut there is empty, which ask() does not accept,
+    and so is one the server answers with an error (Ollama could not parse some of gpt-oss-20b's output)."""
     def llm(messages):
-        body = json.dumps(dict(model=name, messages=messages, temperature=0)).encode()
+        body = json.dumps(dict(model=name, messages=messages, temperature=0, max_tokens=max_tokens)).encode()
         request = urllib.request.Request(f"{url}/chat/completions", body, {"Content-Type": "application/json"})
-        with urllib.request.urlopen(request, timeout=600) as response:
-            return json.load(response)["choices"][0]["message"]["content"]
+        try:
+            with urllib.request.urlopen(request, timeout=600) as response:
+                return json.load(response)["choices"][0]["message"]["content"]
+        except urllib.error.HTTPError:
+            return ""
     return llm

@@ -64,6 +64,16 @@ for t in incubator battery uav bikeshare; do twins/$t/fetch_upstream.sh; done   
 Open the page locally: `python web/build.py`, then open `web/index.html`. The web checks need Node.js 18+.
 The tumor twin needs PyTorch and its own environment; see [twins/tumor](twins/tumor/).
 
+The LLM agent (`dtcore.agent`) needs a language model served with the OpenAI chat API; nothing else, and no test needs
+one. With [Ollama](https://ollama.com) on macOS:
+
+```bash
+brew install ollama                    # the program, in Homebrew's prefix
+ollama serve                           # the server, at http://localhost:11434 (keep it running while the agent works)
+ollama pull qwen3.5:9b                 # models go to ~/.ollama/models, outside the repository (about 6 GB)
+python twins/bikeshare/scripts/compare_policy.py qwen3.5:9b
+```
+
 ## Repository layout
 
 ```
