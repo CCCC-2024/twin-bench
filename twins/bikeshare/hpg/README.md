@@ -1,10 +1,9 @@
 # Running the LLM agent experiments on a Slurm cluster (HiPerGator example)
 
 `scripts/compare_policy.py` and `scripts/new_conditions.py` talk to a language model served by Ollama. On an
-Apple-silicon laptop one model takes 10 min to 2 h per run; on a cluster GPU each reply is faster. The scripts here
-use the same server (Ollama) and the same model files as the laptop, so results from either can be compared; another
-server (vLLM) or other weights would need every model rerun. Written for the University of Florida's HiPerGator
-(paths `/blue/...`, `module load conda`); **untested** on the cluster so far.
+Apple-silicon laptop one model takes 10 min to 2 h per run; on a cluster GPU a run takes 15–54 min. The results in
+`results/compare_policy.json` and `results/new_conditions.json` were made this way, on one B200 at the University of
+Florida's HiPerGator (paths `/blue/...`, `module load conda`).
 
 ## Steps
 Replace `<group>` with your HiPerGator group (`sacctmgr -n show assoc user=$USER format=account,qos`; `slurmInfo`
@@ -28,3 +27,10 @@ shows whether the group has GPUs).
    ```
    The first run of a model downloads it into `/blue/<group>/$USER/ollama/models`. Results are written to
    `twins/bikeshare/results/` in the clone; commit them from there or copy them back.
+
+Speed: Ollama starts about as many threads as the node has cores, far more than a job gets, and the GPU then mostly
+waits. Give each model two threads once (same replies, about ten times faster), and ask for 16 or more CPUs:
+```
+printf 'FROM gpt-oss:20b\nPARAMETER num_thread 2\n' > Modelfile && ollama create gpt-oss:20b -f Modelfile
+```
+(the same for `qwen3.5:9b`, with a server running).

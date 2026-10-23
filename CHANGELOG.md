@@ -16,11 +16,13 @@ versions follow [Semantic Versioning](https://semver.org/).
   decides when (23:00, once it can forecast the next day); the policy decides what. With no valid choice from the
   model, no truck goes out and the action records why. `brief()` and `whatif(set_bikes)` describe the station to the
   agent. `scripts/compare_policy.py` ran it with Qwen3.5-9B and gpt-oss-20b (`results/compare_policy.json`): neither
-  beats the rule; Qwen finds the rule's choice on 16 of 61 nights, gpt-oss rarely runs the what-if.
+  beats the rule; Qwen finds the rule's choice on 7 of 61 nights, gpt-oss rarely runs the what-if.
 - bikeshare: the what-if can scale demand in some hours (`rent_factor`, `return_factor`, `from_hour`, `to_hour`), an
   event the data never showed; `scripts/new_conditions.py` tells the agent of three such events in words
-  (`results/new_conditions.json`): both models move the start the way the words point but seldom simulate the event,
-  so they beat the rule only on the large one and over-react to one that does not matter.
+  (`results/new_conditions.json`): both models beat the rule only on the large one and over-react to one that does
+  not matter, whether or not they simulate it.
+- bikeshare: `hpg/`, scripts to run the agent experiments on a cluster GPU (HiPerGator); `results/compare_policy.json`
+  and `results/new_conditions.json` now come from there, with Qwen asked to simulate first (`--check`) added.
 - dtcore: `agent.ask` takes a choice that also states the conditions the model assumed as that action;
   `chat_model(..., reasoning=)` sends `reasoning_effort`.
 

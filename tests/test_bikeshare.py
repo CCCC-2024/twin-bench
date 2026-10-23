@@ -257,12 +257,12 @@ def test_llm_agents_choose_no_better_than_the_rule_by_the_twins_forecast():
     days = [saved["days"][d] for d in sorted(saved["days"])]
     assert [d["rule"]["start"] for d in days] == [rates["days"][d]["historical_all"]["start"] for d in sorted(rates["days"])]
     lost = lambda m: np.array([d[m]["lost_rent"] + d[m]["lost_return"] for d in days])
-    for m, optimal, no_truck, paired in (("qwen3.5:9b", 16, 17, (-0.13, 0.73)), ("gpt-oss:20b", 0, 4, (0.79, 1.05))):
+    for m, optimal, no_truck, paired in (("qwen3.5:9b", 7, 21, (0.61, 0.78)), ("gpt-oss:20b", 0, 9, (0.39, 1.0))):
         chose = [d for d in days if d[m]["expected"] is not None]
         assert all(d[m]["expected"] >= d["rule"]["expected"] - 1e-9 for d in chose)
         assert sum(d[m]["expected"] - d["rule"]["expected"] < 1e-9 for d in chose) == optimal
         assert len(days) - len(chose) == no_truck and mean_and_se(lost(m) - lost("rule")) == paired
-    assert sum(len(d["gpt-oss:20b"]["asked"]) == 0 for d in days) == 43               # no what-if run at all
+    assert sum(len(d["gpt-oss:20b"]["asked"]) == 0 for d in days) == 32               # no what-if run at all
 
 
 def test_the_whatif_can_scale_demand_in_some_hours_an_event_the_data_never_showed(paper):
@@ -277,7 +277,7 @@ def test_the_whatif_can_scale_demand_in_some_hours_an_event_the_data_never_showe
         twin.whatif(set_bikes=20, rent_factor=3, from_hour=10, to_hour=7)
 
 
-def test_told_of_an_event_agents_react_to_the_words_but_rarely_simulate_it():
+def test_told_of_an_event_agents_react_to_the_words_and_over_react_to_one_that_does_not_matter():
     """scripts/new_conditions.py (results/new_conditions.json): shortages above the best start under the twin's
     forecast with the event, per night, and the nights on which a model ran the event on the what-if (of 11)."""
     saved = json.loads((Path(data.__file__).parent / "results" / "new_conditions.json").read_text())
@@ -287,8 +287,10 @@ def test_told_of_an_event_agents_react_to_the_words_but_rarely_simulate_it():
     ran = lambda event, p: sum(any(w.get("rent_factor", 1) != 1 for w in d[event][p]["asked"])
                                for d in saved["days"].values())
     assert [above(e, "rule") for e in "ABC"] == [17.76, 4.59, 0.0]
-    assert [above(e, "qwen3.5:9b") for e in "ABC"] == [5.71, 5.59, 21.55]
-    assert [above(e, "gpt-oss:20b") for e in "ABC"] == [5.6, 4.84, 8.35]
-    assert [ran(e, "qwen3.5:9b") for e in "ABC"] == [1, 1, 1] and [ran(e, "gpt-oss:20b") for e in "ABC"] == [3, 6, 1]
-    assert [above(e, "gpt-oss:20b+check") for e in "ABC"] == [5.86, 0.37, 9.4]        # asked to run the event first
-    assert [ran(e, "gpt-oss:20b+check") for e in "ABC"] == [9, 11, 1]
+    assert [above(e, "qwen3.5:9b") for e in "ABC"] == [3.98, 7.54, 15.73]
+    assert [above(e, "gpt-oss:20b") for e in "ABC"] == [4.73, 2.1, 15.75]
+    assert [ran(e, "qwen3.5:9b") for e in "ABC"] == [5, 3, 10] and [ran(e, "gpt-oss:20b") for e in "ABC"] == [2, 5, 1]
+    assert [above(e, "qwen3.5:9b+check") for e in "ABC"] == [1.57, 3.13, 16.11]       # asked to run the event first
+    assert [above(e, "gpt-oss:20b+check") for e in "ABC"] == [4.95, 0.29, 14.2]
+    assert [ran(e, "qwen3.5:9b+check") for e in "ABC"] == [10, 9, 7]
+    assert [ran(e, "gpt-oss:20b+check") for e in "ABC"] == [10, 11, 2]

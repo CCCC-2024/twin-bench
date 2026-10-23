@@ -125,24 +125,28 @@ from `results/compare_rates.json`):
   rows describe one trained network, not the method.
 - LLM agent as the nightly policy (`AgentPolicy`, `results/compare_policy.json`), two local models through Ollama,
   at most 10 replies a night, same twin and same days as the rule. The rule is exact for the twin's forecast, so an
-  agent can at best equal its expected shortages. Qwen3.5-9B ran the what-if 6 times a night on average and chose the
-  rule's start on 16 of 61 nights; on 17 nights it was still exploring when its replies ran out, so no truck went
-  out. gpt-oss-20b ran no what-if on 43 nights and mostly chose 15 bikes ("the midpoint of capacity"), calling it
-  optimal; it never chose the rule's start. In the replay neither differs from the rule beyond noise (Qwen −0.13 ±
-  0.73, gpt-oss +0.79 ± 1.05 lost per day) *(test)*. About 1 h 20 min (Qwen) and 30 min (gpt-oss) on an Apple-silicon
-  Mac with 24 GB.
+  agent can at best equal its expected shortages. Qwen3.5-9B ran the what-if 5 times a night on average and chose the
+  rule's start on 7 of 61 nights; on 21 nights it was still exploring when its replies ran out, so no truck went
+  out. gpt-oss-20b ran no what-if on 32 nights and mostly chose 15 bikes (45 nights, "half the docks"), calling it
+  optimal; it never chose the rule's start. In the replay neither differs from the rule beyond noise (Qwen +0.61 ±
+  0.78, gpt-oss +0.39 ± 1.00 lost per day) *(test)*.
 - LLM agent told of an event the data never showed (`scripts/new_conditions.py`, `results/new_conditions.json`):
   at 23:00 before every sixth test day (11 nights) the agent reads one sentence and chooses tomorrow's start; the
   what-if can scale demand in some hours (`rent_factor`, `from_hour`, `to_hour`). There is no record of the events,
   so choices are scored by the twin's forecast with the event as described, against the best start under it. Above
-  the best, per night: A, rentals ×3 from 7:00 to 10:00 (best start 24): rule 17.76, Qwen3.5-9B 5.71, gpt-oss-20b
-  5.60; B, rentals ×2 from 6:00 to 9:00 (best 14): rule 4.59, Qwen 5.59, gpt-oss 4.84; C, rentals ×4 from 21:00 to
-  23:00, which hardly matters for the night's decision (best 2): rule 0.00, Qwen 21.55 (mostly 30 bikes), gpt-oss
-  8.35 *(test)*. Both moved the start the way the words point but seldom ran the event on the what-if (Qwen on 3 of
-  33 decisions, gpt-oss on 10) *(test)*, so they overshot B and over-reacted to C. Run with Qwen not thinking and
-  gpt-oss thinking little (`--reasoning none` / `low`): thinking, Qwen's replies were all cut at 4,096 tokens.
-  Asked to run the event on the what-if first (`--check`), gpt-oss ran it on 9, 11 and 1 of the 11 nights of A, B and
-  C, and came within 0.37 of the best on B, but no closer on A (5.86) or C (9.40) *(test)*.
+  the best, per night: A, rentals ×3 from 7:00 to 10:00 (best start 24): rule 17.76, Qwen3.5-9B 3.98, gpt-oss-20b
+  4.73; B, rentals ×2 from 6:00 to 9:00 (best 14): rule 4.59, Qwen 7.54, gpt-oss 2.10; C, rentals ×4 from 21:00 to
+  23:00, which hardly matters for the night's decision (best 2): rule 0.00, Qwen 15.73 (mostly 26 bikes), gpt-oss
+  15.75 *(test)*. Both beat the rule on the large event and over-reacted to the one that does not matter. gpt-oss
+  seldom ran the event on the what-if (8 of 33 decisions); Qwen ran it on 18, 10 of them for C, and still
+  over-reacted *(test)*; on B it chose an empty station on 8 nights, reasoning that no bikes means no lost rentals.
+  Run with Qwen not thinking and gpt-oss thinking little (`--reasoning none` / `low`): thinking, Qwen's replies were
+  all cut at 4,096 tokens. Asked to run the event on the what-if first (`--check`), both ran it on most nights of A
+  and B (Qwen 10 and 9 of 11, gpt-oss 10 and 11) and came closer there (Qwen 1.57 on A, gpt-oss 0.29 on B), but not
+  on C (16.11, 14.20) *(test)*.
+- Running the agent scripts: each run took 15–54 min, six at a time on one NVIDIA B200 GPU (`hpg/`); run again, every
+  choice was the same. An earlier run of the same scripts chose differently on about half the nights: the numbers
+  above moved, but beating the rule on A, over-reacting to C and doing no better than the rule nightly held in both.
 - What-if (`results/step5_whatif.json`, `.png`): on 2 Nov, the worst day for the overnight decision, the station holds
   14 bikes at 06:59. A truck setting 1 bike: predicted 65.7 → 54.0 lost for the rest of the day; replay 99 → 86.
 - Page (Twin Bench, `web/`): a simulated station online, the recorded Nov–Dec days in the local copy. The JavaScript
