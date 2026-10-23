@@ -63,7 +63,7 @@ no valid choice the action has no `set_bikes` and the reason says why: no truck 
   `scripts/step5_whatif.py`: the daytime-truck what-if;
   `scripts/compare_rates.py`: the twin with each rate model on the test days (needs the `rnn` extra);
   `scripts/compare_policy.py`: the twin with the rule and with the LLM agent on the test days (needs a model
-  server).
+  server); `scripts/new_conditions.py`: the agent told of an event the data never showed.
 - `scripts/export_web.py` writes the page data (`web/bikeshare_model.js`, and the local-only `web/bikeshare_replay.js`) and
   the reference run `results/ref_web_bikeshare.json` that `web/checks/check_bikeshare.js` replays.
 - `scripts/crosscheck_upstream.py` runs the authors' decision code on the same inputs and saves its answers in
@@ -130,6 +130,16 @@ from `results/compare_rates.json`):
   optimal; it never chose the rule's start. In the replay neither differs from the rule beyond noise (Qwen −0.13 ±
   0.73, gpt-oss +0.79 ± 1.05 lost per day) *(test)*. About 1 h 20 min (Qwen) and 30 min (gpt-oss) on an Apple-silicon
   Mac with 24 GB.
+- LLM agent told of an event the data never showed (`scripts/new_conditions.py`, `results/new_conditions.json`):
+  at 23:00 before every sixth test day (11 nights) the agent reads one sentence and chooses tomorrow's start; the
+  what-if can scale demand in some hours (`rent_factor`, `from_hour`, `to_hour`). There is no record of the events,
+  so choices are scored by the twin's forecast with the event as described, against the best start under it. Above
+  the best, per night: A, rentals ×3 from 7:00 to 10:00 (best start 24): rule 17.76, Qwen3.5-9B 5.71, gpt-oss-20b
+  5.60; B, rentals ×2 from 6:00 to 9:00 (best 14): rule 4.59, Qwen 5.59, gpt-oss 4.84; C, rentals ×4 from 21:00 to
+  23:00, which hardly matters for the night's decision (best 2): rule 0.00, Qwen 21.55 (mostly 30 bikes), gpt-oss
+  8.35 *(test)*. Both moved the start the way the words point but seldom ran the event on the what-if (Qwen on 3 of
+  33 decisions, gpt-oss on 10) *(test)*, so they overshot B and over-reacted to C. Run with Qwen not thinking and
+  gpt-oss thinking little (`--reasoning none` / `low`): thinking, Qwen's replies were all cut at 4,096 tokens.
 - What-if (`results/step5_whatif.json`, `.png`): on 2 Nov, the worst day for the overnight decision, the station holds
   14 bikes at 06:59. A truck setting 1 bike: predicted 65.7 → 54.0 lost for the rest of the day; replay 99 → 86.
 - Page (Twin Bench, `web/`): a simulated station online, the recorded Nov–Dec days in the local copy. The JavaScript

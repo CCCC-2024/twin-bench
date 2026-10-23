@@ -263,3 +263,30 @@ def test_llm_agents_choose_no_better_than_the_rule_by_the_twins_forecast():
         assert sum(d[m]["expected"] - d["rule"]["expected"] < 1e-9 for d in chose) == optimal
         assert len(days) - len(chose) == no_truck and mean_and_se(lost(m) - lost("rule")) == paired
     assert sum(len(d["gpt-oss:20b"]["asked"]) == 0 for d in days) == 43               # no what-if run at all
+
+
+def test_the_whatif_can_scale_demand_in_some_hours_an_event_the_data_never_showed(paper):
+    twin = StationTwin(paper["C"])
+    run(ReplayStation(paper["C"], data.events(), JAN1, 1), twin)                # 23:00 on Monday 1 Jan
+    jan1 = data.hourly()[lambda h: h.date == JAN1]                              # Tuesday's rates: Monday's counts
+    lp, lr = jan1.pickups.to_numpy(float), jan1.returns.to_numpy(float)
+    lp[7:10] *= 3                                                               # three times the rentals, 7:00-10:00
+    told = twin.whatif(set_bikes=20, rent_factor=3, from_hour=7, to_hour=10)
+    assert told["expected_lost"] == round(float(model.udf(lp, lr, paper["C"])[20]), 2)
+    with pytest.raises(ValueError, match="from_hour"):
+        twin.whatif(set_bikes=20, rent_factor=3, from_hour=10, to_hour=7)
+
+
+def test_told_of_an_event_agents_react_to_the_words_but_rarely_simulate_it():
+    """scripts/new_conditions.py (results/new_conditions.json): shortages above the best start under the twin's
+    forecast with the event, per night, and the nights on which a model ran the event on the what-if (of 11)."""
+    saved = json.loads((Path(data.__file__).parent / "results" / "new_conditions.json").read_text())
+    def above(event, p):
+        rows = [d[event] for d in saved["days"].values() if d[event][p]["expected"] is not None]
+        return round(float(np.mean([r[p]["expected"] - r["best"]["expected"] for r in rows])), 2)
+    ran = lambda event, p: sum(any(w.get("rent_factor", 1) != 1 for w in d[event][p]["asked"])
+                               for d in saved["days"].values())
+    assert [above(e, "rule") for e in "ABC"] == [17.76, 4.59, 0.0]
+    assert [above(e, "qwen3.5:9b") for e in "ABC"] == [5.71, 5.59, 21.55]
+    assert [above(e, "gpt-oss:20b") for e in "ABC"] == [5.6, 4.84, 8.35]
+    assert [ran(e, "qwen3.5:9b") for e in "ABC"] == [1, 1, 1] and [ran(e, "gpt-oss:20b") for e in "ABC"] == [3, 6, 1]

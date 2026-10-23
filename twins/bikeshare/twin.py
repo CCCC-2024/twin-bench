@@ -5,7 +5,9 @@ D (digital state)  the current number of bikes (observed) and a rate model (rate
                    model (a Gamma posterior per hour and day type).
 update(obs)        keeps the bikes and the hour, and feeds the hour's counts to the rate model.
 predict(h, ...)    distribution of bikes over the next h hours, chance of being empty / full and the
-                   expected lost rentals / returns; set_bikes=s makes it a what-if (a truck now).
+                   expected lost rentals / returns; set_bikes=s makes it a what-if (a truck now), and so do
+                   rent_factor / return_factor: demand times that factor from from_hour to to_hour (clock hours),
+                   an event the data never showed.
 decide()           before midnight: the number of bikes to start the next day with (the paper's
                    overnight rebalancing), chosen by the twin's policy:
                      RulePolicy   the paper's decision, the fewest expected lost rentals + returns (default)
@@ -61,9 +63,13 @@ class StationTwin(Twin):
         return dict(t=obs["t"], bikes=self.bikes, **self.rates.update(obs))
 
     # ---- predict / what-if ------------------------------------------------------------------------
-    def predict(self, horizon, set_bikes=None):
-        """Forecast the next `horizon` hours from now; set_bikes=s: what if a truck sets s bikes now."""
+    def predict(self, horizon, set_bikes=None, rent_factor=1.0, return_factor=1.0, from_hour=0, to_hour=24):
+        """Forecast the next `horizon` hours from now; set_bikes=s: what if a truck sets s bikes now; the factors:
+        what if rentals / returns are that many times the forecast in clock hours from_hour <= h < to_hour."""
         lp, lr = self.rates.ahead(horizon)
+        clock = (self.hour + 1 + np.arange(horizon)) % 24
+        event = (clock >= from_hour) & (clock < to_hour)
+        lp, lr = np.where(event, lp * rent_factor, lp), np.where(event, lr * return_factor, lr)
         start = np.zeros(self.C + 1)
         start[self.bikes if set_bikes is None else int(set_bikes)] = 1.0
         f = model.forecast(lp, lr, self.C, start)
@@ -89,13 +95,20 @@ class StationTwin(Twin):
     # ---- for an LLM agent -------------------------------------------------------------------------
     def brief(self):
         return (f"A bike-share station with {self.C} docks. It is {self.hour}:00 and the station has {self.bikes} "
-                "bikes. A rental at an empty station or a return at a full station is lost. whatif(set_bikes=s): a truck "
-                f"sets the station to s bikes now, a whole number from 0 to {self.C}; it returns the expected lost "
-                "rentals, lost returns and their sum, expected_lost, over the next 24 hours.")
+                "bikes. A rental at an empty station or a return at a full station is lost. whatif(set_bikes=s, "
+                "rent_factor=1, return_factor=1, from_hour=0, to_hour=24): a truck sets the station to s bikes now, a "
+                f"whole number from 0 to {self.C}; optionally, rentals and returns are rent_factor and return_factor "
+                "times the usual from clock hour from_hour up to (not including) to_hour, whole numbers from 0 to 24. "
+                "It returns the expected lost rentals, lost returns and their sum, expected_lost, over the next 24 "
+                "hours.")
 
-    def whatif(self, set_bikes):
+    def whatif(self, set_bikes, rent_factor=1.0, return_factor=1.0, from_hour=0, to_hour=24):
         if type(set_bikes) is not int or not 0 <= set_bikes <= self.C:
             raise ValueError(f"set_bikes must be a whole number from 0 to {self.C}")
-        p = self.predict(24, set_bikes=set_bikes)
+        if any(type(f) not in (int, float) or f < 0 for f in (rent_factor, return_factor)):
+            raise ValueError("rent_factor and return_factor must be numbers, 0 or more")
+        if any(type(h) is not int for h in (from_hour, to_hour)) or not 0 <= from_hour < to_hour <= 24:
+            raise ValueError("from_hour and to_hour must be whole numbers with 0 <= from_hour < to_hour <= 24")
+        p = self.predict(24, set_bikes, rent_factor, return_factor, from_hour, to_hour)
         return dict(lost_rentals=round(float(p["lost_rent"].sum()), 2),
                     lost_returns=round(float(p["lost_return"].sum()), 2), expected_lost=round(p["expected_lost"], 2))

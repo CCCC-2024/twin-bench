@@ -139,6 +139,8 @@ def test_the_agent_runs_the_twins_whatif_then_answers():
     assert answer == dict(answer="Turning it to 4 misses by 1.", choice=None, asked=[{"n": 4}], error=None)
     assert "A dial." in llm.sent[0][0]["content"] and llm.sent[0][1]["content"] == "What happens at 4?"
     assert json.loads(llm.sent[1][-1]["content"]) == {"whatif": {"n": 4}, "result": {"miss": 1}}
+    chose = FixedModel('{"answer": "4", "choice": {"n": 4, "windy": true}}')        # the conditions it assumed, too
+    assert agent.ask(chose, Dial(), "Set the dial.", choices=[{"n": n} for n in range(5)])["choice"] == {"n": 4}
 
 
 def test_the_agent_is_told_what_was_wrong_and_gives_no_answer_when_its_turns_run_out():

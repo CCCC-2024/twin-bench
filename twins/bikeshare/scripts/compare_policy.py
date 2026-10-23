@@ -55,9 +55,10 @@ parser = argparse.ArgumentParser(description="Compare the bike-share twin's poli
 parser.add_argument("models", nargs="+", help="language models for AgentPolicy, as the server names them")
 parser.add_argument("--url", default="http://localhost:11434/v1", help="the server's OpenAI chat API (default: Ollama)")
 parser.add_argument("--turns", type=int, default=10, help="the most replies a model may give a night")
+parser.add_argument("--reasoning", help="reasoning_effort for the models, e.g. none or low (default: theirs)")
 args = parser.parse_args()
 
-agents = {name: AgentPolicy(chat_model(name, args.url), args.turns) for name in args.models}
+agents = {name: AgentPolicy(chat_model(name, args.url, reasoning=args.reasoning), args.turns) for name in args.models}
 policies = dict(rule=RulePolicy(), **agents)
 out = ROOT / "results" / "compare_policy.json"
 res = json.loads(out.read_text()) if out.exists() else dict(models={}, days={str(d): {} for d in experiment.TEST_DAYS})
@@ -65,7 +66,7 @@ for name, policy in policies.items():
     for day, scored in on_the_test_days(policy).items():
         res["days"][day][name] = scored
     if name != "rule":
-        res["models"][name] = dict(url=args.url, turns=args.turns)
+        res["models"][name] = dict(url=args.url, turns=args.turns, reasoning=args.reasoning)
     json.dump(res, open(out, "w"), indent=0)                        # after each policy: a slow run keeps what it has
 
 days = list(res["days"].values())
