@@ -64,6 +64,7 @@ no valid choice the action has no `set_bikes` and the reason says why: no truck 
   `scripts/compare_rates.py`: the twin with each rate model on the test days (needs the `rnn` extra);
   `scripts/compare_policy.py`: the twin with the rule and with the LLM agent on the test days (needs a model
   server); `scripts/new_conditions.py`: the agent told of an event the data never showed.
+- `hpg/`: the agent experiments on a Slurm cluster's GPU (HiPerGator example; untested there so far).
 - `scripts/export_web.py` writes the page data (`web/bikeshare_model.js`, and the local-only `web/bikeshare_replay.js`) and
   the reference run `results/ref_web_bikeshare.json` that `web/checks/check_bikeshare.js` replays.
 - `scripts/crosscheck_upstream.py` runs the authors' decision code on the same inputs and saves its answers in
