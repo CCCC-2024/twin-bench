@@ -290,3 +290,5 @@ def test_told_of_an_event_agents_react_to_the_words_but_rarely_simulate_it():
     assert [above(e, "qwen3.5:9b") for e in "ABC"] == [5.71, 5.59, 21.55]
     assert [above(e, "gpt-oss:20b") for e in "ABC"] == [5.6, 4.84, 8.35]
     assert [ran(e, "qwen3.5:9b") for e in "ABC"] == [1, 1, 1] and [ran(e, "gpt-oss:20b") for e in "ABC"] == [3, 6, 1]
+    assert [above(e, "gpt-oss:20b+check") for e in "ABC"] == [5.86, 0.37, 9.4]        # asked to run the event first
+    assert [ran(e, "gpt-oss:20b+check") for e in "ABC"] == [9, 11, 1]

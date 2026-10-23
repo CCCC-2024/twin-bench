@@ -7,6 +7,7 @@ so each choice is scored by the twin's own forecast with the event as its text s
 start under that forecast. This measures whether the agent turns the words into the right simulation and decision,
 not what the event would cost in the real city. Events A and B change the best start; C (in the evening) barely does,
 so the right answer there is close to the rule's.
+With --check the request also asks the agent to run the event on the what-if first; its rows are named MODEL+check.
 Writes results/new_conditions.json, adding to it model by model.
 
 Usage: python twins/bikeshare/scripts/new_conditions.py MODEL [MODEL ...] [--url URL] [--turns N]
@@ -34,19 +35,22 @@ EVENTS = {   # text for the agent; truth = (rent factor, return factor, from hou
           "number of people will rent bikes here; returns stay as usual.", (4, 1, 21, 23)),
 }
 DAYS = experiment.TEST_DAYS[::6]
+CHECK = " Before you choose, run the what-if with this event and compare several numbers of bikes."
 
 parser = argparse.ArgumentParser(description="The LLM agent on events the data never showed.")
 parser.add_argument("models", nargs="+", help="language models, as the server names them")
 parser.add_argument("--url", default="http://localhost:11434/v1", help="the server's OpenAI chat API (default: Ollama)")
 parser.add_argument("--turns", type=int, default=15, help="the most replies a model may give a decision")
 parser.add_argument("--reasoning", help="reasoning_effort for the models, e.g. none or low (default: theirs)")
+parser.add_argument("--check", action="store_true", help="ask the agent to run the event on the what-if first")
 args = parser.parse_args()
 
 out = ROOT / "results" / "new_conditions.json"
 res = json.loads(out.read_text()) if out.exists() else dict(models={}, events={k: v[0] for k, v in EVENTS.items()},
                                                             days={})
-for name in args.models:
-    llm = agent.chat_model(name, args.url, reasoning=args.reasoning)
+for model_name in args.models:
+    llm = agent.chat_model(model_name, args.url, reasoning=args.reasoning)
+    name = model_name + "+check" if args.check else model_name
 
     def at_midnight(k, source, twin):                                 # the twin has seen 23:00 the day before
         day = JAN1 + datetime.timedelta(days=k // 24)
@@ -57,8 +61,8 @@ for name in args.models:
             event = (np.arange(24) >= a) & (np.arange(24) < b)
             truth = model.udf(np.where(event, lp * fp, lp), np.where(event, lr * fr, lr), twin.C)  # every start
             rule, best = model.best_start(lp, lr, twin.C)[0], int(np.argmin(truth))
-            said = agent.ask(llm, twin, f"{NIGHTLY} {text}", [dict(set_bikes=s) for s in range(twin.C + 1)],
-                             args.turns)
+            said = agent.ask(llm, twin, f"{NIGHTLY} {text}" + (CHECK if args.check else ""),
+                             [dict(set_bikes=s) for s in range(twin.C + 1)], args.turns)
             s = None if said["choice"] is None else said["choice"]["set_bikes"]
             row = res["days"].setdefault(str(day), {}).setdefault(key, {})
             row.update(best=dict(start=best, expected=float(truth[best])),

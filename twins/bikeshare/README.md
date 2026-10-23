@@ -140,6 +140,8 @@ from `results/compare_rates.json`):
   8.35 *(test)*. Both moved the start the way the words point but seldom ran the event on the what-if (Qwen on 3 of
   33 decisions, gpt-oss on 10) *(test)*, so they overshot B and over-reacted to C. Run with Qwen not thinking and
   gpt-oss thinking little (`--reasoning none` / `low`): thinking, Qwen's replies were all cut at 4,096 tokens.
+  Asked to run the event on the what-if first (`--check`), gpt-oss ran it on 9, 11 and 1 of the 11 nights of A, B and
+  C, and came within 0.37 of the best on B, but no closer on A (5.86) or C (9.40) *(test)*.
 - What-if (`results/step5_whatif.json`, `.png`): on 2 Nov, the worst day for the overnight decision, the station holds
   14 bikes at 06:59. A truck setting 1 bike: predicted 65.7 → 54.0 lost for the rest of the day; replay 99 → 86.
 - Page (Twin Bench, `web/`): a simulated station online, the recorded Nov–Dec days in the local copy. The JavaScript
