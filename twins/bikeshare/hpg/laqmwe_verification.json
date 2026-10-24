@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-23",
+  "runtime": "0.40.9-laqmwe",
+  "ollama_source": "v0.40.9",
+  "llama_cpp_source": "b11803",
+  "model_id": "8c1f96021186",
+  "model": {
+    "tensors": 427,
+    "tensor_sha256": "e0a8f44802f509def0228f1fcd118e7d55fd26ecf1e625957bf9fc5fd4b91687",
+    "blob_sha256": "fe55bd8f6f8f2dcc3c4e77bbcc68ed4ff75a3efdf9fb459d607f2d4daf447ed2"
+  },
+  "projector": {
+    "tensors": 334,
+    "tensor_sha256": "bc979d910f6776f1fece8d9f3ac1f5e8aa26b5c2fd4cc89e4ad3e572ee7f379e",
+    "blob_sha256": "17417fdcbe0d66e3a6b13728548b42d84ad0d9dabf7dc34c4b79a888f1d8022e"
+  },
+  "tensor_bytes_verified_unchanged": true,
+  "tokenizer_and_chat_template_verified_unchanged": true,
+  "upstream_license_preserved": true,
+  "native_cli_api_processes_and_loader_logs_verified": true,
+  "text_vision_and_openai_responses_match_stock": true,
+  "test_responses": {"text": "42", "vision": "Red", "openai": "{\"ok\":true}"},
+  "gpt_oss_inference_verified": true,
+  "renderer_and_parser_upstream_tests_passed": true,
+  "rewritten_logs": 29,
+  "renamed_run_directories": 9,
+  "backup": "/blue/woodard/cjiang2/archive/2026-10-23-laqmwe-migration",
+  "raw_weight_bytes_can_still_match_original_name": true,
+  "original_scientific_results_preserved": true,
+  "agent_experiments_rerun": false
+}

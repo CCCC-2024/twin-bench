@@ -9,6 +9,7 @@ not what the event would cost in the real city. Events A and B change the best s
 so the right answer there is close to the rule's.
 With --check the request also asks the agent to run the event on the what-if first; its rows are named MODEL+check.
 Writes results/new_conditions.json, adding to it model by model.
+The console summary covers only the models requested in this run.
 
 Usage: python twins/bikeshare/scripts/new_conditions.py MODEL [MODEL ...] [--url URL] [--turns N]
 """
@@ -78,7 +79,7 @@ print(f"{'event':<6}{'policy':<14}{'start (median)':>15}{'above best / night':>2
       f"{'ran the event':>15}")
 for key in EVENTS:
     rows = [d[key] for d in res["days"].values()]
-    for p in ["rule", *res["models"]]:
+    for p in ["rule", *(n + "+check" if args.check else n for n in args.models)]:
         chose = [r for r in rows if r[p]["expected"] is not None]
         above = np.mean([r[p]["expected"] - r["best"]["expected"] for r in chose]) if chose else np.nan
         ran = "" if p == "rule" else sum(any(w.get("rent_factor", 1) != 1 for w in r[p]["asked"]) for r in rows)

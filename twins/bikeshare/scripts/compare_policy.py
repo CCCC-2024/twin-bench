@@ -11,6 +11,7 @@ above them measures its search. The replay also counts the twin's forecast error
 rates are about twice the demand (README, Notes), and a fixed start can lose fewer than the rule.
 The models are served with the OpenAI chat API, by default Ollama's (--url http://localhost:1234/v1 for LM Studio);
 results/compare_policy.json keeps every policy run so far; a run adds or replaces the rule and the models named.
+The console summary covers only the policies requested in this run.
 
 Usage: python twins/bikeshare/scripts/compare_policy.py MODEL [MODEL ...] [--url URL]
 """
@@ -70,7 +71,7 @@ for name, policy in policies.items():
     json.dump(res, open(out, "w"), indent=0)                        # after each policy: a slow run keeps what it has
 
 days = list(res["days"].values())
-names = ["rule", *res["models"]]
+names = ["rule", *args.models]
 lost = {p: np.array([d[p]["lost_rent"] + d[p]["lost_return"] for d in days]) for p in names}
 print(f"{'policy':<20}{'start (median)':>16}{'expects':>9}{'lost/day':>10}{'no truck':>10}{'what-ifs/night':>16}")
 for p in names:
@@ -80,7 +81,7 @@ for p in names:
     print(f"{p:<20}{np.median([r['start'] for r in rows]):>16.0f}{np.mean(expected) if expected else np.nan:>9.1f}"
           f"{lost[p].mean():>10.2f}{len(rows) - len(expected):>10}{asked:>16.1f}")
 print("\nagainst the rule, 61 days: paired daily difference in lost rentals + returns (mean +/- standard error)")
-for p in res["models"]:
+for p in args.models:
     d = lost[p] - lost["rule"]
     same = sum(row[p]["start"] == row["rule"]["start"] for row in days)
     above = [row[p]["expected"] - row["rule"]["expected"] for row in days if row[p]["expected"] is not None]

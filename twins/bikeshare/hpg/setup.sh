@@ -15,8 +15,10 @@ twins/bikeshare/fetch_upstream.sh
 [ -d $ENV ] || conda create -y -p $ENV python=3.11
 $ENV/bin/pip install -e ".[twins,dev]"     # the agent needs no more than this; the RNN tests skip without torch
 
-# Ollama, installed without root
-curl -fsSL https://ollama.com/download/ollama-linux-amd64.tar.zst | zstd -d | tar x -C $BASE/ollama
+# Reuse the installed runtime: local models may depend on a custom architecture.
+if [ ! -x "$BASE/ollama/bin/ollama" ]; then
+  curl -fsSL https://ollama.com/download/ollama-linux-amd64.tar.zst | zstd -d | tar x -C "$BASE/ollama"
+fi
 $BASE/ollama/bin/ollama --version || true  # "could not connect" is fine here: the server starts in run_agents.sh
 $ENV/bin/python -m pytest -q tests/test_dtcore.py tests/test_bikeshare.py
 echo "ready: env $ENV, ollama $BASE/ollama"

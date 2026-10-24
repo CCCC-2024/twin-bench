@@ -22,10 +22,11 @@ shows whether the group has GPUs).
 3. On that node, from the repository root:
    ```
    export GROUP=<group>
-   bash twins/bikeshare/hpg/run_agents.sh new_conditions.py qwen3.5:9b --reasoning none --check
+   bash twins/bikeshare/hpg/run_agents.sh new_conditions.py laqmwe --reasoning none --check
    bash twins/bikeshare/hpg/run_agents.sh new_conditions.py gpt-oss:20b --reasoning low --check
    ```
-   The first run of a model downloads it into `/blue/<group>/$USER/ollama/models`. Results are written to
+   Installed models are reused. A missing registry model is downloaded into `/blue/<group>/$USER/ollama/models`;
+   the local alias `laqmwe` must already exist and is never pulled from the registry. Results are written to
    `twins/bikeshare/results/` in the clone; commit them from there or copy them back.
 
 Speed: Ollama starts about as many threads as the node has cores, far more than a job gets, and the GPU then mostly
@@ -33,4 +34,9 @@ waits. Give each model two threads once (same replies, about ten times faster), 
 ```
 printf 'FROM gpt-oss:20b\nPARAMETER num_thread 2\n' > Modelfile && ollama create gpt-oss:20b -f Modelfile
 ```
-(the same for `qwen3.5:9b`, with a server running).
+(the same for the installed alias `laqmwe`, with a server running).
+
+`laqmwe` is the local deployment name for `qwen3.5:9b`; published results retain the original model name. The custom
+deployment also uses `laqmwe` for its architecture, tokenizer selector, renderer and parser. It requires the matching
+custom Ollama runtime; stock Ollama cannot load that architecture. See [the build and verification notes](laqmwe.md).
+The model weights, vocabulary, chat template and upstream license are preserved. Naming does not change provenance.
