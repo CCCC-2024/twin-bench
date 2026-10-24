@@ -69,6 +69,13 @@ A twin's estimator, forecaster or policy is a part (`docs/architecture.md`). Whe
 - A policy, `decide(twin) -> action`, is asked only when the twin decides: the twin keeps when and whether, the policy
   chooses what. The LLM agent (`dtcore.agent`) works with any twin that writes `brief()` and `whatif(**scenario)`; to
   make it a policy, the twin wraps it with its request and choices (bike share: `AgentPolicy` in `twin.py`).
+- Text sent to a language model is a constant named `<PURPOSE>_PROMPT` (as LlamaIndex names its prompts). The twin's
+  own prompts are in `twin.py`, next to `brief`, and scripts and the page use them as they are (bike share:
+  `NIGHTLY_PROMPT`; `EXTRACT_EVENT_PROMPT`); wording only one experiment adds stays in its script (`CHECK_PROMPT` in
+  `new_conditions.py`); the agent's own system message is `dtcore.agent.SYSTEM_PROMPT`.
+- Getting a twin's what-if inputs out of words is called extraction (LangChain's term: structured data from
+  unstructured text): the model extracts the inputs, the twin computes every choice (bike share:
+  `EXTRACT_EVENT_PROMPT`). Names use extract / extraction / inputs, not translate.
 - A part gets data only through the twin's `update`, in time order, so it cannot use what the twin has not yet seen.
   Anything else it reads is an argument too, with its assumption stated (bike share: the weather, a perfect forecast).
 - A part with one implementation stays inside the twin, unless something else must use the same object (uav: the
@@ -130,6 +137,9 @@ web/checks/check_<name>.js   compares the page's JS with the Python reference
 ```
 
 Generated files are never edited by hand: change the source and regenerate.
+A request the page sends to a language model is exported from Python with the twin's data (bike share:
+`twin.EXTRACT_EVENT_PROMPT` in `bikeshare_events.js`), never written in JavaScript. The page sends it only when opened from this
+computer (`http://127.0.0.1`), to a model server on the same computer; the published page shows recorded runs only.
 The Pages workflow publishes `index.html`, `*_core.js` and the committed data files only.
 
 ## 6. Never in the repository

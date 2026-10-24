@@ -50,7 +50,8 @@ no valid choice the action has no `set_bikes` and the reason says why: no truck 
 ## Files
 - `__init__.py`: the public names: `StationTwin`, its rate models `HistoricalRates` and `RNNRates`, its policies
   `RulePolicy` and `AgentPolicy`, `ReplayStation`, `SimStation`, `experiment`.
-- `twin.py`: `StationTwin` with update, predict / what-if and decide, and `brief` / `whatif` for the LLM agent; it
+- `twin.py`: `StationTwin` with update, predict / what-if and decide, `brief` / `whatif` for the LLM agent, and the
+  prompts sent to a model (`NIGHTLY_PROMPT`; `EXTRACT_EVENT_PROMPT`, extraction only, sent by the page); it
   takes its rate model and its policy as arguments: `RulePolicy` (the paper's decision, the default) or `AgentPolicy`
   (the LLM agent of `dtcore.agent`).
 - `rates.py`: rate models, what the twin knows about demand: `HistoricalRates` (Gamma posterior per hour and day
@@ -65,7 +66,8 @@ no valid choice the action has no `set_bikes` and the reason says why: no truck 
   `scripts/compare_policy.py`: the twin with the rule and with the LLM agent on the test days (needs a model
   server); `scripts/new_conditions.py`: the agent told of an event the data never showed.
 - `hpg/`: the agent experiments on a Slurm cluster's GPU (HiPerGator example; untested there so far).
-- `scripts/export_web.py` writes the page data (`web/bikeshare_model.js`, and the local-only `web/bikeshare_replay.js`) and
+- `scripts/export_web.py` writes the page data (`web/bikeshare_model.js`, `web/bikeshare_events.js`, and the local-only
+  `web/bikeshare_replay.js`) and
   the reference run `results/ref_web_bikeshare.json` that `web/checks/check_bikeshare.js` replays.
 - `scripts/crosscheck_upstream.py` runs the authors' decision code on the same inputs and saves its answers in
   `results/ref_upstream.json`, which the tests compare against.

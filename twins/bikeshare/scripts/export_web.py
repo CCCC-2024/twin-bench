@@ -7,6 +7,11 @@ web/bikeshare_replay.js (local only, git-ignored): the recorded rentals/returns 
     with the rnn extra, what the twin with the VP-RNN as its rate model forecasts after each of those hours (the page
     reads it with PrecomputedRates). Citi Bike data may not be redistributed as a stand-alone dataset, so this file is
     never committed or published.
+web/bikeshare_events.js (published): for each night of scripts/new_conditions.py, the twin's rental and return rates
+    for the next day as it forecast them at midnight, its brief() then, and the recorded agent runs
+    (results/new_conditions.json); the page draws, from these rates, what each start would lose with an event and with
+    the inputs the agent extracted from it. Opened locally, the page can also ask a model served on the same computer
+    to extract them from an event typed in words: it sends twin.EXTRACT_EVENT_PROMPT and the night's brief.
 results/ref_web_bikeshare.json: a simulated run on dtcore (3 days from 1 Nov; demand x1.5 from hour 30; a truck sets
     5 bikes before hour 44) with every simulated event, the twin's estimates and decisions, forecasts and what-ifs at
     a few hours, and model-only cases. The check feeds the same events to the page's code and compares.
@@ -22,6 +27,7 @@ import numpy as np
 
 from dtcore import Recorder, run
 from twins.bikeshare import ReplayStation, SimStation, StationTwin, data, model
+from twins.bikeshare.twin import EXTRACT_EVENT_PROMPT
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT.parents[1] / "web"
@@ -144,8 +150,29 @@ for _ in range(6):
                       lost_rent=f["lost_rent"][:, 0].tolist(), lost_return=f["lost_return"][:, 0].tolist()))
 ref = dict(day0=DAY0, start_bikes=s0, surge_at=SURGE_AT, truck_at=TRUCK_AT, changes=changes, rows=rows, preds=preds, cases=cases)
 json.dump(ref, open(ROOT / "results" / "ref_web_bikeshare.json", "w"))
+
+# 4. the agent runs on events the data never showed: the same replay as scripts/new_conditions.py, keeping the rates
+nc = json.loads((ROOT / "results" / "new_conditions.json").read_text())
+EVENTS = {"A": (3, 1, 7, 10), "B": (2, 1, 6, 9), "C": (4, 1, 21, 23)}   # as in new_conditions.py: factors, from, to hour
+ahead, brief = {}, {}
+
+
+def at_midnight(k, source, twin):
+    day = str(JAN1 + datetime.timedelta(days=k // 24))
+    if k % 24 == 0 and day in nc["days"]:
+        ahead[day], brief[day] = [v.tolist() for v in twin.rates.ahead(24)], twin.brief()
+run(ReplayStation(C, ev, JAN1, 365), StationTwin(C), max_steps=365 * 24 - 1, before_step=at_midnight)
+for day, (lp, lr) in ahead.items():                         # the rates give back every cost the experiment saved
+    for key, (fp, fr, a, b) in EVENTS.items():
+        w = (np.arange(24) >= a) & (np.arange(24) < b)
+        cost, row = model.udf(np.where(w, np.array(lp) * fp, lp), np.where(w, np.array(lr) * fr, lr), C), nc["days"][day][key]
+        assert int(np.argmin(cost)) == row["best"]["start"] and model.best_start(np.array(lp), np.array(lr), C)[0] == row["rule"]["start"]
+        assert all(abs(cost[r["start"]] - r["expected"]) < 1e-9 for r in row.values() if r["start"] is not None)
+events = dict(events={k: dict(text=nc["events"][k], truth=v) for k, v in EVENTS.items()}, agents=list(nc["models"]), extract_prompt=EXTRACT_EVENT_PROMPT,
+              nights=[dict(day=day, lp=ahead[day][0], lr=ahead[day][1], brief=brief[day], **nc["days"][day]) for day in sorted(nc["days"])])
+(WEB / "bikeshare_events.js").write_text("window.BIKESHARE_EVENTS = " + json.dumps(events, separators=(",", ":")) + ";\n")
 lost = sum(r["lost_rent"] + r["lost_return"] for r in rows)
-print(f"wrote {WEB / 'bikeshare_model.js'}, {WEB / 'bikeshare_replay.js'} (local only)")
+print(f"wrote {WEB / 'bikeshare_model.js'}, {WEB / 'bikeshare_events.js'}, {WEB / 'bikeshare_replay.js'} (local only)")
 print(f"twin learned on {base['weekday'][8][0]} weekdays + {base['weekend'][8][0]} weekend days; decision for 1 Nov: {s0} bikes")
 print(f"reference: {N} simulated hours, {lost} lost rentals + returns, nightly decisions "
       f"{[r['set_bikes'] for r in rows if r['set_bikes'] is not None]}")

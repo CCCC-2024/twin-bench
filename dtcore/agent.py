@@ -16,7 +16,7 @@ import json
 import urllib.error
 import urllib.request
 
-PROTOCOL = """You work with a digital twin of a real system: a model kept in step with the system's data that can \
+SYSTEM_PROMPT = """You work with a digital twin of a real system: a model kept in step with the system's data that can \
 simulate it. Its what-if takes a scenario and returns what the twin predicts. Reply with one JSON object and nothing \
 else, either
   {"whatif": {<scenario>}}   to run the what-if, or
@@ -30,7 +30,7 @@ def ask(llm, twin, request, choices=None, turns=10):
     allowed = None if choices is None else {_key(c) for c in choices}
     keys = set().union(*choices) if choices else set()
     choose = ', "choice": {<the scenario you choose>}' if choices else ""
-    messages = [dict(role="system", content=PROTOCOL % (choose, turns, twin.brief())),
+    messages = [dict(role="system", content=SYSTEM_PROMPT % (choose, turns, twin.brief())),
                 dict(role="user", content=request)]
     asked = []
     for _ in range(turns):

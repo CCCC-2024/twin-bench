@@ -22,8 +22,14 @@ from dtcore import Twin, agent
 from . import model
 from .rates import HistoricalRates
 
-NIGHTLY = ("Tonight a truck sets the number of bikes the station starts tomorrow with. Choose it so that tomorrow has "
-           "the fewest expected lost rentals plus returns.")
+NIGHTLY_PROMPT = ("Tonight a truck sets the number of bikes the station starts tomorrow with. Choose it so that tomorrow has "
+                  "the fewest expected lost rentals plus returns.")
+# extraction: the model only extracts whatif's demand inputs from an event in words; the twin then compares every start
+# Sent as the system message, followed by the twin's brief(); the page sends it too (web/bikeshare_events.js)
+EXTRACT_EVENT_PROMPT = ("Extract, from the event the user describes, the what-if's demand inputs for tomorrow. Reply with "
+                        'one JSON object and nothing else: {"rent_factor": x, "return_factor": y, "from_hour": a, "to_hour": '
+                        'b} (rentals and returns are x and y times the usual from clock hour a up to, not including, hour b), '
+                        'or {"cannot": "<why>"} if the event cannot be written with these inputs.\n\nThe twin: ')
 
 
 class RulePolicy:
@@ -40,7 +46,7 @@ class AgentPolicy:
     def decide(self, twin):
         """The agent's choice, with the scenarios it ran and its reason. With no valid choice the action records why
         and has no set_bikes: no truck goes out."""
-        a = agent.ask(self.llm, twin, NIGHTLY, [dict(set_bikes=s) for s in range(twin.C + 1)], self.turns)
+        a = agent.ask(self.llm, twin, NIGHTLY_PROMPT, [dict(set_bikes=s) for s in range(twin.C + 1)], self.turns)
         if a["choice"] is None:
             return dict(asked=a["asked"], reason=a["error"])
         s = a["choice"]["set_bikes"]

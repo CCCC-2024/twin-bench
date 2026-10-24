@@ -95,6 +95,10 @@
     for (let h = 0; h < lp.length; h++) for (let s = 0; s <= C; s++) { u[s] += f.lost_rent[h][s]; v[s] += f.lost_return[h][s]; }
     return u.map((x, s) => x + v[s]);
   }
+  function withEvent(lp, lr, C, [fp, fr, a, b]) {     // udf when rentals and returns are fp and fr times the usual in hours a..b-1
+    const w = (v, f) => v.map((x, h) => (h >= a && h < b ? x * f : x));
+    return udf(w(lp, fp), w(lr, fr), C);
+  }
   function bestStart(lp, lr, C) { const f = udf(lp, lr, C); let s = 0; for (let i = 1; i <= C; i++) if (f[i] < f[s]) s = i; return [s, f[s]]; }
   function replay(C, start, changes) {
     let bikes = start, lp = 0, lr = 0;
@@ -198,6 +202,6 @@
     advance() { this.k += 1; }
   }
 
-  const BIKE = { expm, generator, hour, forecast, udf, bestStart, replay, weekday, Twin, HistoricalRates, PrecomputedRates, Station };
+  const BIKE = { expm, generator, hour, forecast, udf, withEvent, bestStart, replay, weekday, Twin, HistoricalRates, PrecomputedRates, Station };
   if (typeof module !== 'undefined' && module.exports) module.exports = BIKE; else root.BIKE = BIKE;
 })(typeof self !== 'undefined' ? self : this);

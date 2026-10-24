@@ -25,6 +25,14 @@ versions follow [Semantic Versioning](https://semver.org/).
   and `results/new_conditions.json` now come from there, with Qwen asked to simulate first (`--check`) added.
 - dtcore: `agent.ask` takes a choice that also states the conditions the model assumed as that action;
   `chat_model(..., reasoning=)` sends `reasoning_effort`.
+- web: bike share shows the LLM agent's recorded runs on the three events (`web/bikeshare_events.js`, written by
+  `export_web.py`): the event as told, the what-ifs the agent ran and its answer, and what every start would lose with
+  the event as written. The what-if inputs the agent extracted from the event can be edited to see what the twin then
+  chooses. Opened from this computer, the panel also sends an event typed in words to a model served there, which only
+  extracts the inputs (`EXTRACT_EVENT_PROMPT` in `twin.py`); the twin computes every start.
+- Prompts sent to a model are named `<PURPOSE>_PROMPT`: bikeshare `NIGHTLY` is now `NIGHTLY_PROMPT`,
+  `new_conditions.py`'s `CHECK` is `CHECK_PROMPT`, and `dtcore.agent`'s `PROTOCOL` is `SYSTEM_PROMPT`. The shell shows this panel for any twin
+  with `renderAgent`; `check_bikeshare.js` checks every cost the experiment saved.
 
 ## [0.4.0] - 2026-10-22
 

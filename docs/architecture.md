@@ -55,7 +55,10 @@ one scenario, reduced to a few named numbers) as often as its turns allow, and a
 with `choices` the scenarios it may pick, or a question, such as how to adapt to a condition the data never showed.
 `llm(messages) -> reply` is any language model; `chat_model(name, url)` reaches one served with the OpenAI chat API
 (Ollama, LM Studio). A twin lets the agent work with it by writing `brief` and `whatif`; the agent itself does not
-change. It is in the skeleton because it uses only the Twin interface.
+change. It is in the skeleton because it uses only the Twin interface. A model can also be asked only to extract the
+what-if's inputs from an event in words, with the twin then computing every choice (bike share: `EXTRACT_EVENT_PROMPT`,
+sent by the page): in `scripts/new_conditions.py` the agent turned events into the right inputs but rarely compared
+choices.
 
 Deliberately *not* in the skeleton (one twin uses each so far): MQTT transport (battery live demo), specific filters,
 each twin's page module.

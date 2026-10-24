@@ -78,8 +78,22 @@ if (R.rnn)                // the VP-RNN's weather input ends with 2018: its repl
   replays.push(recordedDays('rnn', new B.PrecomputedRates(R.rnn.table), R.rnn.start_bikes, days.length - 1));
 else console.log('bikeshare_replay.js has no VP-RNN rates (export_web.py ran without the rnn extra): rnn not checked');
 
+// the agent runs on events (bikeshare_events.js): with each event, the page's costs give back every cost the experiment
+// saved (results/new_conditions.json), and without it the rule's start
+global.window = {};
+eval(fs.readFileSync(path.join(webDir, 'bikeshare_events.js'), 'utf8'));
+const E = window.BIKESHARE_EVENTS;
+let nEv = 0;
+for (const n of E.nights) for (const [key, ev] of Object.entries(E.events)) {
+  const u = B.withEvent(n.lp, n.lr, C, ev.truth), row = n[key], best = u.indexOf(Math.min(...u));
+  if (best !== row.best.start) bad(`${n.day} ${key}: best start ${best} vs ${row.best.start}`);
+  if (B.bestStart(n.lp, n.lr, C)[0] !== row.rule.start) bad(`${n.day} ${key}: rule start differs`);
+  for (const p of ['best', 'rule', ...E.agents]) if (row[p].start !== null) d(u[row[p].start], row[p].expected);
+  nEv++;
+}
+
 const nDec = ref.rows.filter(r => r.set_bikes !== null).length;
 console.log(`${ref.cases.length} model cases (ties ${ties}), ${ref.rows.length} simulated hours, ${nDec} nightly decisions, ${ref.preds.length} forecasts, ` +
-            `recorded: ${replays.join(', ')}: exact mismatches ${fails}; max |difference| ${diff.toExponential(2)}` +
+            `recorded: ${replays.join(', ')}, ${nEv} event cases: exact mismatches ${fails}; max |difference| ${diff.toExponential(2)}` +
             (R.rnn ? `; VP-RNN expected cost max relative difference ${rnnRel.toExponential(2)}` : ''));
 console.log(fails === 0 && diff < 1e-9 && rnnRel < 1e-5 ? 'BIKESHARE WEB CHECK OK' : 'BIKESHARE WEB CHECK FAILED');

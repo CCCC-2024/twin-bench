@@ -134,6 +134,23 @@ button, input, select { font: inherit; color: inherit; }
 .skeleton code { font-family: var(--f-mono); font-size: 12px; padding: 1px 6px; border-radius: 5px; background: var(--twin-soft); color: var(--twin); }
 .skeleton code.no { background: transparent; color: var(--muted); text-decoration: line-through; border: 1px dashed var(--line); }
 
+.agentp { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.agentp .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 14px 18px; align-items: start; }
+@media (max-width: 980px) { .agentp .cols { grid-template-columns: minmax(0, 1fr); } }
+.agentp .stack { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.agentp .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 13px; }
+.agentp .meta { color: var(--muted); font-size: 13px; }
+.agentp .seg { flex-wrap: wrap; }
+.agentp select, .agentp input[type="number"] { border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; background: var(--panel); }
+.agentp input[type="number"] { width: 6ch; }
+.agentp textarea { width: 100%; min-height: 64px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--panel); resize: vertical; }
+.agentp pre { margin: 0; padding: 8px 10px; background: var(--twin-soft); border-radius: 8px; font-size: 12px; white-space: pre-wrap; }
+.agentp blockquote { margin: 0; padding: 8px 10px; border-left: 3px solid var(--line); font-size: 13px; color: var(--muted); max-height: 110px; overflow: auto; }
+.agentp ol { margin: 0; padding-left: 20px; font-size: 13px; }
+.agentp .tr { border: 1px solid var(--twin); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;
+              background: color-mix(in srgb, var(--twin-soft) 55%, var(--panel)); }
+.agentp .chart { height: 240px; }
+.agentp .note { font-size: 12px; color: var(--muted); }
 .lower { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
 @media (max-width: 980px) { .lower { grid-template-columns: minmax(0, 1fr); } }
 .log { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
@@ -208,6 +225,8 @@ button, input, select { font: inherit; color: inherit; }
     </aside>
   </div>
 
+  <section class="card agentp" id="agentp" aria-label="LLM agent" hidden></section>
+
   <div class="lower">
     <section class="card log"><span class="label" id="logTitle">Event log</span><ol id="log"></ol></section>
     <section class="card about"><span class="label" id="aboutTitle">What is real here</span><p id="aboutText"></p><p id="aboutLinks"></p></section>
@@ -227,6 +246,7 @@ if (location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.
 <script src="uav_model.js"></script>
 <script src="uav_core.js"></script>
 <script src="bikeshare_model.js"></script>
+<script src="bikeshare_events.js"></script>
 <script src="bikeshare_core.js"></script>
 <script>
 (function () {
@@ -1110,6 +1130,24 @@ const Bike = (function () {
         rnnStart: s => `The twin’s demand forecast is the paper’s trained VP-RNN, run in Python for these days on what was known each hour. It set the station to ${s} bikes for 1 Nov.`,
         rnnEnd: 'End of the VP-RNN’s forecasts: the weather it reads ends with 2018, so the replay stops after the decision for 31 Dec.' },
       forecastBy: 'Demand forecast', rateModel: { historical: 'Historical average', rnn: 'VP-RNN (paper’s network)' }, rnnSays: 'VP-RNN forecast',
+      ag: { title: 'LLM agent · an event described in words', event: 'Event', night: 'Night before', agent: 'Agent',
+        ev: { A: 'Subway closed 7–10 · rentals ×3', B: 'Charity ride 6–9 · rentals ×2', C: 'Concert 21–23 · rentals ×4' },
+        models: { 'qwen3.5:9b': 'Qwen3.5-9B', 'qwen3.5:9b+check': 'Qwen3.5-9B · told to simulate first', 'gpt-oss:20b': 'gpt-oss-20b', 'gpt-oss:20b+check': 'gpt-oss-20b · told to simulate first' },
+        told: 'Told to the agent at 23:00 (the rule is not told):', ran: n => n ? `What-ifs the agent ran (${n}), with the twin’s answer:` : 'The agent ran no what-if.',
+        said: 'The agent’s answer:', none: 'no answer within the reply limit',
+        trTitle: 'What-if inputs extracted from the event', trNote: 'Filled with the agent’s first what-if that included the event (none: no event). Change it to see what the twin then chooses.',
+        rent: 'rentals ×', ret: 'returns ×', from: 'from', to: 'to', agentInputs: 'Agent’s inputs', written: 'As written',
+        noEvent: 'no event', mHead: ['', 'bikes', 'expected lost', 'above best'],
+        rows: { rule: 'Rule (not told)', agent: 'Agent chooses', twin: 'Agent extracts, twin computes', best: 'Best (event as written)' },
+        lgTruth: 'expected lost tomorrow, event as written', xAxis: 'bikes at the start of tomorrow',
+        note: 'Recorded runs (scripts/new_conditions.py); the page does not call a language model. Costs are the twin’s forecast of tomorrow’s lost rentals + returns with the event as written, not the real city.',
+        live: 'Type an event (live)', liveText: 'Event, in words, sent to a model on this computer:', model: 'Model', server: 'Server',
+        go: 'Extract with the model', busy: 'Waiting for the model…', replyIn: v => `Model reply in ${v} s:`, modelInputs: 'Model’s inputs',
+        noServer: u => `No model server at ${u}. Start Ollama, and open this page at http://127.0.0.1 (python -m http.server in web/), not as a file.`,
+        serverErr: (c, m) => `The server answered ${c}: ${m}`, cannot: w => `The model says the event cannot be written as what-if inputs: ${w}`,
+        notUnderstood: 'Reply not understood, or inputs out of range.', keepsUsual: 'The twin keeps its usual forecast.',
+        lgLive: 'expected lost tomorrow, with the extracted inputs', liveRows: { rule: 'Rule (not told)', twin: 'Model extracts, twin computes' },
+        liveNote: 'Live: the model only extracts what-if inputs from the words; the twin computes every start and picks the fewest lost. This step has not been run as an experiment yet. Costs are the twin’s forecast, not the real city.' },
       rnnOff: 'VP-RNN runs only on the recorded days in the local copy: its forecasts for those days are computed in Python (export_web.py with the rnn extra).',
       about: 'The queueing model and the nightly decision reproduce Gammelli et al. 2022 (the station model of Raviv & Kolka 2013) on Citi Bike station 426: 365 of 366 decisions match the authors’ code, the other is a numerical tie. The twin learned its rental and return rates from the real 2018 record up to 31 Oct; this page holds only their totals per hour and day type. In “Simulated station” the demand is the Nov–Dec 2018 average, about half of what the twin learned (its all-history average includes busier months), so the twin over-predicts lost rentals and returns: one of the problems we record. “Recorded days” replays the real rentals and returns (local copy only): demand is fixed by the record, the number of bikes follows the twin and your trucks. There the demand forecast can be switched to the paper’s trained VP-RNN, run in Python for those days: knowing only what is known each night, it forecasts better than the historical average, yet its nightly decisions lose about as many rentals and returns (see the bike-share README). The page’s numbers match the Python code to about 1e-11.',
       els: [['S', 'Physical state', 'Bikes in the station (0–30). The true hourly demand for rentals and returns is not observed.'],
@@ -1141,6 +1179,24 @@ const Bike = (function () {
         rnnStart: s => `孪生的需求预测改用论文训练好的 VP-RNN（用 Python 针对这些天预先算好，每小时只用当时已知的数据）。它把 11 月 1 日的车数定为 ${s} 辆。`,
         rnnEnd: 'VP-RNN 的预测到此为止：它读的天气数据只到 2018 年底，所以回放在定好 12 月 31 日的车数后结束。' },
       forecastBy: '需求预测', rateModel: { historical: '历史平均', rnn: 'VP-RNN（论文的网络）' }, rnnSays: 'VP-RNN 预测',
+      ag: { title: 'LLM agent · 用文字描述的事件', event: '事件', night: '前一晚', agent: 'Agent',
+        ev: { A: '地铁停运 7–10 点 · 借车 ×3', B: '慈善骑行 6–9 点 · 借车 ×2', C: '演唱会 21–23 点 · 借车 ×4' },
+        models: { 'qwen3.5:9b': 'Qwen3.5-9B', 'qwen3.5:9b+check': 'Qwen3.5-9B · 要求先模拟', 'gpt-oss:20b': 'gpt-oss-20b', 'gpt-oss:20b+check': 'gpt-oss-20b · 要求先模拟' },
+        told: '23 点告诉 agent 的话（规则不知道）：', ran: n => n ? `agent 跑过的 what-if（${n} 次）和孪生的回答：` : 'agent 没有跑 what-if。',
+        said: 'agent 的回答：', none: '次数用完，没有答案',
+        trTitle: '从事件提取的 what-if 输入', trNote: '默认填 agent 第一次带事件的 what-if（没有就是“无事件”）。改动它，看孪生会选几辆。',
+        rent: '借车 ×', ret: '还车 ×', from: '从', to: '到', agentInputs: 'agent 提取的输入', written: '按原文',
+        noEvent: '无事件', mHead: ['', '车数', '预计损失', '比最好多'],
+        rows: { rule: '规则（不知道事件）', agent: 'agent 自己选', twin: 'agent 提取，孪生计算', best: '最好（按原文）' },
+        lgTruth: '明天预计损失（按原文的事件）', xAxis: '明天一早的车数',
+        note: '录好的运行（scripts/new_conditions.py），页面不调用语言模型。损失是孪生按原文事件预测的明天借不到 + 还不了的人数，不是真实城市里的数。',
+        live: '现场输入事件', liveText: '用文字描述事件（发给这台电脑上的模型）：', model: '模型', server: '服务器',
+        go: '让模型提取', busy: '等待模型回复…', replyIn: v => `模型回复（${v} 秒）：`, modelInputs: '模型提取的输入',
+        noServer: u => `连不上 ${u} 的模型服务器。请先启动 Ollama，并用 http://127.0.0.1 打开本页（在 web/ 下运行 python -m http.server），不要直接打开文件。`,
+        serverErr: (c, m) => `服务器返回 ${c}：${m}`, cannot: w => `模型说这个事件写不成 what-if 的输入：${w}`,
+        notUnderstood: '回复看不懂，或输入超出范围。', keepsUsual: '孪生按平常的预测计算。',
+        lgLive: '明天预计损失（按提取的输入）', liveRows: { rule: '规则（不知道事件）', twin: '模型提取，孪生计算' },
+        liveNote: '现场：模型只从文字里提取 what-if 的输入；孪生把每个车数都算一遍，选损失最少的。这一步还没有做过实验。损失是孪生的预测，不是真实城市里的数。' },
       rnnOff: 'VP-RNN 只能用在本地版本的真实记录上：这些天的预测是用 Python 预先算好的（export_web.py，需要 rnn 依赖）。',
       about: '排队模型和每晚的决策复现 Gammelli 等 2022（站点模型来自 Raviv & Kolka 2013），用的是 Citi Bike 426 号站：366 个决定里 365 个和作者代码相同，另 1 个是数值上的平手。孪生的借车、还车速度是从 2018 年到 10 月 31 日的真实记录学来的；页面里只有按小时和日类型汇总的总数。“模拟的站点”里，需求取 2018 年 11–12 月的平均，大约是孪生学到的一半（全部历史平均包含更忙的月份），所以孪生会高估借不到和还不了的人数：这是记录下来的问题之一。“真实记录”回放真实的借车和还车（仅本地版本）：需求由记录决定，站里的车数跟着孪生和你派的车走。这时可以把需求预测换成论文训练好的 VP-RNN（用 Python 针对这些天预先算好）：只用每晚已知的数据时，它预测得比历史平均准，但每晚的决定损失的人数差不多（见单车 README）。页面的数字和 Python 相差约 1e-11。',
       els: [['S', '物理状态', '站里的车数（0–30）。每小时真实的借车、还车需求看不到。'],
@@ -1283,6 +1339,148 @@ const Bike = (function () {
              SH.cmdPulse = 1; addLog('cmd', t('ev').truck(S.tryS, S.tryS - before)); forecast(); },
     note: () => t('wiNote')
   };
+  // ---------- the LLM agent on events described in words (scripts/new_conditions.py) ----------
+  // Recorded runs: what the agent was told, which what-ifs it ran and what it answered, scored on the event as written.
+  // Live (page opened from this computer): a model on this computer only extracts whatif's inputs from typed words
+  // (twin.EXTRACT_EVENT_PROMPT). Either way the twin computes every start from those inputs, which a person can edit.
+  const EV = window.BIKESHARE_EVENTS || null;
+  const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);   // a model server can only be on this computer
+  const USUAL = [1, 1, 0, 24];                                        // whatif's inputs on a usual day
+  const AG = { ev: 'C', night: 0, model: EV ? EV.agents[0] : null, inputs: null, ro: null };
+  const LIVE = { text: EV ? EV.events.A.text : '', model: 'qwen3.5:9b', url: 'http://127.0.0.1:11434/v1', reasoning: 'none',
+                 busy: false, reply: null, secs: null, msg: null, inputs: null };
+  const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const asInputs = w => w ? [w.rent_factor ?? 1, w.return_factor ?? 1, w.from_hour ?? 0, w.to_hour ?? 24] : USUAL;
+  const hasEvent = w => (w.rent_factor ?? 1) !== 1 || (w.return_factor ?? 1) !== 1;
+  const hh = v => String(v).padStart(2, '0') + ':00';
+  const opt = (v, lab, cur) => `<option value="${v}" ${String(v) === String(cur) ? 'selected' : ''}>${lab}</option>`;
+  function inputsText([fp, fr, a, b]) {
+    const x = t('ag'), parts = [fp !== 1 ? x.rent + fp : '', fr !== 1 ? x.ret + fr : ''].filter(Boolean);
+    return parts.length ? `${parts.join(', ')}, ${hh(a)}–${hh(b)}` : x.noEvent;
+  }
+  function agentState() {              // the chosen night, the costs with the inputs and where each choice falls
+    const n = EV.nights[AG.night], live = AG.ev === 'live', row = live ? null : n[AG.ev], r = live ? null : row[AG.model];
+    if (!AG.inputs) AG.inputs = live ? (LIVE.inputs || USUAL) : asInputs(r.asked.find(hasEvent));
+    const cost = v => BIKE.withEvent(n.lp, n.lr, CAP, v), inC = cost(AG.inputs), twin = inC.indexOf(Math.min(...inC));
+    return live
+      ? { n, live, cost, ref: inC, marks: { rule: BIKE.bestStart(n.lp, n.lr, CAP)[0], agent: null, twin, best: null } }
+      : { n, live, r, cost, ref: cost(EV.events[AG.ev].truth), marks: { rule: row.rule.start, agent: r.start, twin, best: row.best.start } };
+  }
+  function choosersHTML(x, m) {
+    const night = d => { const p = new Date(new Date(d + 'T00:00Z') - 864e5); return `${WD[SH.lang][(p.getUTCDay() + 6) % 7]} ${p.getUTCMonth() + 1}/${p.getUTCDate()} 23:00`; };
+    return `<div class="row"><span class="meta">${x.event}</span><span class="seg" id="agEv">` +
+      Object.keys(EV.events).concat(LOCAL ? ['live'] : []).map(k => `<button data-k="${k}" aria-pressed="${k === AG.ev}">${k === 'live' ? x.live : x.ev[k]}</button>`).join('') +
+      `</span></div><div class="row"><span class="meta">${x.night}</span><select id="agNight">${EV.nights.map((d, i) => opt(i, night(d.day), AG.night)).join('')}</select>` +
+      (m.live ? '' : `<span class="meta">${x.agent}</span><select id="agModel">${EV.agents.map(a => opt(a, x.models[a] || a, AG.model)).join('')}</select>`) + '</div>';
+  }
+  function recordedHTML(x, m) {
+    const r = m.r, tries = r.asked.map(w => `<li>${w.set_bikes} ${t('bikes')} · ${inputsText(asInputs(w))} → ${f1(m.cost(asInputs(w))[w.set_bikes])}</li>`);
+    return `<div><span class="meta">${x.told}</span><blockquote>${esc(EV.events[AG.ev].text)}</blockquote></div>` +
+      `<div><span class="meta">${x.ran(r.asked.length)}</span>${tries.length ? '<ol>' + tries.join('') + '</ol>' : ''}</div>` +
+      `<div><span class="meta">${x.said}</span><blockquote>${esc(r.answer)}</blockquote></div>`;
+  }
+  function liveHTML(x) {
+    return `<div><span class="meta">${x.liveText}</span><textarea id="agText">${esc(LIVE.text)}</textarea></div>` +
+      `<div class="row"><label>${x.model} <input id="agLm" value="${esc(LIVE.model)}" style="width:14ch"></label>` +
+      `<label>reasoning <select id="agLr">${['none', 'low', ''].map(v => opt(v, v || 'default', LIVE.reasoning)).join('')}</select></label>` +
+      `<label>${x.server} <input id="agUrl" value="${esc(LIVE.url)}" style="width:24ch"></label></div>` +
+      `<div class="row"><button class="btn primary" id="agGo" ${LIVE.busy ? 'disabled' : ''}>${LIVE.busy ? x.busy : x.go}</button></div>` +
+      (LIVE.reply !== null ? `<div><span class="meta">${x.replyIn(LIVE.secs)}</span><pre>${esc(LIVE.reply || '(empty)')}</pre></div>` : '') +
+      (LIVE.msg ? `<div class="pill bad" style="white-space:normal">${esc(LIVE.msg)}</div>` : '');
+  }
+  function inputsHTML(x, live) {
+    const hours = (lo, hi, cur) => Array.from({ length: hi - lo + 1 }, (_, i) => opt(lo + i, hh(lo + i), cur)).join('');
+    return `<div class="tr"><span class="label" style="color:var(--twin)">${x.trTitle}</span>` +
+      `<div class="row"><label>${x.rent}<input type="number" id="agFp" min="0" step="0.5" value="${AG.inputs[0]}"></label>` +
+      `<label>${x.ret}<input type="number" id="agFr" min="0" step="0.5" value="${AG.inputs[1]}"></label>` +
+      `<label>${x.from} <select id="agA">${hours(0, 23, AG.inputs[2])}</select></label><label>${x.to} <select id="agB">${hours(1, 24, AG.inputs[3])}</select></label></div>` +
+      `<div class="row"><button class="btn" id="agReset">${live ? x.modelInputs : x.agentInputs}</button>${live ? '' : `<button class="btn" id="agWritten">${x.written}</button>`}</div>` +
+      (live ? '' : `<span class="note">${x.trNote}</span>`) + '</div>';
+  }
+  function resultHTML(x, m) {
+    const L = m.live ? x.liveRows : x.rows, base = m.ref[m.marks.best ?? m.marks.twin];
+    const line = ([sym, color, label, s]) => `<span><span style="color:var(--${color})">${sym}</span> ${label}</span>` + (s === null
+      ? `<span class="num">–</span><span class="num">–</span><span class="num">${x.none}</span>`
+      : `<span class="num">${s}</span><span class="num">${f1(m.ref[s])}</span><span class="num">${f1(m.ref[s] - base)}</span>`);
+    const rows = [['○', 'muted', L.rule, m.marks.rule], !m.live && ['✕', 'warn', L.agent, m.marks.agent],
+                  ['◆', 'twin', `<b>${L.twin}</b>`, m.marks.twin], !m.live && ['●', 'ok', L.best, m.marks.best]].filter(Boolean);
+    return `<div class="legend"><span><i style="border-color:var(--ink)"></i>${m.live ? x.lgLive : x.lgTruth}</span></div>` +
+      '<div class="chart"><canvas id="agChart"></canvas></div>' +
+      `<div class="metrics" style="grid-template-columns:auto repeat(3,minmax(0,1fr));margin-top:8px">` +
+      x.mHead.map((h, i) => `<span class="h${i ? ' num' : ''}">${h}</span>`).join('') + rows.map(line).join('') + '</div>';
+  }
+  function renderAgent(el) {
+    const x = t('ag'), m = agentState();
+    el.innerHTML = `<span class="label">${x.title}</span>` + choosersHTML(x, m) +
+      `<div class="cols"><div class="stack">${m.live ? liveHTML(x) : recordedHTML(x, m)}${inputsHTML(x, m.live)}</div>` +
+      `<div style="min-width:0">${resultHTML(x, m)}</div></div><span class="note">${m.live ? x.liveNote : x.note}</span>`;
+    bindAgent(el, m);
+  }
+  function bindAgent(el, m) {
+    const again = () => renderAgent(el), q = s => el.querySelector(s), num = s => Number(q(s).value);
+    el.querySelectorAll('#agEv button').forEach(b => b.onclick = () => { AG.ev = b.dataset.k; AG.inputs = null; again(); });
+    q('#agNight').onchange = e => { AG.night = Number(e.target.value); AG.inputs = null; again(); };
+    el.querySelectorAll('#agFp, #agFr, #agA, #agB').forEach(i => i.onchange = () => {
+      const a = num('#agA'); AG.inputs = [Math.max(0, num('#agFp') || 0), Math.max(0, num('#agFr') || 0), a, Math.max(num('#agB'), a + 1)]; again(); });
+    q('#agReset').onclick = () => { AG.inputs = null; again(); };
+    if (m.live) {
+      q('#agText').oninput = e => { LIVE.text = e.target.value; };
+      q('#agLm').oninput = e => { LIVE.model = e.target.value.trim(); };
+      q('#agLr').onchange = e => { LIVE.reasoning = e.target.value; };
+      q('#agUrl').oninput = e => { LIVE.url = e.target.value.trim(); };
+      q('#agGo').onclick = () => liveExtract(el, m.n);
+    } else {
+      q('#agModel').onchange = e => { AG.model = e.target.value; AG.inputs = null; again(); };
+      q('#agWritten').onclick = () => { AG.inputs = EV.events[AG.ev].truth.slice(); again(); };
+    }
+    const cv = q('#agChart'), draw = () => drawAgent(cv, m.ref, m.marks);
+    if (AG.ro) AG.ro.disconnect(); AG.ro = new ResizeObserver(draw); AG.ro.observe(cv);
+  }
+  // one request to a server with the OpenAI chat API (Ollama): twin.EXTRACT_EVENT_PROMPT + the night's brief(), then the words
+  async function liveExtract(el, n) {
+    const x = t('ag'), body = { model: LIVE.model, temperature: 0, max_tokens: 4096,
+      messages: [{ role: 'system', content: EV.extract_prompt + n.brief }, { role: 'user', content: LIVE.text }] };
+    if (LIVE.reasoning) body.reasoning_effort = LIVE.reasoning;
+    Object.assign(LIVE, { busy: true, reply: null, msg: null }); renderAgent(el);
+    const t0 = performance.now(), done = (inputs, msg) => {
+      Object.assign(LIVE, { busy: false, inputs, msg, secs: ((performance.now() - t0) / 1000).toFixed(1) }); AG.inputs = null; renderAgent(el); };
+    let res;
+    try { res = await fetch(LIVE.url.replace(/\/$/, '') + '/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); }
+    catch (e) { return done(null, x.noServer(LIVE.url)); }
+    if (!res.ok) return done(null, x.serverErr(res.status, (await res.text()).slice(0, 200)));
+    try { LIVE.reply = (await res.json()).choices[0].message.content || ''; } catch (e) { LIVE.reply = ''; }
+    const said = parseExtraction(LIVE.reply);
+    done(said.inputs || USUAL, said.cannot !== undefined ? x.cannot(said.cannot) + ' ' + x.keepsUsual : said.inputs ? null : x.notUnderstood + ' ' + x.keepsUsual);
+  }
+  function parseExtraction(reply) {    // {inputs} or {cannot} or {}; the inputs checked as whatif() in twin.py checks them
+    let said;
+    try { said = JSON.parse(reply.slice(reply.indexOf('{'), reply.lastIndexOf('}') + 1)); } catch (e) { return {}; }
+    if (said && 'cannot' in said) return { cannot: String(said.cannot) };
+    const v = ['rent_factor', 'return_factor', 'from_hour', 'to_hour'].map(k => said && said[k]);
+    const ok = v.slice(0, 2).every(f => typeof f === 'number' && f >= 0) && v.slice(2).every(Number.isInteger) && 0 <= v[2] && v[2] < v[3] && v[3] <= 24;
+    return ok ? { inputs: v } : {};
+  }
+  function drawAgent(cv, ref, mk) {
+    const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1; if (!r.width) return;
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+    const g = cv.getContext('2d'), K = n => css('--' + n); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, r.width, r.height);
+    g.font = '11px ' + css('--f-mono'); g.textBaseline = 'middle';
+    const lo = Math.min(...ref), hi = Math.max(...ref), pad = (hi - lo) * 0.08 || 1;
+    const L = 40, Rm = 10, Top = 8, Bot = 34, W = r.width - L - Rm, H = r.height - Top - Bot;
+    const X = s => L + s / CAP * W, Y = v => Top + (hi + pad - v) / (hi - lo + 2 * pad) * H;
+    g.strokeStyle = K('line'); g.fillStyle = K('muted'); g.lineWidth = 1; g.textAlign = 'right';
+    const stepY = Math.max(1, Math.round((hi - lo + 2 * pad) / 4 / 5) * 5);
+    for (let v = Math.ceil((lo - pad) / stepY) * stepY; v <= hi + pad; v += stepY) { g.beginPath(); g.moveTo(L, Y(v) + .5); g.lineTo(L + W, Y(v) + .5); g.stroke(); g.fillText(String(v), L - 6, Y(v)); }
+    g.textAlign = 'center'; for (let s = 0; s <= CAP; s += 5) g.fillText(String(s), X(s), Top + H + 10);
+    g.fillText(t('ag').xAxis, L + W / 2, r.height - 8);
+    g.strokeStyle = K('ink'); g.lineWidth = 1.8; g.beginPath(); ref.forEach((v, s) => s ? g.lineTo(X(s), Y(v)) : g.moveTo(X(s), Y(v))); g.stroke();
+    const at = s => [X(s), Y(ref[s])];
+    if (mk.best !== null) { const [a, b] = at(mk.best); g.fillStyle = K('ok'); g.beginPath(); g.arc(a, b, 7, 0, 2 * Math.PI); g.fill(); }
+    if (mk.twin !== null) { const [a, b] = at(mk.twin); g.fillStyle = K('twin'); g.beginPath(); g.moveTo(a, b - 6); g.lineTo(a + 6, b); g.lineTo(a, b + 6); g.lineTo(a - 6, b); g.closePath(); g.fill(); }
+    if (mk.rule !== null) { const [a, b] = at(mk.rule); g.strokeStyle = K('muted'); g.lineWidth = 2; g.beginPath(); g.arc(a, b, 9, 0, 2 * Math.PI); g.stroke(); }
+    if (mk.agent !== null) { const [a, b] = at(mk.agent); g.strokeStyle = K('warn'); g.lineWidth = 2.5; g.beginPath();
+      g.moveTo(a - 6, b - 6); g.lineTo(a + 6, b + 6); g.moveTo(a + 6, b - 6); g.lineTo(a - 6, b + 6); g.stroke(); }
+  }
   // ---------- 3D ----------
   const sc = {}, GAP = 0.34, NCOL = 15, DX = 0.052, ROWZ = 0.058;
   const dockXZ = i => [((NCOL - 1) / 2 - Math.floor(i / 2)) * DX, i % 2 ? -ROWZ : ROWZ];   // fills both rows evenly, from the end nearest the viewer
@@ -1362,7 +1560,7 @@ const Bike = (function () {
   }
   return { key: 'bikeshare', TXT, speeds: [1, 3, 8], speedLabel: v => v + ' h/s', rate: v => v,
            view: { target: [0, 0.03, 0], dir: [0, 1.35, 1.05], halfWidth: 0.62, minDist: 1.75 },
-           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, renderParts, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
+           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, renderParts, renderAgent: EV ? renderAgent : null, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
            clockOf: () => S.last ? stamp(S.last.day, S.last.hour + 1) : '–', available: !!(window.BIKE && M),
            links: '<a href="https://doi.org/10.1016/j.trc.2022.103571" target="_blank" rel="noopener">Gammelli et al. 2022</a> · <a href="https://github.com/DanieleGammelli/variational-poisson-rnn" target="_blank" rel="noopener">authors’ code and station data (MIT)</a> · <a href="https://citibikenyc.com/system-data" target="_blank" rel="noopener">Citi Bike System Data</a>' };
 })();
@@ -1392,6 +1590,7 @@ function renderStatic() {
   $('legend').innerHTML = d.legend();
   d.renderWorld($('world'));
   if (d.renderParts) d.renderParts($('parts')); else $('parts').innerHTML = '';   // the twin's parts a person can choose
+  $('agentp').hidden = !d.renderAgent; if (d.renderAgent) d.renderAgent($('agentp')); else $('agentp').innerHTML = '';   // its LLM agent, if any
   const cfg = d.whatif.cfg(), sl = $('try'); sl.min = cfg.min; sl.max = cfg.max; sl.step = cfg.step; sl.value = cfg.value;
   syncPlay();
 }

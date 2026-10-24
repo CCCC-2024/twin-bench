@@ -22,7 +22,7 @@ import numpy as np
 
 from dtcore import agent, run
 from twins.bikeshare import ReplayStation, StationTwin, data, experiment, model
-from twins.bikeshare.twin import NIGHTLY
+from twins.bikeshare.twin import NIGHTLY_PROMPT
 
 ROOT = Path(__file__).resolve().parents[1]
 JAN1 = datetime.date(2018, 1, 1)
@@ -36,7 +36,7 @@ EVENTS = {   # text for the agent; truth = (rent factor, return factor, from hou
           "number of people will rent bikes here; returns stay as usual.", (4, 1, 21, 23)),
 }
 DAYS = experiment.TEST_DAYS[::6]
-CHECK = " Before you choose, run the what-if with this event and compare several numbers of bikes."
+CHECK_PROMPT = " Before you choose, run the what-if with this event and compare several numbers of bikes."
 
 parser = argparse.ArgumentParser(description="The LLM agent on events the data never showed.")
 parser.add_argument("models", nargs="+", help="language models, as the server names them")
@@ -62,7 +62,7 @@ for model_name in args.models:
             event = (np.arange(24) >= a) & (np.arange(24) < b)
             truth = model.udf(np.where(event, lp * fp, lp), np.where(event, lr * fr, lr), twin.C)  # every start
             rule, best = model.best_start(lp, lr, twin.C)[0], int(np.argmin(truth))
-            said = agent.ask(llm, twin, f"{NIGHTLY} {text}" + (CHECK if args.check else ""),
+            said = agent.ask(llm, twin, f"{NIGHTLY_PROMPT} {text}" + (CHECK_PROMPT if args.check else ""),
                              [dict(set_bikes=s) for s in range(twin.C + 1)], args.turns)
             s = None if said["choice"] is None else said["choice"]["set_bikes"]
             row = res["days"].setdefault(str(day), {}).setdefault(key, {})
