@@ -4,8 +4,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
-/* Layout: instrument bench. One shell (top bar, 3D bench of physical object | digital twin, twin panel,
-   six elements, log) shared by every system; a system plugs in its own scene, readouts, chart and what-if. */
+/* Layout: the simulation is the page. One shell (top bar, 3D view of physical object | digital twin with the operations
+   inside it, twin panel) shared by every system; a system plugs in its own scene, controls, readouts, chart and what-if. */
 :root {
   --bg: #EDF1F4; --panel: #FFFFFF; --ink: #13212C; --muted: #5A6B78; --line: #D3DBE1;
   --twin: #1F5BD8; --twin-soft: #DCE6FB; --heat: #E0532A; --heat-soft: #FBE1D8;
@@ -26,71 +26,94 @@
   --ok: #3DBD87; --warn: #FF6B5E; --warn-soft: #3A1A18; --foam: #C9D3DB; --foam-edge: #9FB0BD;
   color-scheme: dark; }
 
-body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 14px; line-height: 1.45;
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.45;
        padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
        padding-block: 14px 28px; }
-.wrap { max-width: 1320px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+.wrap { max-width: 1760px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
 h1, h2, h3 { font-family: var(--f-display); margin: 0; text-wrap: balance; }
 .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
 button, input, select { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--twin); outline-offset: 2px; }
 
-.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 20px; }
-.brand h1 { font-size: 30px; font-weight: 700; letter-spacing: .01em; line-height: 1.05; }
-.brand p { margin: 4px 0 0; color: var(--muted); max-width: 66ch; }
+.top { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 6px 24px; }
+.top .bar { justify-self: end; }
+@media (max-width: 980px) { .top { grid-template-columns: minmax(0, 1fr); } .top .bar { justify-self: start; } }
+/* this twin's six elements, with the letters of the slide that names the loop */
+.cap { grid-column: 1 / -1; margin: 0; font-family: var(--f-display); font-size: 20px; font-weight: 600; line-height: 1.2; display: flex; flex-wrap: wrap; gap: 4px 22px; }
+.cap i { font-style: normal; font-weight: 700; color: var(--twin); margin-right: 6px; }
+@media (max-width: 1400px) { .cap { font-size: 18px; gap: 4px 16px; } }
+.brand h1 { font-size: 26px; font-weight: 700; letter-spacing: .01em; line-height: 1.05; }
 .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--panel); }
-.seg button { border: 0; background: transparent; padding: 6px 11px; cursor: pointer; white-space: nowrap; }
+.seg button { border: 0; background: transparent; padding: 7px 12px; cursor: pointer; white-space: nowrap; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
 .seg.sys button { font-family: var(--f-display); font-weight: 600; font-size: 15px; padding: 6px 14px; }
-.btn { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 6px 12px; cursor: pointer; white-space: nowrap; }
+.btn { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 7px 13px; cursor: pointer; white-space: nowrap; }
 .btn:hover { border-color: var(--muted); }
 .btn.primary { background: var(--twin); border-color: var(--twin); color: #fff; font-weight: 600; }
 .btn:disabled, .seg button:disabled { opacity: .45; cursor: not-allowed; }
 .clock { font-family: var(--f-mono); color: var(--muted); padding: 0 4px; min-width: 10ch; text-align: right; }
 
-.main { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.main { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 14px; align-items: start; }
 @media (max-width: 980px) { .main { grid-template-columns: minmax(0, 1fr); } .main > .leftcol { display: contents; }
   .scenecard { order: 1; } .twinp { order: 2; } .elements { order: 3; } }
 .leftcol { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); min-width: 0; }
 .label { font-family: var(--f-display); font-weight: 600; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 
-.scene { position: relative; height: clamp(260px, min(52vh, 72vw), 520px); border-bottom: 1px solid var(--line); overflow: hidden;
-         border-radius: var(--r) var(--r) 0 0; touch-action: none; }
+.stage { position: relative; }
+.scene { position: relative; height: clamp(360px, calc(100vh - 200px), 820px); overflow: hidden; border-radius: var(--r); touch-action: none; }
 .scene canvas { display: block; width: 100%; height: 100%; }
 .tag { position: absolute; transform: translate(-50%, -50%); pointer-events: none; white-space: nowrap;
-       font-family: var(--f-mono); font-size: 12px; padding: 2px 6px; border-radius: 5px;
+       font-family: var(--f-mono); font-size: 14px; padding: 2px 6px; border-radius: 5px;
        background: var(--panel); border: 1px solid var(--line); color: var(--ink); }
-.tag.big { font-family: var(--f-display); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; border: 0; background: transparent; }
+.tag.big { font-family: var(--f-display); font-weight: 700; font-size: 19px; border: 0; background: transparent; }
 .tag.twin { border-color: var(--twin); color: var(--twin); }
 .tag.heat { border-color: var(--heat); color: var(--heat); }
-.tag.flow { border: 0; background: transparent; color: var(--muted); font-size: 11px; }
+.tag.flow { border: 0; background: transparent; color: var(--muted); font-size: 13px; }
 .tag.warn { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
-.scene .hint { position: absolute; left: 12px; bottom: 10px; color: var(--muted); font-size: 12px; pointer-events: none; }
+.scene .hint { position: absolute; right: 12px; bottom: 8px; color: var(--muted); font-size: 12px; pointer-events: none; }
 .scene .nogl { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; color: var(--muted); }
 
-.world { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding: 12px 14px; }
-.world .label { width: 100%; }
-.ctl { display: flex; align-items: center; gap: 8px; }
-.ctl input[type="range"] { width: 140px; accent-color: var(--twin); }
-.check { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-.check input { accent-color: var(--twin); }
-.world .meta { color: var(--muted); font-size: 13px; }
-.world .seg { flex-wrap: wrap; }
-
+/* the operations sit on the objects they act on: pinned to points in the 3D view and moved with it each frame;
+   settings of the whole run (simulated or recorded, …) stay in the top-left corner */
+.world { position: absolute; inset: 0; pointer-events: none; display: flex; flex-wrap: wrap; align-items: center; align-content: flex-start;
+         gap: 8px 12px; padding: 12px; font-size: 14px; }
+.world > *, .pin, .bubble { pointer-events: auto; }
+.pin { position: absolute; z-index: 3; display: flex; flex-wrap: nowrap; align-items: center; gap: 8px 10px; white-space: nowrap;
+       padding: 7px 9px; border-radius: 10px; border: 1px solid var(--foam-edge); background: color-mix(in srgb, var(--panel) 94%, transparent); }
+.world .seg { flex-wrap: nowrap; }
+.world .seg button, .stage .btn { padding: 6px 11px; font-size: 15px; }
+.whatif.pin { border-color: var(--twin); flex-direction: column; align-items: stretch; gap: 4px; background: color-mix(in srgb, var(--twin-soft) 70%, var(--panel)); }
+.whatif .wit { font-family: var(--f-display); font-weight: 600; font-size: 15px; color: var(--twin); }
+#wiExtra { display: flex; border-top: 1px solid color-mix(in srgb, var(--twin) 25%, transparent); padding-top: 6px; }
+#wiExtra:empty { display: none; }
+/* orange = AI, as on the slides */
+.btn.ai { flex: 1; border-color: var(--heat); color: var(--heat); background: var(--panel); font-weight: 600; }
+.btn.ai:hover { background: var(--heat-soft); }
+/* what happened to the asset (grey, over the asset) and how the twin reacted (blue, over the twin) */
+.bubble { position: absolute; z-index: 4; width: max-content; max-width: min(40%, 420px); padding: 8px 13px; border-radius: 12px; border: 2px solid var(--foam-edge);
+          background: var(--panel); font-family: var(--f-display); font-weight: 600; font-size: 19px; line-height: 1.25; white-space: normal; }
+.bubble.twin { border-color: var(--twin); color: var(--twin); background: color-mix(in srgb, var(--twin-soft) 60%, var(--panel)); }
+.bubble:empty { display: none; }
+@media (max-width: 760px) { .bubble { font-size: 16px; max-width: 46%; } .world { font-size: 14px; } }
 .twinp { display: flex; flex-direction: column; }
 .twinp header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 12px 14px 0; flex-wrap: wrap; }
-.twinp header h2 { font-size: 20px; font-weight: 700; color: var(--twin); }
-.parts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 14px 0; }
+.twinp header h2 { font-size: 24px; font-weight: 700; color: var(--twin); }
+.parts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 14px 0; font-size: 14px; }
+.parts .seg button { padding: 5px 10px; }
 .parts:empty { display: none; }
 .parts .meta { color: var(--muted); font-size: 13px; }
 .readouts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line);
             margin: 10px 14px 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
 .ro { background: var(--panel); padding: 9px 11px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ro .k { font-size: 12px; color: var(--muted); }
-.ro .v { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 500; min-height: 1.45em; }
-.ro .s { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.ro .k { font-size: 15px; color: var(--muted); }
+.ro .v { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 24px; font-weight: 500; min-height: 1.45em; }
+.ro .s { font-family: var(--f-mono); font-size: 14px; color: var(--muted); }
+/* two readouts per twin: what it sees, and what it estimates or decides */
+.readouts .ro { display: none; }
+[data-sys="incubator"] .ro:is(:nth-child(1), :nth-child(2)), [data-sys="battery"] .ro:is(:nth-child(1), :nth-child(4)),
+[data-sys="uav"] .ro:is(:nth-child(1), :nth-child(4)), [data-sys="bikeshare"] .ro:is(:nth-child(1), :nth-child(2)) { display: flex; }
 .pill { display: inline-block; font-family: var(--f-body); font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; }
 .pill.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
 .pill.bad { color: var(--warn); background: var(--warn-soft); }
@@ -99,46 +122,36 @@ button, input, select { font: inherit; color: inherit; }
 .pill.twin { color: var(--twin); background: var(--twin-soft); }
 
 .chartbox { padding: 12px 14px 4px; }
-.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
 .legend i { display: inline-block; width: 16px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 5px; }
 .legend i.dash { border-top-style: dashed; }
 .legend i.dot { width: 6px; height: 6px; border: 0; border-radius: 50%; }
 .legend i.box { width: 12px; height: 8px; border: 0; }
-.chart { position: relative; height: 230px; }
+.chart { position: relative; height: clamp(170px, calc(100vh - 500px), 520px); }
+html[data-sys="bikeshare"] .chart { height: clamp(150px, calc(100vh - 570px), 520px); }   /* its panel has one more row, the forecast choice */
 .chart canvas { width: 100%; height: 100%; display: block; }
 
-.whatif { margin: 8px 14px 14px; border: 1px solid var(--twin); border-radius: 8px; padding: 11px 12px; display: flex; flex-direction: column; gap: 9px;
+.whatif { border: 1px solid var(--twin); display: flex; flex-direction: column; gap: 6px;
           background: color-mix(in srgb, var(--twin-soft) 55%, var(--panel)); }
 .whatif .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
-.whatif .slab { font-size: 13px; width: 100%; }
-.whatif input[type="range"] { flex: 1 1 160px; min-width: 120px; accent-color: var(--twin); }
+.whatif :is(.slab, .metrics, .note) { display: none; }
+.whatif input[type="range"] { flex: 1 1 120px; min-width: 100px; accent-color: var(--twin); }
 .whatif .val { font-family: var(--f-mono); font-size: 18px; font-weight: 500; color: var(--twin); min-width: 7ch; }
 .metrics { display: grid; grid-template-columns: auto repeat(2, minmax(0, 1fr)); gap: 3px 12px; font-size: 13px; }
 .metrics .h { color: var(--muted); font-size: 12px; }
 .metrics .num { text-align: right; }
 .whatif .note { font-size: 12px; color: var(--muted); }
 
-.elements { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
-.el-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; }
-@media (max-width: 640px) { .el-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.el { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.el b { font-family: var(--f-display); font-size: 15px; }
-.el b span { font-family: var(--f-mono); color: var(--twin); margin-right: 6px; }
-.el p { margin: 0; color: var(--muted); font-size: 13px; }
 .pgrid { display: grid; grid-template-columns: repeat(5, 18px); gap: 2px; }
 .pgrid .pc { width: 18px; height: 18px; border-radius: 3px; display: grid; place-items: center; }
 .pgrid .pc.p3 { background: var(--heat-soft); outline: 1px solid var(--heat); outline-offset: -1px; }
 .pgrid .pc.p2 { background: var(--line); }
 .pgrid .pc i { width: 10px; height: 10px; border-radius: 50%; background: var(--ink); }
-.skeleton { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
-.skeleton code { font-family: var(--f-mono); font-size: 12px; padding: 1px 6px; border-radius: 5px; background: var(--twin-soft); color: var(--twin); }
-.skeleton code.no { background: transparent; color: var(--muted); text-decoration: line-through; border: 1px dashed var(--line); }
-
 .agentp { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
 .agentp .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 14px 18px; align-items: start; }
 @media (max-width: 980px) { .agentp .cols { grid-template-columns: minmax(0, 1fr); } }
 .agentp .stack { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.agentp .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 13px; }
+.agentp .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 .agentp .meta { color: var(--muted); font-size: 13px; }
 .agentp .seg { flex-wrap: wrap; }
 .agentp select, .agentp input[type="number"] { border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; background: var(--panel); }
@@ -149,27 +162,46 @@ button, input, select { font: inherit; color: inherit; }
 .agentp ol { margin: 0; padding-left: 20px; font-size: 13px; }
 .agentp .tr { border: 1px solid var(--twin); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;
               background: color-mix(in srgb, var(--twin-soft) 55%, var(--panel)); }
-.agentp .chart { height: 240px; }
 .agentp .note { font-size: 12px; color: var(--muted); }
-.lower { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
-@media (max-width: 980px) { .lower { grid-template-columns: minmax(0, 1fr); } }
-.log { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
-.log ol { list-style: none; margin: 0; padding: 0; max-height: 210px; overflow: auto; display: flex; flex-direction: column; gap: 4px; }
-.log li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; font-size: 13px; }
-.log li time { font-family: var(--f-mono); color: var(--muted); min-width: 10ch; white-space: nowrap; }
-.log li.bad { color: var(--warn); }
-.log li.cmd { color: var(--twin); }
-.about { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
-.about p { margin: 0; max-width: 72ch; }
-.about a { color: var(--twin); }
+.src { font-size: 13px; color: var(--muted); margin: 0; }
+.src a { color: var(--twin); }
+[hidden] { display: none !important; }
+/* the LLM agent on an event in words, opened from the bike-share station */
+.evflow { position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 6; max-height: calc(100% - 20px); overflow: auto;
+          display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
+          background: color-mix(in srgb, var(--panel) 97%, transparent); }
+.stage.ev-open :is(.whatif, .world, .bubble) { display: none; }
+.evflow .head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.evflow .head .x { margin-left: auto; }
+.evflow .head .seg { flex-wrap: nowrap; }
+/* the chain the agent shows: the event in words -> AI reads the what-if inputs -> the twin compares every start */
+.chain { display: grid; grid-template-columns: minmax(0, 1.25fr) auto minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; align-items: stretch; }
+.chain .arrow { align-self: center; font-size: 24px; color: var(--muted); }
+.step { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--foam-edge); min-width: 0; }
+.step .k { font-size: 14px; color: var(--muted); }
+.step .big { font-family: var(--f-display); font-weight: 700; font-size: 24px; line-height: 1.15; }
+.step .txt { font-size: 16px; line-height: 1.4; }
+.step.ai { border-color: var(--heat); } .step.ai .big { color: var(--heat); }
+.step.tw { border-color: var(--twin); background: color-mix(in srgb, var(--twin-soft) 60%, var(--panel)); } .step.tw .big { color: var(--twin); }
+.step textarea { font-family: var(--f-body); font-size: 16px; min-height: 72px; width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; resize: vertical; }
+.cmp { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; font-size: 15px; }
+.cmp .bar { height: 16px; border-radius: 4px; }
+.cmp .num { text-align: right; }
+@media (max-width: 760px) { .chain { grid-template-columns: minmax(0, 1fr); } .chain .arrow { transform: rotate(90deg); justify-self: center; } }
+.agentp .stack { gap: 12px; }
+.agentp .meta { font-size: 15px; }
+.agentp .row { font-size: 16px; }
+.agentp blockquote { font-size: 17px; color: var(--ink); max-height: 9em; }
+.agentp details summary { cursor: pointer; color: var(--muted); font-size: 15px; }
+.agentp details[open] { display: flex; flex-direction: column; gap: 8px; }
+.agentp textarea { font-family: var(--f-body); font-size: 17px; min-height: 96px; }
+.agentp pre { font-size: 14px; }
+.agentp .chart { height: 260px; }
 </style>
 
 <div class="wrap">
   <header class="top">
-    <div class="brand">
-      <h1>Twin Bench</h1>
-      <p id="subtitle">One small skeleton, several systems: each digital twin below runs on the same loop.</p>
-    </div>
+    <div class="brand"><h1>Twin Bench</h1></div>
     <div class="bar" role="toolbar" aria-label="Run controls">
       <div class="seg sys" id="sysSeg" aria-label="System">
         <button data-sys="incubator" aria-pressed="true" id="sysInc">Incubator</button>
@@ -183,23 +215,32 @@ button, input, select { font: inherit; color: inherit; }
       <button class="btn" id="reset">Reset</button>
       <div class="seg" id="langSeg"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="zh" aria-pressed="false">中文</button></div>
     </div>
+    <p class="cap" id="loopCap"></p>
   </header>
 
   <div class="main">
-    <div class="leftcol">
-      <section class="card scenecard" aria-label="Physical object and digital twin">
-        <div class="scene" id="scene"><div class="hint" id="dragHint">Drag to rotate · scroll to zoom</div></div>
-        <div class="world"><span class="label" id="worldTitle">Physical side</span><div id="world" style="display:contents"></div></div>
-      </section>
-      <section class="card elements" aria-label="Six elements">
-        <span class="label" id="elTitle">The six elements of this twin</span>
-        <div class="el-grid" id="elGrid"></div>
-        <div class="skeleton" id="skeleton"></div>
-      </section>
-    </div>
+    <section class="card scenecard stage" aria-label="Physical object and digital twin" id="stage">
+      <div class="scene" id="scene"><div class="hint" id="dragHint">Drag to rotate · scroll to zoom</div></div>
+      <div class="world" id="world"></div>
+      <div class="bubble phys" id="bnPhys" data-pin="physName"></div>
+      <div class="bubble twin" id="bnTwin" data-pin="twinName"></div>
+      <div class="whatif pin" data-pin="wi">
+        <span class="wit" id="wiTitle"></span>
+        <div class="row">
+          <label class="slab" for="try" id="wiSlider"></label>
+          <input type="range" id="try">
+          <span class="val" id="tryV"></span>
+          <button class="btn primary" id="send"></button>
+        </div>
+        <div id="wiExtra"></div>
+        <div class="metrics" id="metrics"></div>
+        <div class="note" id="wiNote"></div>
+      </div>
+      <section class="agentp evflow" id="agentp" aria-label="LLM agent" hidden></section>
+    </section>
 
     <aside class="card twinp" aria-label="Digital twin">
-      <header><h2 id="twinTitle">Digital twin</h2><span class="label" id="twinSees"></span></header>
+      <header><h2 id="twinTitle">Digital twin</h2></header>
       <div class="parts" id="parts"></div>
       <div class="readouts">
         <div class="ro"><span class="k" id="ro0k"></span><span class="v" id="ro0v"></span><span class="s" id="ro0s"></span></div>
@@ -211,26 +252,10 @@ button, input, select { font: inherit; color: inherit; }
         <div class="legend" id="legend"></div>
         <div class="chart"><canvas id="chart"></canvas></div>
       </div>
-      <div class="whatif">
-        <span class="label" style="color:var(--twin)" id="wiTitle"></span>
-        <div class="row">
-          <label class="slab" for="try" id="wiSlider"></label>
-          <input type="range" id="try">
-          <span class="val" id="tryV"></span>
-          <button class="btn primary" id="send"></button>
-        </div>
-        <div class="metrics" id="metrics"></div>
-        <div class="note" id="wiNote"></div>
-      </div>
     </aside>
   </div>
 
-  <section class="card agentp" id="agentp" aria-label="LLM agent" hidden></section>
-
-  <div class="lower">
-    <section class="card log"><span class="label" id="logTitle">Event log</span><ol id="log"></ol></section>
-    <section class="card about"><span class="label" id="aboutTitle">What is real here</span><p id="aboutText"></p><p id="aboutLinks"></p></section>
-  </div>
+  <p class="src" id="aboutLinks"></p>
 </div>
 
 <script>
@@ -261,22 +286,22 @@ const fint = v => (v === undefined || v === null || !isFinite(v)) ? '–' : Math
 
 // ======================= shell text =======================
 const SHELL = {
-  en: { subtitle: 'One small skeleton, several systems: each digital twin below runs on the same loop.',
-        reset: 'Reset', dragHint: 'Drag to rotate · scroll to zoom', twinTitle: 'Digital twin', logTitle: 'Event log',
-        aboutTitle: 'What is real here', elTitle: 'The six elements of this twin (Kapteyn et al. 2021)',
-        skeleton: 'Same skeleton (dtcore):', sys: { incubator: 'Incubator', battery: 'Battery', uav: 'UAV', bikeshare: 'Bike share' }, notSupported: 'not supported' },
-  zh: { subtitle: '一个小骨架，多个系统：下面每个数字孪生都跑在同一个循环上。',
-        reset: '重置', dragHint: '拖动旋转 · 滚轮缩放', twinTitle: '数字孪生', logTitle: '事件记录',
-        aboutTitle: '哪些是真的', elTitle: '这个孪生的六要素（Kapteyn 等 2021）',
-        skeleton: '同一个骨架（dtcore）：', sys: { incubator: '培养箱', battery: '电池', uav: '无人机', bikeshare: '共享单车' }, notSupported: '不支持' }
+  en: { reset: 'Reset', dragHint: 'Drag to rotate · scroll to zoom', twinTitle: 'Digital twin', loop: ['S', 'O', 'D', 'Q', 'U', 'R'],
+        sys: { incubator: 'Incubator', battery: 'Battery', uav: 'UAV', bikeshare: 'Bike share' } },
+  zh: { reset: '重置', dragHint: '拖动旋转 · 滚轮缩放', twinTitle: '数字孪生', loop: ['S', 'O', 'D', 'Q', 'U', 'R'],
+        sys: { incubator: '培养箱', battery: '电池', uav: '无人机', bikeshare: '共享单车' } }
 };
 const SH = { lang: store.get('twb-lang') || ((navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en'),
              key: null, dom: null, running: !matchMedia('(prefers-reduced-motion: reduce)').matches, speedIdx: 1,
              log: [], acc: 0, cmdPulse: 0 };
 const T = k => SHELL[SH.lang][k];
 const D = k => SH.dom.TXT[SH.lang][k];
-function addLog(kind, text) { SH.log.unshift({ t: SH.dom.clockOf ? SH.dom.clockOf() : '', kind, text }); if (SH.log.length > 80) SH.log.pop(); renderLog(); }
-function renderLog() { $('log').innerHTML = SH.log.map(e => `<li class="${e.kind}"><time>${e.t}</time><span>${e.text}</span></li>`).join(''); }
+function addLog(kind, text, banner) {   // banner: [text, 'phys' | 'twin' | 'act'], shown in the bubbles over the asset and the twin
+  SH.log.unshift({ t: SH.dom.clockOf ? SH.dom.clockOf() : '', kind, text }); if (SH.log.length > 80) SH.log.pop();
+  if (!banner) return;   // a physical event fills the asset's bubble and clears the twin's; act: a command sent back to the asset
+  if (banner[1] === 'phys') { $('bnPhys').textContent = banner[0]; $('bnTwin').textContent = ''; }
+  else { if (banner[1] === 'act') $('bnPhys').textContent = ''; $('bnTwin').textContent = banner[0]; }
+}
 
 // ======================= 3D shell =======================
 const G = { ok: false, tags: {} };
@@ -349,6 +374,22 @@ function placeTags(list) {
   }
   for (const k of Object.keys(G.tags)) if (!seen.has(k)) G.tags[k].hidden = true;
 }
+/* controls and bubbles pinned to points of the scene (data-pin = an anchor of the twin's scene); kept inside the view */
+function placePins() {
+  const d = SH.dom, st = $('stage'), W = st.clientWidth, H = $('scene').clientHeight, v = new THREE.Vector3();
+  const top = Math.max(8, ...[...$('world').children].filter(c => !c.dataset.pin).map(c => c.offsetTop + c.offsetHeight + 6));   // below the run's settings
+  st.querySelectorAll('[data-pin]').forEach(el => {
+    const pos = d.pin && d.pin(el.dataset.pin); if (!pos || !el.offsetWidth) return;
+    v.copy(pos).project(G.camera);
+    const w = el.offsetWidth, h = el.offsetHeight, up = el.classList.contains('bubble');
+    const ay = (1 - v.y) / 2 * H; let x = (v.x + 1) / 2 * W - w / 2, y = ay + (up ? -h - 26 : 10);
+    if (up && y < top) y = Math.max(top, ay + 22);   // no room above the label: below it
+    const left = (v.x + 1) / 2 * W < W / 2, lo = left ? 8 : W / 2 + 6, hi = left ? W / 2 - 6 : W - 8;   // each in its own half
+    x = Math.min(Math.max(x, lo), Math.max(lo, hi - w)); y = Math.min(Math.max(y, top), H - h - 8);
+    el.style.left = x + 'px'; el.style.top = y + 'px';
+  });
+}
+function closeAgent() { $('agentp').hidden = true; $('stage').classList.remove('ev-open'); }
 function clearTags() { for (const k of Object.keys(G.tags)) { G.tags[k].remove(); delete G.tags[k]; } }
 
 // ======================= chart shell =======================
@@ -359,7 +400,7 @@ function chartFrame() {
   if (cv.width !== Math.round(r.width * dpr) || cv.height !== Math.round(r.height * dpr)) { cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); }
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, r.width, r.height);
   const C = {}; ['--ink', '--muted', '--line', '--twin', '--heat', '--warn', '--twin-soft', '--heat-soft', '--warn-soft', '--ok', '--panel'].forEach(n => C[n.slice(2)] = css(n));
-  ctx.font = '11px ' + css('--f-mono'); ctx.textBaseline = 'middle';
+  ctx.font = '13px ' + css('--f-mono'); ctx.textBaseline = 'middle';
   return { r, C };
 }
 function lineXY(pts, x, y, color, w, dash) {
@@ -371,7 +412,11 @@ function lineXY(pts, x, y, color, w, dash) {
 // ======================= INCUBATOR =======================
 const Inc = (function () {
   const TXT = {
-    en: { subtitle: "Aarhus University's incubator, built from its published description (four-parameter thermal model).",
+    en: { loop: ['air and heater temperature', '3 sensors', 'heater estimate', 'next 30 minutes', 'set point', 'stay in band, less energy'],
+      bn: { lidOpen: 'Lid opened. The twin is not told.', lidClose: 'Lid closed.', anomaly: 'Twin: the readings no longer fit its model. Lid open?',
+            normal: 'Twin: the readings fit its model again.', send: d => `Set point ${d} °C sent to the box.`,
+            room: v => `Room now ${v} °C. The twin reads it from its sensor.`, mm: on => on ? 'The box now differs from the twin’s model. The twin is not told.' : 'The box matches the twin’s model again.' },
+      subtitle: "Aarhus University's incubator, built from its published description (four-parameter thermal model).",
       modeSim: 'Simulated box', modeReplay: 'Real experiment', worldTitle: 'Things that happen to the physical box',
       lidOpen: 'Open lid', lidClose: 'Close lid', room: 'Room', mismatch: "Box differs from the twin's model",
       twinSees: 'Sees only the three sensors and the heater signal',
@@ -398,7 +443,11 @@ const Inc = (function () {
             ['Q', 'Predictions', 'Box temperature for the next 30 minutes.'],
             ['U', 'Actions', 'A new set point sent to the box controller (you decide, using the what-if).'],
             ['R', 'Objective', 'Stay in the controller band with less heater energy.']] },
-    zh: { subtitle: 'Aarhus 大学的培养箱，按论文描述搭建（四参数热模型）。',
+    zh: { loop: ['空气和加热板温度', '3 个传感器', '加热板温度估计', '未来 30 分钟', '设定温度', '保持在区间、少耗电'],
+      bn: { lidOpen: '盖子打开了，孪生不知道。', lidClose: '盖子关上了。', anomaly: '孪生：读数和模型对不上，可能开盖了？',
+            normal: '孪生：读数和模型重新一致。', send: d => `设定温度 ${d} °C 已发送到箱子。`,
+            room: v => `室温改为 ${v} °C，孪生从室温传感器读到。`, mm: on => on ? '箱子和孪生的模型不一样了，孪生不知道。' : '箱子和孪生的模型重新一致。' },
+      subtitle: 'Aarhus 大学的培养箱，按论文描述搭建（四参数热模型）。',
       modeSim: '模拟的箱子', modeReplay: '真实实验回放', worldTitle: '发生在物理箱子上的事',
       lidOpen: '打开盖子', lidClose: '关上盖子', room: '室温', mismatch: '箱子和孪生的模型不一样',
       twinSees: '只看得到三个传感器和加热开关信号',
@@ -446,8 +495,8 @@ const Inc = (function () {
     S.hist.push({ t: o.t, T: o.T, est: s.T_est, h: s.T_heater_est, ht: o.true_T_heater, on: o.heater_on, an: s.anomaly });
     if (S.hist.length > 4000) S.hist.splice(0, S.hist.length - 4000);
     S.lastObs = o; S.lastEst = s;
-    if (s.anomaly && !S.wasAnomaly) addLog('bad', t('ev').anomaly);
-    if (!s.anomaly && S.wasAnomaly) addLog('', t('ev').normal);
+    if (s.anomaly && !S.wasAnomaly) addLog('bad', t('ev').anomaly, [t('bn').anomaly, 'twin']);
+    if (!s.anomaly && S.wasAnomaly) addLog('', t('ev').normal, [t('bn').normal, 'twin']);
     S.wasAnomaly = s.anomaly;
     if (S.mode === 'sim') S.box.advance();
     return true;
@@ -484,14 +533,14 @@ const Inc = (function () {
     const sim = S.mode === 'sim', hasRep = !!replayData();
     el.innerHTML =
       `<div class="seg" id="incMode"><button data-m="sim" aria-pressed="${sim}">${t('modeSim')}</button><button data-m="replay" aria-pressed="${!sim}" ${hasRep ? '' : 'disabled title="' + t('ev').noReplay + '"'}>${t('modeReplay')}</button></div>` +
-      `<button class="btn" id="lid" ${sim ? '' : 'disabled'}>${S.lid ? t('lidClose') : t('lidOpen')}</button>` +
-      `<label class="ctl"><span>${t('room')}</span><input type="range" id="room" min="15" max="30" step="0.5" value="${S.room}" ${sim ? '' : 'disabled'}><span class="num" id="roomV">${S.room.toFixed(1)} °C</span></label>` +
-      `<label class="check"><input type="checkbox" id="mismatch" ${S.mismatch ? 'checked' : ''} ${sim ? '' : 'disabled'}><span>${t('mismatch')}</span></label>`;
+      `<label class="check"><input type="checkbox" id="mismatch" ${S.mismatch ? 'checked' : ''} ${sim ? '' : 'disabled'}><span>${t('mismatch')}</span></label>` +
+      `<div class="pin" data-pin="pc"><button class="btn" id="lid" ${sim ? '' : 'disabled'}>${S.lid ? t('lidClose') : t('lidOpen')}</button>` +
+      `<label class="ctl"><span>${t('room')}</span><input type="range" id="room" min="15" max="30" step="0.5" value="${S.room}" ${sim ? '' : 'disabled'}><span class="num" id="roomV">${S.room.toFixed(1)} °C</span></label></div>`;
     el.querySelectorAll('#incMode button').forEach(b => b.onclick = () => { if (b.dataset.m !== S.mode) { S.mode = b.dataset.m; SH.log = []; SH.running = true; init(); SH.refreshAll(); } });
-    $('lid').onclick = () => { S.lid = !S.lid; addLog('', S.lid ? t('ev').lidOpen : t('ev').lidClose); $('lid').textContent = S.lid ? t('lidClose') : t('lidOpen'); };
+    $('lid').onclick = () => { S.lid = !S.lid; addLog('', S.lid ? t('ev').lidOpen : t('ev').lidClose, [S.lid ? t('bn').lidOpen : t('bn').lidClose, 'phys']); $('lid').textContent = S.lid ? t('lidClose') : t('lidOpen'); };
     $('room').oninput = () => { S.room = Number($('room').value); $('roomV').textContent = S.room.toFixed(1) + ' °C'; if (S.box) S.box.Troom = S.room; };
-    $('room').onchange = () => { addLog('', t('ev').room(S.room.toFixed(1))); forecast(); SH.refreshPanel(); };
-    $('mismatch').onchange = () => { S.mismatch = $('mismatch').checked; S.box.setParams(S.mismatch ? IDT.PARAMS_ALT : IDT.PARAMS_2023); addLog('', S.mismatch ? t('ev').mm1 : t('ev').mm0); };
+    $('room').onchange = () => { addLog('', t('ev').room(S.room.toFixed(1)), [t('bn').room(S.room.toFixed(1)), 'phys']); forecast(); SH.refreshPanel(); };
+    $('mismatch').onchange = () => { S.mismatch = $('mismatch').checked; S.box.setParams(S.mismatch ? IDT.PARAMS_ALT : IDT.PARAMS_2023); addLog('', S.mismatch ? t('ev').mm1 : t('ev').mm0, [t('bn').mm(S.mismatch), 'phys']); };
   }
   // ---------- panel ----------
   function readouts() {
@@ -553,7 +602,7 @@ const Inc = (function () {
         `<span>${t('mRange')}</span><span class="num">${f1(a.mn)}–${f1(a.mx)}</span><span class="num">${f1(b.mn)}–${f1(b.mx)}</span>`;
     },
     canSend: () => S.mode === 'sim',
-    send() { S.box.act(S.tryD); SH.cmdPulse = 1; addLog('cmd', t('ev').send(S.tryD.toFixed(1))); forecast(); },
+    send() { S.box.act(S.tryD); SH.cmdPulse = 1; addLog('cmd', t('ev').send(S.tryD.toFixed(1)), [t('bn').send(S.tryD.toFixed(1)), 'act']); forecast(); },
     note: () => S.mode === 'sim' ? t('wiNote') : t('wiReplay')
   };
   // ---------- 3D ----------
@@ -589,7 +638,8 @@ const Inc = (function () {
     const V = (a, b, c) => new THREE.Vector3(a, b, c);
     sc.anchors = { physName: V(-GAP, Ht + 0.2, -Dp / 2), twinName: V(GAP, Ht + 0.2, -Dp / 2), s1: V(-GAP - 0.15, 0.13, 0.05), s2: V(-GAP + 0.15, 0.13, 0.05),
       s3: V(-GAP - 0.33, 0.085, 0.16), bed: V(-GAP, 0.03, 0.14), twinBed: V(GAP, 0.03, 0.14), twinAir: V(GAP, 0.13, 0.05),
-      obs: sc.links.obs.getPoint(0.5).clone().add(V(0, 0.03, 0)), cmd: sc.links.cmd.getPoint(0.5).clone().add(V(0, -0.03, 0)), warn: V(GAP, Ht + 0.11, 0) };
+      obs: sc.links.obs.getPoint(0.5).clone().add(V(0, 0.03, 0)), cmd: sc.links.cmd.getPoint(0.5).clone().add(V(0, -0.03, 0)), warn: V(GAP, Ht + 0.11, 0),
+      pc: V(-GAP, 0, Dp / 2 + 0.08), wi: V(GAP, 0, Dp / 2 + 0.08) };
     sc.lidAngle = 0; theme();
   }
   function theme() {
@@ -629,7 +679,7 @@ const Inc = (function () {
   }
   return { key: 'incubator', TXT, speeds: [10, 30, 120], speedLabel: v => '×' + v, rate: v => v / IDT.DT,
            view: { target: [0, 0.06, 0], dir: [0, 0.85, 1.55], halfWidth: 0.95, minDist: 1.77 },
-           caps: ['update', 'predict', 'whatif'], init, step, forecast, renderWorld, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
+           caps: ['update', 'predict', 'whatif'], init, step, forecast, renderWorld, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags, pin: k => sc.anchors && sc.anchors[k],
            clockOf: () => fmtClock(S.lastObs ? S.lastObs.t : 0),
            links: '<a href="https://arxiv.org/abs/2102.10390" target="_blank" rel="noopener">Feng et al. 2021, The Incubator Case Study for Digital Twin Engineering</a> · <a href="https://github.com/INTO-CPS-Association/example_digital-twin_incubator" target="_blank" rel="noopener">data and published parameters</a> · <a href="https://arxiv.org/abs/2012.05841" target="_blank" rel="noopener">Kapteyn et al. 2021</a>' };
 })();
@@ -637,7 +687,10 @@ const Inc = (function () {
 // ======================= BATTERY =======================
 const Bat = (function () {
   const TXT = {
-    en: { subtitle: 'LFP 18650 cells cycled to failure (Severson et al. 2019); twin from Thelen et al. 2023, reproduced.',
+    en: { loop: ['capacity left', 'capacity each cycle', 'how fast it ages', 'life curve', 'retire cycle', 'energy vs run time'],
+      bn: { decide: (k, x) => `Twin, at cycle ${k}: retire the cell at cycle ${x}.`, send: x => `Retirement at cycle ${x} sent to the cell.`,
+            cell: c => `${c}: a different cell, measured. The twin starts again.`, retired: x => `Cell retired at cycle ${x}.` },
+      subtitle: 'LFP 18650 cells cycled to failure (Severson et al. 2019); twin from Thelen et al. 2023, reproduced.',
       worldTitle: 'The physical cell', cell: 'Cell', policy: 'Fast-charge policy', twinSees: 'Sees only the capacity measured after each cycle',
       roCap: 'Capacity (measured)', roEol: 'Predicted end of life (50 %)', roCheck: 'Model check', roRet: 'Retirement',
       cycle: 'cycle', notStarted: 'not started', startsAt: 'starts when capacity ≤ 98.5 %', band: '5–95 %',
@@ -662,7 +715,10 @@ const Bat = (function () {
             ['Q', 'Predictions', 'Capacity curve and the cycle it reaches 50 %, with a 5–95 % band.'],
             ['U', 'Actions', 'The cycle at which to retire the cell, sent automatically by the twin.'],
             ['R', 'Objective', 'Utility of energy delivered vs run time per charge (Thelen et al.).']] },
-    zh: { subtitle: '循环到失效的 LFP 18650 电芯（Severson 等 2019）；孪生复现自 Thelen 等 2023。',
+    zh: { loop: ['剩余容量', '每个循环的容量', '老化速度', '寿命曲线', '退役循环', '供电量与使用时长'],
+      bn: { decide: (k, x) => `孪生（第 ${k} 循环）：第 ${x} 循环让电芯退役。`, send: x => `第 ${x} 循环退役已发送到电芯。`,
+            cell: c => `${c}：换一个电芯，真实测量。孪生重新开始。`, retired: x => `电芯在第 ${x} 循环退役。` },
+      subtitle: '循环到失效的 LFP 18650 电芯（Severson 等 2019）；孪生复现自 Thelen 等 2023。',
       worldTitle: '物理电芯', cell: '电芯', policy: '快充方案', twinSees: '只看得到每个循环后测得的容量',
       roCap: '容量（实测）', roEol: '预测寿命终点（50 %）', roCheck: '模型核对', roRet: '退役',
       cycle: '循环', notStarted: '未开始', startsAt: '容量 ≤ 98.5 % 时开始', band: '5–95 %',
@@ -704,7 +760,7 @@ const Bat = (function () {
     const c = S.c; if (S.retiredAt !== null || S.ended) return false;
     if (S.i >= c.cycles.length) { S.ended = true; addLog('', t('ev').end); return false; }
     const k = c.cycles[S.i];
-    if (S.retireAt !== null && k > S.retireAt) { S.retiredAt = S.retireAt; addLog('cmd', t('ev').retired(S.retireAt)); return false; }
+    if (S.retireAt !== null && k > S.retireAt) { S.retiredAt = S.retireAt; addLog('cmd', t('ev').retired(S.retireAt), [t('bn').retired(S.retireAt), 'phys']); return false; }
     S.i++;
     const q = c.q[S.i - 1];
     if (k === c.k_fpt) addLog('', t('ev').twinStart(k, q.toFixed(3)));
@@ -712,7 +768,8 @@ const Bat = (function () {
     if (s && !S.decided && q <= BAT.DECIDE_AT) {
       const d = BAT.decideOnline(c.q.slice(0, S.i), c.q0, s.la, s.b, s.eol, [0.5, 0.5]);
       S.decided = { k, x: d.x }; S.retireAt = d.x; S.sentByUser = false; SH.cmdPulse = 1;
-      addLog('cmd', t('ev').decide(k, q.toFixed(3), d.x) + (Math.abs(q - BAT.powerLaw(k, s.la, s.b)) > 0.02 ? ' ' + t('ev').outlierNote : ''));
+      addLog('cmd', t('ev').decide(k, q.toFixed(3), d.x) + (Math.abs(q - BAT.powerLaw(k, s.la, s.b)) > 0.02 ? ' ' + t('ev').outlierNote : ''),
+             [t('bn').decide(k, d.x), 'twin']);
     }
     return true;
   }
@@ -730,9 +787,9 @@ const Bat = (function () {
   }
   // ---------- world ----------
   function renderWorld(el) {
-    el.innerHTML = `<div class="seg" id="cellSeg">${CELLS.map((c, i) => `<button data-i="${i}" aria-pressed="${i === S.ci}">${cellName(c)}</button>`).join('')}</div>` +
+    el.innerHTML = `<div class="pin" data-pin="pc"><div class="seg" id="cellSeg">${CELLS.map((c, i) => `<button data-i="${i}" aria-pressed="${i === S.ci}">${cellName(c)}</button>`).join('')}</div></div>` +
       `<span class="meta">${t('policy')}: <span class="num">${S.c ? (SH.lang === 'zh' ? S.c.policy.replace(' to ', ' 充到 ').replace(', then ', '，之后 ') : S.c.policy) : ''}</span> · ${S.c ? S.c.barcode : ''}</span>`;
-    el.querySelectorAll('#cellSeg button').forEach(b => b.onclick = () => { const i = Number(b.dataset.i); if (i !== S.ci) { S.ci = i; SH.log = []; SH.running = true; init(); SH.refreshAll(); } });
+    el.querySelectorAll('#cellSeg button').forEach(b => b.onclick = () => { const i = Number(b.dataset.i); if (i !== S.ci) { S.ci = i; SH.log = []; SH.running = true; init(); SH.refreshAll(); addLog('', '', [t('bn').cell(cellName(S.c)), 'phys']); } });
   }
   // ---------- panel ----------
   function readouts() {
@@ -817,7 +874,7 @@ const Bat = (function () {
       const c = cur(); if (!S.wi || S.retiredAt !== null || S.ended) return;
       if (S.wi.x < c.k) { addLog('', t('ev').past); return; }
       S.retireAt = S.wi.x; S.sentByUser = true; if (!S.decided) S.decided = { k: c.k, x: S.wi.x };
-      SH.cmdPulse = 1; addLog('cmd', t('ev').send(S.wi.x, S.w.toFixed(2)));
+      SH.cmdPulse = 1; addLog('cmd', t('ev').send(S.wi.x, S.w.toFixed(2)), [t('bn').send(S.wi.x), 'act']);
     },
     note: () => S.wi ? t('wiNote') : t('wiWait')
   };
@@ -851,7 +908,8 @@ const Bat = (function () {
     const V = (a, b, c) => new THREE.Vector3(a, b, c);
     sc.anchors = { physName: V(-GAP, Hc + 0.1, 0), twinName: V(GAP, Hc + 0.1, 0), pg: V(-GAP - 0.13, 0.2, 0.05), tg: V(GAP + 0.15, 0.2, 0.05),
       teol: V(GAP + 0.15, 0.11, 0.05), cycler: V(-GAP - 0.2, 0.085, 0.12), obs: sc.links.obs.getPoint(0.5).clone().add(V(0, 0.03, 0)),
-      cmd: sc.links.cmd.getPoint(0.5).clone().add(V(0, -0.035, 0)), ret: V(-GAP, Hc * 0.55, 0.12) };
+      cmd: sc.links.cmd.getPoint(0.5).clone().add(V(0, -0.035, 0)), ret: V(-GAP, Hc * 0.55, 0.12),
+      pc: V(-GAP, 0, 0.14), wi: V(GAP, 0, 0.14) };
     theme();
   }
   function theme() {
@@ -894,7 +952,7 @@ const Bat = (function () {
   }
   return { key: 'battery', TXT, speeds: [5, 15, 50], speedLabel: v => v + '/s', rate: v => v,
            view: { target: [0, 0.2, 0], dir: [0, 0.55, 1.6], halfWidth: 0.62, minDist: 1.35 },
-           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
+           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags, pin: k => sc.anchors && sc.anchors[k],
            clockOf: () => { const c = cur(); return c ? `${SH.lang === 'zh' ? '循环' : 'cycle'} ${c.k}` : '–'; },
            links: '<a href="https://www.nature.com/articles/s41560-019-0356-8" target="_blank" rel="noopener">Severson et al. 2019 (data)</a> · <a href="https://github.com/acthelen/battery_digital_twin" target="_blank" rel="noopener">Thelen et al. code and packaged data (MIT)</a> · <a href="https://arxiv.org/abs/2012.05841" target="_blank" rel="noopener">Kapteyn et al. 2021</a>' };
 })();
@@ -902,8 +960,12 @@ const Bat = (function () {
 // ======================= UAV =======================
 const Uav = (function () {
   const TXT = {
-    en: { subtitle: "Kapteyn et al.'s fixed-wing UAV twin (Nature Computational Science 2021): wing damage from 24 strain gauges.",
-      worldTitle: 'Things that happen to the physical UAV', dmg1: 'Damage region 1 (+20 %)', dmg2: 'Damage region 2 (+20 %)', repair: 'Repair',
+    en: { loop: ['wing damage', '24 strain gauges', 'damage estimate', 'next 30 turns', '3g or 2g turn', 'performance vs safety'],
+      bn: { dmg: (r, v) => `Wing region ${r} now ${v} % damaged. The twin is not told.`, grew: (r, v, c) => `Region ${r} damage grew to ${v} % in a ${c} turn. The twin is not told.`,
+            repair: 'UAV repaired. The twin is not told.', sw: u => u ? 'Twin: damage is low. Back to 3g turns.' : 'Twin: damage is high. Switch to gentler 2g turns.',
+            send: a => `New planner weight ${a} sent to the UAV.` },
+      subtitle: "Kapteyn et al.'s fixed-wing UAV twin (Nature Computational Science 2021): wing damage from 24 strain gauges.",
+      worldTitle: 'Things that happen to the physical UAV', dmg1: 'Region 1 +20 %', dmg2: 'Region 2 +20 %', repair: 'Repair',
       grows: 'Damage grows with maneuvers (faster in 3g turns)', twinSees: 'Sees only 24 strain readings and the maneuver it flew',
       ro1: 'Region 1 damage', ro2: 'Region 2 damage', roMap: 'Most likely state', roNext: 'Next maneuver',
       trueSim: 'true (sim only)', prob: 'probability', vote: 'policy vote for 3g', bank: 'bank',
@@ -926,8 +988,12 @@ const Uav = (function () {
             ['Q', 'Predictions', 'Strain under each maneuver; expected damage over the next 30 turns.'],
             ['U', 'Actions', 'Next turn: aggressive 3g or cautious 2g, chosen automatically.'],
             ['R', 'Objective', 'Maneuver performance vs structural health (the authors’ planner).']] },
-    zh: { subtitle: 'Kapteyn 等的固定翼无人机孪生（Nature Computational Science 2021）：用 24 个应变片估计机翼损伤。',
-      worldTitle: '发生在物理无人机上的事', dmg1: '区域 1 受损（+20 %）', dmg2: '区域 2 受损（+20 %）', repair: '修复',
+    zh: { loop: ['机翼损伤', '24 个应变片', '损伤估计', '未来 30 次转弯', '3g 或 2g 转弯', '性能与安全'],
+      bn: { dmg: (r, v) => `机翼区域 ${r} 损伤到 ${v} %，孪生不知道。`, grew: (r, v, c) => `区域 ${r} 的损伤在一次 ${c} 转弯中增长到 ${v} %，孪生不知道。`,
+            repair: '无人机修好了，孪生不知道。', sw: u => u ? '孪生：损伤小，改回 3g 转弯。' : '孪生：损伤大，改用更稳的 2g 转弯。',
+            send: a => `新的规划器权重 ${a} 已发送到无人机。` },
+      subtitle: 'Kapteyn 等的固定翼无人机孪生（Nature Computational Science 2021）：用 24 个应变片估计机翼损伤。',
+      worldTitle: '发生在物理无人机上的事', dmg1: '区域 1 +20 %', dmg2: '区域 2 +20 %', repair: '修复',
       grows: '损伤随机动增长（3g 转弯更快）', twinSees: '只看得到 24 个应变读数和自己飞的机动',
       ro1: '区域 1 损伤', ro2: '区域 2 损伤', roMap: '最可能的状态', roNext: '下一个机动',
       trueSim: '真值（仅模拟）', prob: '概率', vote: '策略中 3g 的票数', bank: '坡度',
@@ -964,22 +1030,22 @@ const Uav = (function () {
   }
   function step() {
     const o = S.asset.observe(), e = S.tw.update(o), d = S.tw.decide();
-    if (S.next && d.u !== S.next.u) addLog('cmd', t('ev').sw(d.u ? '3g' : '2g'));
+    if (S.next && d.u !== S.next.u) addLog('cmd', t('ev').sw(d.u ? '3g' : '2g'), [t('bn').sw(d.u), 'twin']);
     S.asset.act(d);
     S.last = o; S.est = e; S.next = d;
     S.hist.push({ k: o.t, t1: o.true1, t2: o.true2, e1: e.est1, e2: e.est2, u: o.u });
     if (S.hist.length > 2000) S.hist.splice(0, S.hist.length - 2000);
     const grew = S.asset.advance();
-    grew.forEach(r => addLog('bad', t('ev').grew(r + 1, 20 * S.asset.g[r], o.u ? '3g' : '2g')));
+    grew.forEach(r => addLog('bad', t('ev').grew(r + 1, 20 * S.asset.g[r], o.u ? '3g' : '2g'), [t('bn').grew(r + 1, 20 * S.asset.g[r], o.u ? '3g' : '2g'), 'phys']));
     return true;
   }
   function forecast() { if (!S.tw) return; S.wiNow = S.tw.predict(30); S.wiTry = S.tw.predict(30, S.alphaTry); }
   function renderWorld(el) {
-    el.innerHTML = `<button class="btn" id="uDmg1">${t('dmg1')}</button><button class="btn" id="uDmg2">${t('dmg2')}</button><button class="btn" id="uRep">${t('repair')}</button>` +
-      `<label class="check"><input type="checkbox" id="uGrow" ${S.grows ? 'checked' : ''}><span>${t('grows')}</span></label>`;
-    $('uDmg1').onclick = () => { S.asset.damage(0); addLog('bad', t('ev').dmg(1)); };
-    $('uDmg2').onclick = () => { S.asset.damage(1); addLog('bad', t('ev').dmg(2)); };
-    $('uRep').onclick = () => { S.asset.repair(); addLog('', t('ev').repair); };
+    el.innerHTML = `<label class="check"><input type="checkbox" id="uGrow" ${S.grows ? 'checked' : ''}><span>${t('grows')}</span></label><button class="btn" id="uRep">${t('repair')}</button>` +
+      `<div class="pin" data-pin="pc"><button class="btn" id="uDmg1">${t('dmg1')}</button><button class="btn" id="uDmg2">${t('dmg2')}</button></div>`;
+    $('uDmg1').onclick = () => { S.asset.damage(0); addLog('bad', t('ev').dmg(1), [t('bn').dmg(1, 20 * S.asset.g[0]), 'phys']); };
+    $('uDmg2').onclick = () => { S.asset.damage(1); addLog('bad', t('ev').dmg(2), [t('bn').dmg(2, 20 * S.asset.g[1]), 'phys']); };
+    $('uRep').onclick = () => { S.asset.repair(); addLog('', t('ev').repair, [t('bn').repair, 'phys']); };
     $('uGrow').onchange = () => { S.grows = $('uGrow').checked; S.asset.grows = S.grows; addLog('', S.grows ? t('ev').grows1 : t('ev').grows0); };
   }
   function readouts() {
@@ -1034,7 +1100,7 @@ const Uav = (function () {
         policyGrid(b.policy, S.est ? S.est.belief : null);
     },
     canSend: () => !!S.tw,
-    send() { S.tw.setPolicy(S.alphaTry); SH.cmdPulse = 1; addLog('cmd', t('ev').send(S.alphaTry.toFixed(2), S.tw.pol.reduce((x, y) => x + y, 0))); },
+    send() { S.tw.setPolicy(S.alphaTry); SH.cmdPulse = 1; addLog('cmd', t('ev').send(S.alphaTry.toFixed(2), S.tw.pol.reduce((x, y) => x + y, 0)), [t('bn').send(S.alphaTry.toFixed(2)), 'act']); },
     note: () => t('wiNote')
   };
   // ---------- 3D ----------
@@ -1065,6 +1131,7 @@ const Uav = (function () {
     const V = (a, b, c) => new THREE.Vector3(a, b, c);
     sc.anchors = { physName: V(-GAP, 0.52, -0.05), twinName: V(GAP, 0.52, -0.05), p1: V(-GAP + 0.14, 0.36, 0.1), p2: V(-GAP + 0.33, 0.29, 0.13),
       q1: V(GAP + 0.14, 0.36, 0.1), q2: V(GAP + 0.33, 0.29, 0.13), pm: V(-GAP - 0.28, 0.16, 0.12), qm: V(GAP - 0.28, 0.16, 0.12),
+      pc: V(-GAP, 0.02, 0.3), wi: V(GAP, 0.02, 0.3),
       obs: sc.links.obs.getPoint(0.5).clone().add(V(0, 0.03, 0)), cmd: sc.links.cmd.getPoint(0.5).clone().add(V(0, -0.035, 0)) };
     theme();
   }
@@ -1099,7 +1166,7 @@ const Uav = (function () {
   }
   return { key: 'uav', TXT, speeds: [1, 2, 6], speedLabel: v => v + '/s', rate: v => v,
            view: { target: [0, 0.22, -0.02], dir: [0, 0.95, 1.55], halfWidth: 1.25, minDist: 1.75 },
-           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
+           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags, pin: k => sc.anchors && sc.anchors[k],
            clockOf: () => S.last ? `${t('turn')} ${S.last.t}` : '–', available: !!U,
            links: '<a href="https://www.nature.com/articles/s43588-021-00069-0" target="_blank" rel="noopener">Kapteyn, Pretorius & Willcox 2021</a> · <a href="https://github.com/michaelkapteyn/UAV-Digital-Twin" target="_blank" rel="noopener">authors’ code and data (BSD 3-Clause)</a>' };
 })();
@@ -1107,9 +1174,19 @@ const Uav = (function () {
 // ======================= BIKE SHARE =======================
 const Bike = (function () {
   const TXT = {
-    en: { subtitle: 'One Citi Bike station in New York (West St & Chambers St, 30 docks): the queueing twin of Gammelli et al. 2022.',
-      modeSim: 'Simulated station', modeReplay: 'Recorded days (Nov–Dec 2018)', worldTitle: 'Things that happen at the physical station',
-      demand: 'Demand', dem: { 0.5: 'quiet ×0.5', 1: 'as in Nov–Dec', 1.5: 'busy ×1.5' },
+    en: { loop: ['bikes, true demand', 'hourly rentals, returns', 'demand estimate', 'lost riders', 'bikes at 23:00', 'fewest lost riders'],
+      bn: { night: n => `23:00. Twin: start tomorrow with ${n} bikes.`, truck: n => `Truck sent: the station set to ${n} bikes.`,
+            demand: v => `Demand at the station now ${v}. The twin is not told.` },
+      am: { open: 'Agent: an event in words…', close: 'Close', run: 'Run the agent ▶', again: 'Run again ▶', comparing: 'Comparing…', evs: { A: 'Subway closed', B: 'Charity ride', C: 'Concert', live: 'Type your own' }, told: 'Event, told at 23:00 the night before', type: 'Event, typed now',
+            reads: m => `Agent reads it (${m})`, reading: 'Reading…', go: 'Extract', computes: 'Twin compares all 31 starts', start: n => `Start with ${n} bikes`,
+            alone: (n, l, b) => `Agent alone, without the twin comparing: tried ${n} option${n === 1 ? '' : 's'}${n ? ' (' + l + ' bikes)' : ''}, chose ${b} bikes.`,
+            lost: 'Expected lost tomorrow', barTwin: 'Agent reads, twin compares', barAlone: 'Agent alone', barUsual: 'Event ignored',
+            more: 'All 31 starts, the agent’s own answer, change the inputs', answer: 'The agent’s own answer:', bikes: 'bikes',
+            noteRec: 'A recorded run, the night before 1 Nov. The event is shown in short; the run was given the full text, with hours and size. Lost: the twin’s forecast with the event as written.',
+            noteLive: 'Lost: the twin’s forecast with the extracted inputs. Extraction alone is not yet a tested experiment.' },
+      subtitle: 'One Citi Bike station in New York (West St & Chambers St, 30 docks): the queueing twin of Gammelli et al. 2022.',
+      modeSim: 'Simulated', modeReplay: 'Recorded, Nov–Dec 2018', worldTitle: 'Things that happen at the physical station',
+      demand: 'Demand', demTip: 'usual = the average of the recorded Nov–Dec 2018', dem: { 0.5: 'quiet ×0.5', 1: 'usual', 1.5: 'busy ×1.5' },
       twinSees: 'Sees only the bike count and each hour’s rentals and returns',
       roBikes: 'Bikes in the station', roRates: 'Next hour: rentals / returns (twin)', roRisk: 'Next 3 hours: time empty / full', roLost: 'Lost today',
       lastNight: s => `twin set ${s} at midnight`, trueSim: 'true (sim only)', learned: n => `learned from ${n} days`, perH: '/h',
@@ -1156,9 +1233,19 @@ const Bike = (function () {
             ['Q', 'Predictions', 'Bikes over the next hours (10–90 %), time empty or full, expected lost rentals and returns.'],
             ['U', 'Actions', 'Every night the twin sets the next day’s bikes on its own; during the day you can send a truck (what-if first).'],
             ['R', 'Objective', 'Fewest expected lost rentals + lost returns (as in the paper).']] },
-    zh: { subtitle: '纽约的一个 Citi Bike 站点（West St & Chambers St，30 个车位）：Gammelli 等 2022 的排队孪生。',
-      modeSim: '模拟的站点', modeReplay: '真实记录（2018 年 11–12 月）', worldTitle: '发生在物理站点上的事',
-      demand: '需求', dem: { 0.5: '冷清 ×0.5', 1: '同 11–12 月', 1.5: '繁忙 ×1.5' },
+    zh: { loop: ['车数、真实需求', '每小时的借车、还车', '需求估计', '之后损失的人数', '23 点定车数', '损失最少'],
+      bn: { night: n => `23:00 孪生：明天一早放 ${n} 辆。`, truck: n => `已派车：站里调到 ${n} 辆。`,
+            demand: v => `站点的需求改为 ${v}，孪生不知道。` },
+      am: { open: 'Agent：用文字描述的事件…', close: '关闭', run: '运行 agent ▶', again: '再运行一次 ▶', comparing: '比较中…', evs: { A: '地铁停运', B: '慈善骑行', C: '演唱会', live: '自己输入' }, told: '事件（前一晚 23 点告诉 agent）', type: '事件（现场输入）',
+            reads: m => `agent 读出（${m}）`, reading: '读取中…', go: '提取', computes: '孪生比较全部 31 个车数', start: n => `明早放 ${n} 辆`,
+            alone: (n, l, b) => `agent 自己选、孪生不比较：试了 ${n} 个选项${n ? '（' + l + ' 辆）' : ''}，选了 ${b} 辆。`,
+            lost: '明天预计损失', barTwin: 'agent 读、孪生比较', barAlone: 'agent 自己选', barUsual: '不管事件',
+            more: '全部 31 个车数、agent 的原话、修改输入', answer: 'agent 的原话：', bikes: '辆',
+            noteRec: '录好的运行（11 月 1 日前一晚）。事件显示的是简写；运行时给的是带小时和倍数的原文。损失：孪生按原文事件预测。',
+            noteLive: '损失：孪生按提取的输入预测。只提取这一步还没做过实验。' },
+      subtitle: '纽约的一个 Citi Bike 站点（West St & Chambers St，30 个车位）：Gammelli 等 2022 的排队孪生。',
+      modeSim: '模拟', modeReplay: '真实记录 2018 年 11–12 月', worldTitle: '发生在物理站点上的事',
+      demand: '需求', demTip: '平常 = 2018 年 11–12 月真实记录的平均', dem: { 0.5: '冷清 ×0.5', 1: '平常', 1.5: '繁忙 ×1.5' },
       twinSees: '只看得到车数和每小时的借车、还车数',
       roBikes: '站里的车数', roRates: '下一小时：借 / 还（孪生）', roRisk: '未来 3 小时：空站 / 满站的时间', roLost: '今天的损失',
       lastNight: s => `孪生半夜调到 ${s} 辆`, trueSim: '真值（仅模拟）', learned: n => `从 ${n} 天学到`, perH: '/时',
@@ -1249,7 +1336,7 @@ const Bike = (function () {
     if (o.lost_rent + o.lost_return) addLog('bad', t('ev').lost(o.lost_rent, o.lost_return));
     const h = { k: o.t, bikes: o.bikes, after: o.bikes, lr: o.lost_rent, lt: o.lost_return };
     if (a) { S.st.act(a); S.night = a; S.known = a.set_bikes; h.after = a.set_bikes; SH.cmdPulse = 1;
-             addLog('cmd', t('ev').night(a.set_bikes, Math.round(a.expected_lost))); }
+             addLog('cmd', t('ev').night(a.set_bikes, Math.round(a.expected_lost)), [t('bn').night(a.set_bikes), 'twin']); }
     S.hist.push(h); if (S.hist.length > 400) S.hist.splice(0, S.hist.length - 400);
     S.st.advance(); S.stale = true;
     return true;
@@ -1261,11 +1348,12 @@ const Bike = (function () {
     const sim = S.mode === 'sim', hasRep = !!replayData();
     el.innerHTML =
       `<div class="seg" id="bkMode"><button data-m="sim" aria-pressed="${sim}">${t('modeSim')}</button><button data-m="replay" aria-pressed="${!sim}" ${hasRep ? '' : 'disabled title="' + t('ev').noReplay + '"'}>${t('modeReplay')}</button></div>` +
-      `<span class="ctl"><span class="meta">${t('demand')}</span><span class="seg" id="bkDem">` +
-      [0.5, 1, 1.5].map(v => `<button data-v="${v}" aria-pressed="${S.demand === v}" ${sim ? '' : 'disabled'}>${t('dem')[v]}</button>`).join('') + '</span></span>';
+      (sim ? `<div class="pin" data-pin="pc" title="${t('demTip')}"><span class="meta">${t('demand')}</span><span class="seg" id="bkDem">` +
+      [0.5, 1, 1.5].map(v => `<button data-v="${v}" aria-pressed="${S.demand === v}">${t('dem')[v]}</button>`).join('') + '</span></div>' : '');   // recorded days: demand is the record's
     el.querySelectorAll('#bkMode button').forEach(b => b.onclick = () => { if (b.dataset.m !== S.mode) { S.mode = b.dataset.m; SH.log = []; SH.running = true; init(); SH.refreshAll(); } });
     el.querySelectorAll('#bkDem button').forEach(b => b.onclick = () => { const v = Number(b.dataset.v); if (v === S.demand) return;
-      S.demand = v; S.st.surge = v; addLog('', t('ev').demand(t('dem')[v])); renderWorld(el); });
+      S.demand = v; S.st.surge = v; addLog('', t('ev').demand(t('dem')[v]), [t('bn').demand(t('dem')[v]), 'phys']); renderWorld(el); });
+    if (EV) { $('wiExtra').innerHTML = `<button class="btn ai" id="bkEvent">${t('am').open}</button>`; $('bkEvent').onclick = openAgent; }   // AI 2: the what-if's inputs from words
   }
   // ---------- the twin's parts: its rate model (rates.py), chosen by a person; switching restarts the run ----------
   function renderParts(el) {
@@ -1336,7 +1424,7 @@ const Bike = (function () {
     canSend: () => !!S.last,
     send() { const before = S.st.bikes; S.st.act({ set_bikes: S.tryS }); S.known = S.tryS;
              const h = S.hist[S.hist.length - 1]; if (h) h.after = S.tryS;
-             SH.cmdPulse = 1; addLog('cmd', t('ev').truck(S.tryS, S.tryS - before)); forecast(); },
+             SH.cmdPulse = 1; addLog('cmd', t('ev').truck(S.tryS, S.tryS - before), [t('bn').truck(S.tryS), 'act']); forecast(); },
     note: () => t('wiNote')
   };
   // ---------- the LLM agent on events described in words (scripts/new_conditions.py) ----------
@@ -1346,9 +1434,10 @@ const Bike = (function () {
   const EV = window.BIKESHARE_EVENTS || null;
   const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);   // a model server can only be on this computer
   const USUAL = [1, 1, 0, 24];                                        // whatif's inputs on a usual day
-  const AG = { ev: 'C', night: 0, model: EV ? EV.agents[0] : null, inputs: null, ro: null };
-  const LIVE = { text: EV ? EV.events.A.text : '', model: 'qwen3.5:9b', url: 'http://127.0.0.1:11434/v1', reasoning: 'none',
+  const AG = { ev: 'C', play: 0, timer: null, night: 0, model: EV ? EV.agents[0] : null, inputs: null, ro: null };
+  const LIVE = { text: 'Big concert at the arena near the station tomorrow night.', /* vague on purpose: the model works out hours and factor */ model: 'qwen3.5:9b', url: 'http://127.0.0.1:11434/v1', reasoning: 'none',
                  busy: false, reply: null, secs: null, msg: null, inputs: null };
+  const SHORT = { A: 'Subway line near the station closed tomorrow morning.', B: 'Charity ride starting near the station early tomorrow.', C: LIVE.text };   // the events in short, for showing; the runs had the full text
   const esc = v => String(v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const asInputs = w => w ? [w.rent_factor ?? 1, w.return_factor ?? 1, w.from_hour ?? 0, w.to_hour ?? 24] : USUAL;
   const hasEvent = w => (w.rent_factor ?? 1) !== 1 || (w.return_factor ?? 1) !== 1;
@@ -1366,28 +1455,6 @@ const Bike = (function () {
       ? { n, live, cost, ref: inC, marks: { rule: BIKE.bestStart(n.lp, n.lr, CAP)[0], agent: null, twin, best: null } }
       : { n, live, r, cost, ref: cost(EV.events[AG.ev].truth), marks: { rule: row.rule.start, agent: r.start, twin, best: row.best.start } };
   }
-  function choosersHTML(x, m) {
-    const night = d => { const p = new Date(new Date(d + 'T00:00Z') - 864e5); return `${WD[SH.lang][(p.getUTCDay() + 6) % 7]} ${p.getUTCMonth() + 1}/${p.getUTCDate()} 23:00`; };
-    return `<div class="row"><span class="meta">${x.event}</span><span class="seg" id="agEv">` +
-      Object.keys(EV.events).concat(LOCAL ? ['live'] : []).map(k => `<button data-k="${k}" aria-pressed="${k === AG.ev}">${k === 'live' ? x.live : x.ev[k]}</button>`).join('') +
-      `</span></div><div class="row"><span class="meta">${x.night}</span><select id="agNight">${EV.nights.map((d, i) => opt(i, night(d.day), AG.night)).join('')}</select>` +
-      (m.live ? '' : `<span class="meta">${x.agent}</span><select id="agModel">${EV.agents.map(a => opt(a, x.models[a] || a, AG.model)).join('')}</select>`) + '</div>';
-  }
-  function recordedHTML(x, m) {
-    const r = m.r, tries = r.asked.map(w => `<li>${w.set_bikes} ${t('bikes')} · ${inputsText(asInputs(w))} → ${f1(m.cost(asInputs(w))[w.set_bikes])}</li>`);
-    return `<div><span class="meta">${x.told}</span><blockquote>${esc(EV.events[AG.ev].text)}</blockquote></div>` +
-      `<div><span class="meta">${x.ran(r.asked.length)}</span>${tries.length ? '<ol>' + tries.join('') + '</ol>' : ''}</div>` +
-      `<div><span class="meta">${x.said}</span><blockquote>${esc(r.answer)}</blockquote></div>`;
-  }
-  function liveHTML(x) {
-    return `<div><span class="meta">${x.liveText}</span><textarea id="agText">${esc(LIVE.text)}</textarea></div>` +
-      `<div class="row"><label>${x.model} <input id="agLm" value="${esc(LIVE.model)}" style="width:14ch"></label>` +
-      `<label>reasoning <select id="agLr">${['none', 'low', ''].map(v => opt(v, v || 'default', LIVE.reasoning)).join('')}</select></label>` +
-      `<label>${x.server} <input id="agUrl" value="${esc(LIVE.url)}" style="width:24ch"></label></div>` +
-      `<div class="row"><button class="btn primary" id="agGo" ${LIVE.busy ? 'disabled' : ''}>${LIVE.busy ? x.busy : x.go}</button></div>` +
-      (LIVE.reply !== null ? `<div><span class="meta">${x.replyIn(LIVE.secs)}</span><pre>${esc(LIVE.reply || '(empty)')}</pre></div>` : '') +
-      (LIVE.msg ? `<div class="pill bad" style="white-space:normal">${esc(LIVE.msg)}</div>` : '');
-  }
   function inputsHTML(x, live) {
     const hours = (lo, hi, cur) => Array.from({ length: hi - lo + 1 }, (_, i) => opt(lo + i, hh(lo + i), cur)).join('');
     return `<div class="tr"><span class="label" style="color:var(--twin)">${x.trTitle}</span>` +
@@ -1397,29 +1464,52 @@ const Bike = (function () {
       `<div class="row"><button class="btn" id="agReset">${live ? x.modelInputs : x.agentInputs}</button>${live ? '' : `<button class="btn" id="agWritten">${x.written}</button>`}</div>` +
       (live ? '' : `<span class="note">${x.trNote}</span>`) + '</div>';
   }
-  function resultHTML(x, m) {
-    const L = m.live ? x.liveRows : x.rows, base = m.ref[m.marks.best ?? m.marks.twin];
-    const line = ([sym, color, label, s]) => `<span><span style="color:var(--${color})">${sym}</span> ${label}</span>` + (s === null
-      ? `<span class="num">–</span><span class="num">–</span><span class="num">${x.none}</span>`
-      : `<span class="num">${s}</span><span class="num">${f1(m.ref[s])}</span><span class="num">${f1(m.ref[s] - base)}</span>`);
-    const rows = [['○', 'muted', L.rule, m.marks.rule], !m.live && ['✕', 'warn', L.agent, m.marks.agent],
-                  ['◆', 'twin', `<b>${L.twin}</b>`, m.marks.twin], !m.live && ['●', 'ok', L.best, m.marks.best]].filter(Boolean);
-    return `<div class="legend"><span><i style="border-color:var(--ink)"></i>${m.live ? x.lgLive : x.lgTruth}</span></div>` +
-      '<div class="chart"><canvas id="agChart"></canvas></div>' +
-      `<div class="metrics" style="grid-template-columns:auto repeat(3,minmax(0,1fr));margin-top:8px">` +
-      x.mHead.map((h, i) => `<span class="h${i ? ' num' : ''}">${h}</span>`).join('') + rows.map(line).join('') + '</div>';
+  /* one night as a chain: the event in words -> what the AI reads from it -> the twin compares every start;
+     below, what the agent chose alone, as bars of expected lost; the curve, its own answer and the inputs fold away */
+  function agentHTML(x, m) {
+    const a = t('am'), k = m.marks, model = m.live ? LIVE.model : (x.models[AG.model] || AG.model).split(' · ')[0];
+    const head = `<div class="head"><span class="seg" id="agEv">` +
+      Object.keys(EV.events).concat(LOCAL ? ['live'] : []).map(e => `<button data-k="${e}" aria-pressed="${e === AG.ev}">${a.evs[e]}</button>`).join('') +
+      `</span><button class="btn x" id="agClose">${a.close} ✕</button></div>`;
+    const ev = m.live
+      ? `<div class="step"><span class="k">${a.type}</span><textarea id="agText">${esc(LIVE.text)}</textarea>` +
+        `<button class="btn ai" id="agGo" ${LIVE.busy ? 'disabled' : ''}>${LIVE.busy ? a.reading : a.go}</button></div>`
+      : `<div class="step"><span class="k">${a.told}</span><span class="txt">${esc(SHORT[AG.ev] || EV.events[AG.ev].text)}</span></div>`;
+    const P = m.live ? 3 : AG.play;   // how far the replay of a recorded night has got
+    const read = m.live ? (LIVE.busy ? a.reading : inputsText(AG.inputs)) : P === 0 ? '–' : P === 1 ? a.reading : inputsText(AG.inputs);
+    const chain = `<div class="chain">${ev}<span class="arrow">→</span>` +
+      `<div class="step ai"><span class="k">${a.reads(esc(model))}</span><span class="big">${read}</span>` +
+      (m.live && LIVE.msg ? `<span class="pill bad" style="white-space:normal">${esc(LIVE.msg)}</span>` : '') +
+      (m.live && LIVE.reply !== null ? `<span class="k">${x.replyIn(LIVE.secs)} ${esc(LIVE.reply || '(empty)')}</span>` : '') + `</div>` +
+      `<span class="arrow">→</span><div class="step tw"><span class="k">${a.computes}</span><span class="big">${P < 2 ? '–' : P === 2 ? a.comparing : a.start(k.twin)}</span></div></div>`;
+    const other = m.live ? k.rule : k.agent, rows = [[a.barTwin, 'twin', k.twin], [m.live ? a.barUsual : a.barAlone, m.live ? 'muted' : 'warn', other]];
+    const top = Math.max(...rows.map(r => r[2] === null ? 0 : m.ref[r[2]])) || 1;
+    const bars = `<div class="cmp"><span class="k" style="grid-column:1 / -1;color:var(--muted)">${a.lost}</span>` + rows.map(([lab, c, st]) => st === null ? '' :
+      `<span>${lab} · ${st} ${a.bikes}</span><span class="bar" style="width:${(m.ref[st] / top * 100).toFixed(1)}%;background:var(--${c})"></span>` +
+      `<span class="num">${f1(m.ref[st])}${st !== k.twin && m.ref[st] - m.ref[k.twin] > 0.05 ? ` (+${f1(m.ref[st] - m.ref[k.twin])})` : ''}</span>`).join('') + '</div>';
+    const alone = m.live ? '' : (() => { const tried = m.r.asked.map(w => w.set_bikes); return `<span class="meta">${a.alone(tried.length, tried.join(', '), k.agent)}</span>`; })();
+    const more = `<details ${AG.open ? 'open' : ''} id="agOpen"><summary>${a.more}</summary><div class="cols"><div class="stack">` +
+      (m.live ? '' : `<div><span class="meta">${a.answer}</span><blockquote>${esc(m.r.answer)}</blockquote></div>`) + inputsHTML(x, m.live) + `</div>` +
+      `<div style="min-width:0"><div class="legend"><span><i style="border-color:var(--ink)"></i>${m.live ? x.lgLive : x.lgTruth}</span></div><div class="chart"><canvas id="agChart"></canvas></div></div></div></details>`;
+    const run = m.live ? '' : `<div class="row"><button class="btn ai" id="agRun" ${P === 1 || P === 2 ? 'disabled' : ''}>${P === 3 ? a.again : a.run}</button></div>`;
+    return head + chain + run + (P === 3 ? alone + bars + more : '') + `<span class="meta">${m.live ? a.noteLive : a.noteRec}</span>`;
   }
+  function stopReplay() { clearTimeout(AG.timer); AG.play = 0; }
+  function openAgent() { stopReplay(); $('agentp').hidden = false; $('stage').classList.add('ev-open'); renderAgent($('agentp')); }
   function renderAgent(el) {
     const x = t('ag'), m = agentState();
-    el.innerHTML = `<span class="label">${x.title}</span>` + choosersHTML(x, m) +
-      `<div class="cols"><div class="stack">${m.live ? liveHTML(x) : recordedHTML(x, m)}${inputsHTML(x, m.live)}</div>` +
-      `<div style="min-width:0">${resultHTML(x, m)}</div></div><span class="note">${m.live ? x.liveNote : x.note}</span>`;
+    el.innerHTML = agentHTML(x, m);
     bindAgent(el, m);
   }
   function bindAgent(el, m) {
-    const again = () => renderAgent(el), q = s => el.querySelector(s), num = s => Number(q(s).value);
-    el.querySelectorAll('#agEv button').forEach(b => b.onclick = () => { AG.ev = b.dataset.k; AG.inputs = null; again(); });
+    const again = () => renderAgent(el), q = s => el.querySelector(s) || {}, num = s => Number(q(s).value);   // {}: a control this view leaves out
+    el.querySelectorAll('#agEv button').forEach(b => b.onclick = () => { stopReplay(); AG.ev = b.dataset.k; AG.inputs = null; again(); });
+    q('#agRun').onclick = () => {   // the recorded night, one step at a time: the agent reads, then the twin compares
+      stopReplay(); AG.play = 1; again();
+      AG.timer = setTimeout(() => { AG.play = 2; again(); AG.timer = setTimeout(() => { AG.play = 3; again(); }, 1800); }, 2600); };
     q('#agNight').onchange = e => { AG.night = Number(e.target.value); AG.inputs = null; again(); };
+    q('#agOpen').ontoggle = e => { AG.open = e.target.open; };
+    q('#agClose').onclick = closeAgent;
     el.querySelectorAll('#agFp, #agFr, #agA, #agB').forEach(i => i.onchange = () => {
       const a = num('#agA'); AG.inputs = [Math.max(0, num('#agFp') || 0), Math.max(0, num('#agFr') || 0), a, Math.max(num('#agB'), a + 1)]; again(); });
     q('#agReset').onclick = () => { AG.inputs = null; again(); };
@@ -1433,8 +1523,8 @@ const Bike = (function () {
       q('#agModel').onchange = e => { AG.model = e.target.value; AG.inputs = null; again(); };
       q('#agWritten').onclick = () => { AG.inputs = EV.events[AG.ev].truth.slice(); again(); };
     }
-    const cv = q('#agChart'), draw = () => drawAgent(cv, m.ref, m.marks);
-    if (AG.ro) AG.ro.disconnect(); AG.ro = new ResizeObserver(draw); AG.ro.observe(cv);
+    const cv = el.querySelector('#agChart'), draw = () => drawAgent(cv, m.ref, m.marks);
+    if (AG.ro) AG.ro.disconnect(); if (cv) { AG.ro = new ResizeObserver(draw); AG.ro.observe(cv); }   // the curve appears once the replay is done
   }
   // one request to a server with the OpenAI chat API (Ollama): twin.EXTRACT_EVENT_PROMPT + the night's brief(), then the words
   async function liveExtract(el, n) {
@@ -1464,13 +1554,14 @@ const Bike = (function () {
     const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1; if (!r.width) return;
     cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
     const g = cv.getContext('2d'), K = n => css('--' + n); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, r.width, r.height);
-    g.font = '11px ' + css('--f-mono'); g.textBaseline = 'middle';
+    g.font = '13px ' + css('--f-mono'); g.textBaseline = 'middle';
     const lo = Math.min(...ref), hi = Math.max(...ref), pad = (hi - lo) * 0.08 || 1;
-    const L = 40, Rm = 10, Top = 8, Bot = 34, W = r.width - L - Rm, H = r.height - Top - Bot;
-    const X = s => L + s / CAP * W, Y = v => Top + (hi + pad - v) / (hi - lo + 2 * pad) * H;
-    g.strokeStyle = K('line'); g.fillStyle = K('muted'); g.lineWidth = 1; g.textAlign = 'right';
     const stepY = Math.max(1, Math.round((hi - lo + 2 * pad) / 4 / 5) * 5);
-    for (let v = Math.ceil((lo - pad) / stepY) * stepY; v <= hi + pad; v += stepY) { g.beginPath(); g.moveTo(L, Y(v) + .5); g.lineTo(L + W, Y(v) + .5); g.stroke(); g.fillText(String(v), L - 6, Y(v)); }
+    const y0 = Math.floor((lo - pad) / stepY) * stepY, y1 = Math.ceil((hi + pad) / stepY) * stepY;   // the axis ends on a labelled line
+    const L = 40, Rm = 10, Top = 8, Bot = 34, W = r.width - L - Rm, H = r.height - Top - Bot;
+    const X = s => L + s / CAP * W, Y = v => Top + (y1 - v) / (y1 - y0) * H;
+    g.strokeStyle = K('line'); g.fillStyle = K('muted'); g.lineWidth = 1; g.textAlign = 'right';
+    for (let v = y0; v <= y1; v += stepY) { g.beginPath(); g.moveTo(L, Y(v) + .5); g.lineTo(L + W, Y(v) + .5); g.stroke(); g.fillText(String(v), L - 6, Y(v)); }
     g.textAlign = 'center'; for (let s = 0; s <= CAP; s += 5) g.fillText(String(s), X(s), Top + H + 10);
     g.fillText(t('ag').xAxis, L + W / 2, r.height - 8);
     g.strokeStyle = K('ink'); g.lineWidth = 1.8; g.beginPath(); ref.forEach((v, s) => s ? g.lineTo(X(s), Y(v)) : g.moveTo(X(s), Y(v))); g.stroke();
@@ -1518,6 +1609,7 @@ const Bike = (function () {
     const V = (a, b, c) => new THREE.Vector3(a, b, c);
     sc.anchors = { physName: V(-GAP, 0.22, -0.56), twinName: V(GAP, 0.22, -0.56), pCount: V(-GAP, 0.075, 0.43), pHour: V(-GAP, 0.15, -0.2),
       pLost: V(-GAP, 0.12, 0.26), qAhead: V(GAP, 0.075, 0.43), qRates: V(GAP, 0.15, -0.2), qRisk: V(GAP, 0.12, 0.26),
+      pc: V(-GAP, 0, 0.5), wi: V(GAP, 0, 0.5),
       obs: sc.links.obs.getPoint(0.5).clone().add(V(0, 0.03, 0)), cmd: sc.links.cmd.getPoint(0.5).clone().add(V(0, -0.03, 0)) };
     theme();
   }
@@ -1559,8 +1651,8 @@ const Bike = (function () {
     return L;
   }
   return { key: 'bikeshare', TXT, speeds: [1, 3, 8], speedLabel: v => v + ' h/s', rate: v => v,
-           view: { target: [0, 0.03, 0], dir: [0, 1.35, 1.05], halfWidth: 0.62, minDist: 1.75 },
-           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, renderParts, renderAgent: EV ? renderAgent : null, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags,
+           view: { target: [0, 0.09, 0], dir: [0, 1.35, 1.05], halfWidth: 0.66, minDist: 1.75 },
+           caps: ['update', 'predict', 'whatif', 'decide'], init, step, forecast, renderWorld, renderParts, renderAgent: EV ? renderAgent : null, readouts, legend, drawChart, whatif, buildScene, theme, update3D, tags, pin: k => sc.anchors && sc.anchors[k],
            clockOf: () => S.last ? stamp(S.last.day, S.last.hour + 1) : '–', available: !!(window.BIKE && M),
            links: '<a href="https://doi.org/10.1016/j.trc.2022.103571" target="_blank" rel="noopener">Gammelli et al. 2022</a> · <a href="https://github.com/DanieleGammelli/variational-poisson-rnn" target="_blank" rel="noopener">authors’ code and station data (MIT)</a> · <a href="https://citibikenyc.com/system-data" target="_blank" rel="noopener">Citi Bike System Data</a>' };
 })();
@@ -1575,22 +1667,17 @@ function renderSpeeds() {
 function renderStatic() {
   const d = SH.dom;
   document.documentElement.lang = SH.lang === 'zh' ? 'zh-CN' : 'en';
-  $('subtitle').textContent = T('subtitle') + ' ' + D('subtitle');
   $('reset').textContent = T('reset'); $('dragHint').textContent = T('dragHint'); $('twinTitle').textContent = T('twinTitle');
-  $('logTitle').textContent = T('logTitle'); $('aboutTitle').textContent = T('aboutTitle'); $('elTitle').textContent = T('elTitle');
   $('sysInc').textContent = T('sys').incubator; $('sysBat').textContent = T('sys').battery; $('sysUav').textContent = T('sys').uav; $('sysBike').textContent = T('sys').bikeshare;
   document.querySelectorAll('#sysSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sys === d.key)));
   document.querySelectorAll('#langSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === SH.lang)));
-  $('worldTitle').textContent = D('worldTitle'); $('twinSees').textContent = D('twinSees');
+  $('loopCap').innerHTML = T('loop').map((k, i) => `<span><i>${k}</i>${D('loop')[i]}</span>`).join('');   // the six elements, for every twin
   $('wiTitle').textContent = D('wiTitle'); $('wiSlider').textContent = D('wiSlider'); $('send').textContent = D('send');
-  $('elGrid').innerHTML = D('els').map(([k, n, x]) => `<div class="el"><b><span>${k}</span>${n}</b><p>${x}</p></div>`).join('');
-  const all = ['update', 'predict', 'whatif', 'decide'];
-  $('skeleton').innerHTML = `<span>${T('skeleton')}</span>` + all.map(c => `<code class="${d.caps.includes(c) ? '' : 'no'}" title="${d.caps.includes(c) ? '' : T('notSupported')}">${c}()</code>`).join('') + '<code>observe()</code><code>act()</code>';
-  $('aboutText').textContent = D('about'); $('aboutLinks').innerHTML = d.links;
+  $('aboutLinks').innerHTML = d.links;
   $('legend').innerHTML = d.legend();
-  d.renderWorld($('world'));
+  $('wiExtra').innerHTML = ''; d.renderWorld($('world'));
   if (d.renderParts) d.renderParts($('parts')); else $('parts').innerHTML = '';   // the twin's parts a person can choose
-  $('agentp').hidden = !d.renderAgent; if (d.renderAgent) d.renderAgent($('agentp')); else $('agentp').innerHTML = '';   // its LLM agent, if any
+  if (d.renderAgent && !$('agentp').hidden) d.renderAgent($('agentp'));    // its LLM agent, when opened
   const cfg = d.whatif.cfg(), sl = $('try'); sl.min = cfg.min; sl.max = cfg.max; sl.step = cfg.step; sl.value = cfg.value;
   syncPlay();
 }
@@ -1604,15 +1691,24 @@ function refreshPanel() {
   $('legend').innerHTML = d.legend();
   d.drawChart();
 }
-function refreshAll() { renderStatic(); refreshPanel(); renderLog(); }
+function refreshAll() { renderStatic(); refreshPanel(); }
 SH.refreshAll = refreshAll; SH.refreshPanel = refreshPanel;
 function syncPlay() { $('play').textContent = SH.running ? '❚❚' : '▶'; $('play').setAttribute('aria-label', SH.running ? 'Pause' : 'Play'); }
 
 function switchDomain(key) {
   SH.key = key; SH.dom = DOMAINS[key]; SH.log = []; SH.acc = 0; SH.speedIdx = 1; store.set('twb-sys', key);
+  document.documentElement.dataset.sys = key; closeAgent(); $('bnPhys').textContent = $('bnTwin').textContent = '';
   if (G.ok) { if (G.group) G.scene.remove(G.group); clearTags(); G.group = new THREE.Group(); G.scene.add(G.group); SH.dom.buildScene(G.group); G.floor.material.color = col('--line'); fitCamera(); }
   SH.dom.init(); renderSpeeds(); refreshAll();
 }
+
+const KEYS = Object.keys(DOMAINS);
+document.addEventListener('keydown', e => {   // arrows or a presentation clicker switch the twin; Escape closes the agent
+  if (e.key === 'Escape') { closeAgent(); return; }
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || !$('agentp').hidden) return;
+  const k = { ArrowRight: 1, PageDown: 1, ArrowLeft: -1, PageUp: -1 }[e.key]; if (!k) return;
+  const i = KEYS.indexOf(SH.key) + k; if (i >= 0 && i < KEYS.length) { SH.running = true; switchDomain(KEYS[i]); } e.preventDefault();
+});
 
 let lastReal = performance.now(), panelT = 0, fcT = 0;
 function frame(now) {
@@ -1625,12 +1721,12 @@ function frame(now) {
     if (fcT > 700) { d.forecast(); fcT = 0; }
     if (panelT > 120) { refreshPanel(); panelT = 0; }
   }
-  if (G.ok) { d.update3D(dt, now); G.controls.update(); G.renderer.render(G.scene, G.camera); placeTags(d.tags(G.host.getBoundingClientRect().width < 560)); }
+  if (G.ok) { d.update3D(dt, now); G.controls.update(); G.renderer.render(G.scene, G.camera); placeTags(d.tags(G.host.getBoundingClientRect().width < 560)); placePins(); }
   requestAnimationFrame(frame);
 }
 
 $('play').onclick = () => { SH.running = !SH.running; syncPlay(); if (!SH.running) { SH.dom.forecast(); refreshPanel(); } };   // paused: show the last hour
-$('reset').onclick = () => { SH.log = []; SH.dom.init(); SH.running = true; refreshAll(); };
+$('reset').onclick = () => { SH.log = []; $('bnPhys').textContent = $('bnTwin').textContent = ''; SH.dom.init(); SH.running = true; refreshAll(); };
 document.querySelectorAll('#sysSeg button').forEach(b => b.onclick = () => { if (b.dataset.sys !== SH.key) { SH.running = true; switchDomain(b.dataset.sys); } });
 document.querySelectorAll('#langSeg button').forEach(b => b.onclick = () => { SH.lang = b.dataset.lang; store.set('twb-lang', SH.lang); refreshAll(); });
 $('try').oninput = () => { SH.dom.whatif.onTry(Number($('try').value)); refreshPanel(); };

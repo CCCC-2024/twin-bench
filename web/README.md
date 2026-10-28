@@ -1,15 +1,17 @@
 # Twin Bench page
 
-One page shell, one module per twin (incubator, battery, UAV, bike share). Each module brings its 3D asset, readings, curves and
-what-if controls; the shell, event log and six-element panel are shared. Everything runs in the browser.
+One page shell, one module per twin (incubator, battery, UAV, bike share). The simulation is the page: each module brings
+its 3D asset, with the controls pinned beside the objects they act on (the asset's by the asset, the twin's what-if by
+the twin; `data-pin` names an anchor of the scene) and two bubbles: what happened to the asset and how the twin reacted.
+The twin panel beside it has two readings and a chart. Everything runs in
+the browser; arrow keys or a presentation clicker switch the twin.
 
-A module fills two places in the shell with its own controls: `renderWorld` for what happens to the physical object,
-and, if the twin has a part with more than one implementation, `renderParts` for the part a person chooses (the twin
-panel's first line; bike share: the demand forecast, historical average or the paper's VP-RNN). Choosing restarts the
-run, so the same source drives each choice from the same start. A twin with an LLM agent also fills `renderAgent`, a
-panel below (bike share: the agent's recorded runs on events described in words, whose what-if inputs extracted from the
-event can be edited; opened from this computer, an event can also be typed and its inputs extracted live by a model
-served there).
+A module fills the shell with its own parts: `renderWorld` for what happens to the physical object, and, if the twin has
+a part with more than one implementation, `renderParts` for the part a person chooses (bike share: the demand forecast,
+historical average or the paper's VP-RNN). Choosing restarts the run, so the same source drives each choice from the same
+start. A twin with an LLM agent also fills `renderAgent`, opened over the page from the asset's controls (bike share:
+"Event in words…": the agent's recorded runs on events described in words, whose extracted what-if inputs can be
+edited; opened from this computer, an event can also be typed and its inputs extracted live by a model served there).
 
 Published by `.github/workflows/pages.yml` on every push to `main` that touches `web/`.
 
