@@ -11,6 +11,27 @@ built from a paper's description and checked against real data.
 **Live page:** https://cccc-2024.github.io/twin-bench/ — the physical asset and its twin side by side, with what-if
 controls, all computed in the browser.
 
+## What the twins have shown so far
+
+Building the twins, rather than reading about them, turned up these (details and every number in each twin's README):
+
+- **The reproductions hold.** Bike share: 365 of 366 nightly decisions identical to the authors' code (the other is a
+  numerical tie); battery: the twin on `dtcore` equals the original particle filter. CI re-checks both on every push.
+  The UAV filter was compared with the authors' model once.
+- **A better forecast did not give a better decision.** In the bike-share twin, a learned forecast (the paper's
+  VP-RNN) is more accurate than the last-30-days average, yet when the twin sets the bikes at night it does not decide
+  better (8.8 vs 7.8 lost per day, within noise). The paper's protocol, where it does better, uses same-day counts that
+  are not known at 23:00. Two trainings with the same accuracy chose the same start on only 5 of 61 nights.
+  ([bikeshare](twins/bikeshare/#results))
+- **A twin that learns from all its history adapts slowly.** Rates learned from January–October are about twice the
+  November–December demand, and each new weekday moves them by about 1/220. A forgetting window is the next step.
+- **The model can rank actions even where its levels are wrong.** The twin's expected shortages are far from the
+  replay (42.8 vs 8.4 per day), but the differences between actions agree better, and a decision only needs those.
+- **An LLM agent helps with events the data never showed, and over-reacts to ones that do not matter**
+  (preliminary: small local models, one station, 11 nights). Told of a morning rush (rentals ×3, 7–10 am), both agents
+  came far closer to the best start than the rule (4–5 vs 18 extra lost); told of a late-evening event that hardly
+  affects the night's choice, both lost about 16 where the rule lost none. On ordinary nights neither beat the rule.
+
 | Twin | Domain | What it does | Source | Status |
 |---|---|---|---|---|
 | [incubator](twins/incubator/) | Thermal control | Kalman filter estimates the unmeasured heater temperature, flags an opened lid, what-if on the set point | Built from the description in Feng et al. 2021; real data from Aarhus University | dtcore + page |
