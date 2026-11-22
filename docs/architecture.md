@@ -77,7 +77,7 @@ acts on it. Published agent-with-twin systems draw the same line: the
 model selects and parameterizes tools and never computes numbers (Mylonas et al. 2026, arXiv 2609.22476, a control-room twin where
 only 39 % of answers had numbers supported by the backend once that layer was removed; Kleiman et al. 2025,
 arXiv 2505.13761: the model is "an interface and interpreter, not the source of truth"). All four twins write `brief`, `whatif` and `best`; `tools/advise_events.py` runs four
-kinds of event on each (bike share's page sends its own `EXTRACT_EVENT_PROMPT`, an earlier form of the same split).
+kinds of event on each; bike share's page sends the same prompt when it reads an event typed live.
 
 Deliberately *not* in the skeleton (one twin uses each so far): MQTT transport (battery live demo), specific filters,
 each twin's page module.

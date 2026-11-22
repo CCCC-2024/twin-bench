@@ -11,7 +11,8 @@ web/bikeshare_events.js (published): for each night of scripts/new_conditions.py
     for the next day as it forecast them at midnight, its brief() then, and the recorded agent runs
     (results/new_conditions.json); the page draws, from these rates, what each start would lose with an event and with
     the inputs the agent extracted from it. Opened locally, the page can also ask a model served on the same computer
-    to extract them from an event typed in words: it sends twin.EXTRACT_EVENT_PROMPT and the night's brief.
+    to extract them from an event typed in words: it sends dtcore.agent.advise's prompt for this twin and the night's
+    brief, and reads the reply as advise does.
 results/ref_web_bikeshare.json: a simulated run on dtcore (3 days from 1 Nov; demand x1.5 from hour 30; a truck sets
     5 bikes before hour 44) with every simulated event, the twin's estimates and decisions, forecasts and what-ifs at
     a few hours, and model-only cases. The check feeds the same events to the page's code and compares.
@@ -25,9 +26,8 @@ from pathlib import Path
 
 import numpy as np
 
-from dtcore import Recorder, run
+from dtcore import Recorder, agent, run
 from twins.bikeshare import ReplayStation, SimStation, StationTwin, data, model
-from twins.bikeshare.twin import EXTRACT_EVENT_PROMPT
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT.parents[1] / "web"
@@ -168,7 +168,7 @@ for day, (lp, lr) in ahead.items():                         # the rates give bac
         cost, row = model.udf(np.where(w, np.array(lp) * fp, lp), np.where(w, np.array(lr) * fr, lr), C), nc["days"][day][key]
         assert int(np.argmin(cost)) == row["best"]["start"] and model.best_start(np.array(lp), np.array(lr), C)[0] == row["rule"]["start"]
         assert all(abs(cost[r["start"]] - r["expected"]) < 1e-9 for r in row.values() if r["start"] is not None)
-events = dict(events={k: dict(text=nc["events"][k], truth=v) for k, v in EVENTS.items()}, agents=list(nc["models"]), extract_prompt=EXTRACT_EVENT_PROMPT,
+events = dict(events={k: dict(text=nc["events"][k], truth=v) for k, v in EVENTS.items()}, agents=list(nc["models"]), advise_prompt=agent.ADVISE_PROMPT % (agent.ESTIMATE, json.dumps(StationTwin.conditions), ""),
               nights=[dict(day=day, lp=ahead[day][0], lr=ahead[day][1], brief=brief[day], **nc["days"][day]) for day in sorted(nc["days"])])
 (WEB / "bikeshare_events.js").write_text("window.BIKESHARE_EVENTS = " + json.dumps(events, separators=(",", ":")) + ";\n")
 lost = sum(r["lost_rent"] + r["lost_return"] for r in rows)

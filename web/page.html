@@ -1429,7 +1429,7 @@ const Bike = (function () {
   // ---------- the LLM agent on events described in words (scripts/new_conditions.py) ----------
   // Recorded runs: what the agent was told, which what-ifs it ran and what it answered, scored on the event as written.
   // Live (page opened from this computer): a model on this computer only extracts whatif's inputs from typed words
-  // (twin.EXTRACT_EVENT_PROMPT). Either way the twin computes every start from those inputs, which a person can edit.
+  // (dtcore.agent.advise's prompt). Either way the twin computes every start from those inputs, which a person can edit.
   const EV = window.BIKESHARE_EVENTS || null;
   const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);   // a model server can only be on this computer
   const USUAL = [1, 1, 0, 24];                                        // whatif's inputs on a usual day
@@ -1525,10 +1525,10 @@ const Bike = (function () {
     const cv = el.querySelector('#agChart'), draw = () => drawAgent(cv, m.ref, m.marks);
     if (AG.ro) AG.ro.disconnect(); if (cv) { AG.ro = new ResizeObserver(draw); AG.ro.observe(cv); }   // the curve appears once the replay is done
   }
-  // one request to a server with the OpenAI chat API (Ollama): twin.EXTRACT_EVENT_PROMPT + the night's brief(), then the words
+  // one request to a server with the OpenAI chat API (Ollama): advise's prompt + the night's brief(), then the words
   async function liveExtract(el, n) {
     const x = t('ag'), body = { model: LIVE.model, temperature: 0, max_tokens: 4096,
-      messages: [{ role: 'system', content: EV.extract_prompt + n.brief }, { role: 'user', content: LIVE.text }] };
+      messages: [{ role: 'system', content: EV.advise_prompt + n.brief }, { role: 'user', content: LIVE.text }] };
     if (LIVE.reasoning) body.reasoning_effort = LIVE.reasoning;
     Object.assign(LIVE, { busy: true, reply: null, msg: null }); renderAgent(el);
     const t0 = performance.now(), done = (inputs, msg) => {
@@ -1541,11 +1541,14 @@ const Bike = (function () {
     const said = parseExtraction(LIVE.reply);
     done(said.inputs || USUAL, said.cannot !== undefined ? x.cannot(said.cannot) + ' ' + x.keepsUsual : said.inputs ? null : x.notUnderstood + ' ' + x.keepsUsual);
   }
-  function parseExtraction(reply) {    // {inputs} or {cannot} or {}; the inputs checked as whatif() in twin.py checks them
+  function parseExtraction(reply) {    // advise's calls: {inputs} or {cannot} or {}; inputs checked as whatif() in twin.py checks them
     let said;
     try { said = JSON.parse(reply.slice(reply.indexOf('{'), reply.lastIndexOf('}') + 1)); } catch (e) { return {}; }
-    if (said && 'cannot' in said) return { cannot: String(said.cannot) };
-    const v = ['rent_factor', 'return_factor', 'from_hour', 'to_hour'].map(k => said && said[k]);
+    const args = said && typeof said.arguments === 'object' && said.arguments ? said.arguments : {};
+    if (said && said.name === 'cannot') return { cannot: String(Object.values(args)[0] ?? '') };
+    if (!said || !['conditions', 'no_effect'].includes(said.name)) return {};
+    const given = said.name === 'conditions' ? args : {};
+    const v = ['rent_factor', 'return_factor', 'from_hour', 'to_hour'].map((k, i) => given[k] ?? [1, 1, 0, 24][i]);
     const ok = v.slice(0, 2).every(f => typeof f === 'number' && f >= 0) && v.slice(2).every(Number.isInteger) && 0 <= v[2] && v[2] < v[3] && v[3] <= 24;
     return ok ? { inputs: v } : {};
   }

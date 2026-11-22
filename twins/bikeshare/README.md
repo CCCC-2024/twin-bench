@@ -51,7 +51,8 @@ no valid choice the action has no `set_bikes` and the reason says why: no truck 
 - `__init__.py`: the public names: `StationTwin`, its rate models `HistoricalRates` and `RNNRates`, its policies
   `RulePolicy` and `AgentPolicy`, `ReplayStation`, `SimStation`, `experiment`.
 - `twin.py`: `StationTwin` with update, predict / what-if and decide, `brief` / `whatif` for the LLM agent, and the
-  prompts sent to a model (`NIGHTLY_PROMPT`; `EXTRACT_EVENT_PROMPT`, extraction only, sent by the page); it
+  prompt of its own agent experiments (`NIGHTLY_PROMPT`); events in words go through `dtcore.agent.advise`, as on
+  every twin (the page sends advise's prompt too); it
   takes its rate model and its policy as arguments: `RulePolicy` (the paper's decision, the default) or `AgentPolicy`
   (the LLM agent of `dtcore.agent`).
 - `rates.py`: rate models, what the twin knows about demand: `HistoricalRates` (Gamma posterior per hour and day
