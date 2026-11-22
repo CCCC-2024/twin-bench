@@ -88,3 +88,9 @@ On the 2023 empty-box experiment (1.85 h, 2216 samples) unless noted.
 - On the tempeh experiment (a batch of fermenting beans in the box; set point lowered to 30 °C after 11 h) the alarm is
   on for 49 % of the samples *(test)*. The model has no load and no heat from the fungus, so this is what the alarm is
   for ("something in the box"), not a false alarm; a twin for loaded runs would need those terms.
+- For an LLM agent (`dtcore.agent.advise`): given its copy of the box's controller and a band,
+  `IncubatorTwin(controller=..., band=(36, 38))`, the twin compares every set point from 35 to 39 °C in steps of 0.25
+  over the next hour (`best`), optionally with the room at another temperature. An hour into the simulated run the
+  best set point is 37.25 °C with the room at 22 °C and 37.75 °C at 12 °C; keeping 37.25 °C in the cold room leaves the
+  air outside the band 20.6 of the next 60 minutes instead of 4.1 *(test)*. The band and the goal are ours. The what-if
+  has no input for an opened lid.

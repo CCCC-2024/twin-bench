@@ -57,3 +57,15 @@ def test_maneuver_differs_only_when_switching_to_2g_late(authors_asset):
     mismatches = authors_asset.mismatches
     assert round(len(mismatches) / (len(SEEDS) * TURNS), 3) == 0.024
     assert {(turn, flown, best) for turn, flown, best in mismatches} <= {(31, 1, 0), (32, 1, 0)}
+
+
+def test_with_damage_growing_twice_as_often_the_planner_turns_gently_earlier(uav_model):
+    """For an LLM agent: the policy for a faster damage growth differs in 3 of 25 states (region 1 at 40 %)."""
+    usual, gusty = uav_model.policy(2.5), uav_model.policy(2.5, growth=2.0)
+    assert [uav_model.S[i] for i in np.where(usual != gusty)[0]] == [(40, 0), (40, 20), (40, 40)]
+    twin = UAVTwin(uav_model)
+    twin.b_pred = np.eye(25)[10]                                               # region 1 at 40 %, region 2 intact
+    assert twin.best()["maneuver"] == "3g" and twin.best(growth_factor=2)["maneuver"] == "2g"
+    assert twin.whatif("2g", growth_factor=2)["value"] > twin.whatif("3g", growth_factor=2)["value"]
+    with pytest.raises(ValueError, match="growth_factor"):
+        twin.best(growth_factor=5)

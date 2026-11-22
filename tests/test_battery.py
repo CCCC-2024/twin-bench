@@ -107,3 +107,16 @@ def test_the_authors_prior_is_narrow_against_fits_to_the_training_cells(cells):
     (mean_a, mean_b), (std_a, std_b) = np.mean(fits, axis=0), np.std(fits, axis=0)
     assert (round(mean_a, 1), round(mean_b, 2), round(std_a, 1), round(std_b, 1)) == (-12.9, 4.35, 3.2, 1.2)
     assert (PRIOR, PROC_STD) == ((-15.77, 5.45), (0.05, 0.05))      # the authors' prior; its std is PROC_STD
+
+
+def test_a_cell_that_fades_faster_is_retired_earlier(example):
+    """For an LLM agent: best() is the twin's decision, and with a faster fade from now on an earlier one."""
+    cell, _ = example
+    twin = BatteryTwin(cell["q0"])
+    run(CellReplay(cell), twin, max_steps=248)                                  # to cycle 249, where it decides
+    assert twin.best() == dict(retire_at=twin.decision["x_twin"], utility=0.793, end_of_life=548)
+    assert twin.best(fade_factor=1.5) == dict(retire_at=477, utility=0.7621, end_of_life=511)
+    assert twin.whatif(508, fade_factor=1.5)["utility"] < 0.7621                # the usual cycle, with the faster fade
+    assert twin.whatif(9999, fade_factor=1.5) == twin.whatif(509, fade_factor=1.5)   # past its end of life: stopped
+    with pytest.raises(ValueError, match="fade_factor"):
+        twin.best(fade_factor=0)

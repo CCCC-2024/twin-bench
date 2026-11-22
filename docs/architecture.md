@@ -56,9 +56,28 @@ with `choices` the scenarios it may pick, or a question, such as how to adapt to
 `llm(messages) -> reply` is any language model; `chat_model(name, url)` reaches one served with the OpenAI chat API
 (Ollama, LM Studio). A twin lets the agent work with it by writing `brief` and `whatif`; the agent itself does not
 change. It is in the skeleton because it uses only the Twin interface. A model can also be asked only to extract the
-what-if's inputs from an event in words, with the twin then computing every choice (bike share: `EXTRACT_EVENT_PROMPT`,
-sent by the page): in `scripts/new_conditions.py` the agent turned events into the right inputs but rarely compared
-choices.
+what-if's inputs from an event in words, with the twin then computing every choice: in
+`twins/bikeshare/scripts/new_conditions.py` the agent turned events into the right inputs but rarely compared choices.
+`advise(llm, twin, event)` is that split for any twin: the model answers with one of three calls, `conditions` (the
+what-if inputs the event changes), `no_effect` or `cannot` (the event matters but no input expresses it), then
+`twin.best(**conditions)`, the twin's own comparison of every action. The model chooses nothing and computes nothing;
+inputs that are the twin's actions (`twin.actions`) are dropped from its reply, and conditions the twin cannot run are
+told back to the model once and are otherwise an error, not an action. The rule for every twin: a twin states each
+condition once as data, `twin.conditions` (name -> the JSON schema of its value, with a description), the inputs of
+its `best`; the prompt and the tool definitions are made from that, so a new twin writes no prompt. The calls go in
+the reply as JSON, `{"name": ..., "arguments": {...}}`; `chat_model(use_tools=True)` sends them as tool calls instead,
+which read stated events as well but said `cannot` less often (8 and 14 of 20 against 14 and 15, Qwen3.5-9B and
+gpt-oss-20b). Three results on 9 held-out events per twin (`tools/advise_events.py`): an event with its numbers is
+read right (27 and 30 of 30) and one that changes nothing is left alone (20 and 19 of 20); an event the what-if has
+no input for is called `cannot` in 14 and 15 of 20; and a vague event is the open problem, since the model must guess
+a number and the twin then acts on it: for the incubator ("someone left the window open on a cold winter night") both
+models gave the room an outdoor temperature, and the twin's choice was outside the band 30 to 54 minutes of 60 where
+not knowing the event cost 8. A guess from words should be confirmed by a person or given as a range before a twin
+acts on it. Published agent-with-twin systems draw the same line: the
+model selects and parameterizes tools and never computes numbers (arXiv 2609.22476, 2026, a control-room twin where
+numeric grounding fell to 39 % without that layer), since a language model reasons over text and does not optimize
+(Xia 2026, arXiv 2606.20761). All four twins write `brief`, `whatif` and `best`; `tools/advise_events.py` runs four
+kinds of event on each (bike share's page sends its own `EXTRACT_EVENT_PROMPT`, an earlier form of the same split).
 
 Deliberately *not* in the skeleton (one twin uses each so far): MQTT transport (battery live demo), specific filters,
 each twin's page module.
@@ -92,7 +111,8 @@ dtcore has no class for parts: what a twin asks of a part differs from twin to t
 | battery | particle filter (D, Q) | built in `BatteryTwin` at first-prediction time | a step per cycle giving `log10_a`, `b`, `eol_pred` (the decision's inputs), and a capacity band | `ParticleFilter` |
 | incubator | Kalman filter (D); model and controller (Q) | built in `IncubatorTwin`; `predict` takes the controller (open: the twin should keep its own copy) | a step per sample giving the state and the innovation (the lid alarm); a forward simulation | `Kalman`, `Stepper`, `Controller` |
 | _template | scalar Kalman filter (D); heater rule (U) | written inside `MugTwin` | a filter step per reading; heater on if the mug would cool below the target within the look-ahead | one each |
-| every twin | policy (U) | `decide()` (incubator: a person) | the twin's what-if, `predict(horizon, **scenario)`, as its tools | each twin's rule; the LLM agent (`dtcore.agent`) for a twin with `brief` and `whatif` (so far bikeshare) |
+| every twin | policy (U) | `decide()` (incubator: a person) | the twin's what-if, `predict(horizon, **scenario)`, as its tools | each twin's rule; the LLM agent (`dtcore.agent`): `ask` for a twin with `brief` and `whatif` (as a policy so far in bikeshare), `advise` for one with `best` too (all four) |
+| every twin | reader of events (O, from outside the sensors) | `agent.advise(llm, twin, event)` | the conditions an event in words means for the what-if; the twin's `best(**conditions)` then chooses | any language model; compared by `tools/advise_events.py` against a perfect reader, with and without tool calls |
 
 A learned part must give what the twin asks of it: a battery predictor that only estimates the end of life cannot
 replace the filter without a capacity band and the decision's inputs. The one learned part so far shows why the

@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 from dtcore import Recorder, run
-from twins.bikeshare import AgentPolicy, HistoricalRates, ReplayStation, StationTwin, data, experiment, model
+from twins.bikeshare import AgentPolicy, DiscountedRates, HistoricalRates, SelectedRates, ReplayStation, StationTwin, data, experiment, model
 
 JAN1 = datetime.date(2018, 1, 1)
 TOL = 1e-3          # the authors integrate with Runge-Kutta: relative error up to ~1e-3
@@ -294,3 +294,58 @@ def test_told_of_an_event_agents_react_to_the_words_and_over_react_to_one_that_d
     assert [above(e, "gpt-oss:20b+check") for e in "ABC"] == [4.95, 0.29, 14.2]
     assert [ran(e, "qwen3.5:9b+check") for e in "ABC"] == [10, 9, 7]
     assert [ran(e, "gpt-oss:20b+check") for e in "ABC"] == [10, 11, 2]
+
+
+def hours_of(n_days, level):
+    """n_days of made-up hourly observations: `level(day)` rentals and returns in every hour."""
+    for i in range(n_days * 24):
+        day = JAN1 + datetime.timedelta(days=i // 24)
+        yield dict(date=str(day), hour=i % 24, weekday=day.weekday() < 5, pickups=level(i // 24), returns=level(i // 24))
+
+
+def test_discounted_rates_forget_old_days_and_with_no_forgetting_equal_the_historical_average():
+    never, weekly, plain = DiscountedRates(1e12), DiscountedRates(7), HistoricalRates()
+    for obs in hours_of(60, lambda d: 10 if d < 30 else 2):             # demand drops to a fifth after 30 days
+        for r in (never, weekly, plain):
+            r.update(obs)
+    assert np.allclose(never.ahead(24), plain.ahead(24))
+    assert plain.ahead(24)[0].max() > 5 and weekly.ahead(24)[0].max() < 2.5   # the plain average is still near 6
+
+
+def test_selected_rates_switch_to_the_rate_model_that_forecast_the_last_days_better():
+    rates = SelectedRates(dict(all=HistoricalRates(), week=HistoricalRates(window_days=7)), judge_days=7)
+    chosen = [rates.update(obs)["rates_chosen"] for obs in hours_of(60, lambda d: 10 if d < 30 else 2)]
+    assert chosen[30 * 24] == "all" and chosen[-1] == "week"
+    assert np.allclose(rates.ahead(24), rates.candidates["week"].ahead(24))
+
+
+def test_forgetting_halves_the_forecast_error_after_the_season_changes_and_loses_fewer():
+    """scripts/compare_forgetting.py (results/compare_forgetting.json). On May-Oct, where how much to forget is chosen,
+    the rate models lose the same; on Nov-Dec every one that remembers about a month or less loses fewer than
+    remembering everything, and the twin selecting for itself does as well as the one chosen for it."""
+    saved = json.loads((Path(data.__file__).parent / "results" / "compare_forgetting.json").read_text())
+    test = [str(d) for d in experiment.TEST_DAYS]
+    lost = lambda m, days: np.array([saved["days"][d][m]["lost"] for d in days])
+    choose = sorted(set(saved["days"]) - set(test))
+    means = [float(lost(m, choose).mean()) for m in saved["forecast_rmse"]]
+    assert len(choose) == 184 and 75.8 < min(means) and max(means) < 76.1
+    assert saved["chosen_on_choose_days"] == "window_21"
+    assert {m: round(float(lost(m, test).mean()), 2) for m in ("all", "window_21", "window_30", "half_life_5", "selected")} \
+        == dict(all=8.43, window_21=7.57, window_30=7.79, half_life_5=7.51, selected=7.54)
+    assert mean_and_se(lost("all", test) - lost("window_21", test)) == (0.85, 0.33)
+    assert mean_and_se(lost("all", test) - lost("selected", test)) == (0.89, 0.30)
+    assert mean_and_se(lost("window_21", test) - lost("selected", test)) == (0.03, 0.12)
+    rmse = lambda m: [round(x, 2) for x in saved["forecast_rmse"][m]["test"]]
+    assert rmse("all") == [10.12, 9.88] and rmse("window_21") == [5.72, 5.59] and rmse("selected") == [5.67, 5.48]
+    assert [saved["days"][d]["selected"]["chosen"] for d in test[:10]].count("all") == 9   # slow to leave "all"
+
+
+def test_best_is_the_rules_start_and_under_an_event_the_start_with_the_fewest_expected_lost(paper):
+    twin = StationTwin(paper["C"])
+    run(ReplayStation(paper["C"], data.events(), JAN1, 1), twin)                # 23:00 on Monday 1 Jan
+    assert twin.best()["set_bikes"] == twin.decide()["set_bikes"]
+    told = twin.best(rent_factor=3, from_hour=7, to_hour=10)
+    every = [twin.whatif(s, rent_factor=3, from_hour=7, to_hour=10)["expected_lost"] for s in range(paper["C"] + 1)]
+    assert told["expected_lost"] == min(every) == every[told["set_bikes"]]
+    with pytest.raises(ValueError, match="rent_factor"):
+        twin.best(rent_factor=-1)

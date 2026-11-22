@@ -23,14 +23,28 @@ Building the twins, rather than reading about them, turned up these (details and
   better (8.8 vs 7.8 lost per day, within noise). The paper's protocol, where it does better, uses same-day counts that
   are not known at 23:00. Two trainings with the same accuracy chose the same start on only 5 of 61 nights.
   ([bikeshare](twins/bikeshare/#results))
-- **A twin that learns from all its history adapts slowly.** Rates learned from January–October are about twice the
-  November–December demand, and each new weekday moves them by about 1/220. A forgetting window is the next step.
+- **A twin that learns from all its history adapts slowly; forgetting fixes the forecast and part of the decision.**
+  Rates learned from January–October are about twice the November–December demand. Remembering only the last weeks
+  (a window, or a discount factor) halves the forecast error there (RMSE 10.1 → 5.4–5.7 rentals an hour) and loses
+  0.85 ± 0.33 fewer riders a day (8.43 → 7.57; the best possible in hindsight is 4.67). How much to forget hardly
+  matters below about a month, and the twin can select it from its own recent forecast errors (7.54), though it takes
+  about ten days to notice the change. In the busy months no rate model decides differently.
+  ([bikeshare](twins/bikeshare/#forgetting))
 - **The model can rank actions even where its levels are wrong.** The twin's expected shortages are far from the
   replay (42.8 vs 8.4 per day), but the differences between actions agree better, and a decision only needs those.
 - **An LLM agent helps with events the data never showed, and over-reacts to ones that do not matter**
   (preliminary: small local models, one station, 11 nights). Told of a morning rush (rentals ×3, 7–10 am), both agents
   came far closer to the best start than the rule (4–5 vs 18 extra lost); told of a late-evening event that hardly
   affects the night's choice, both lost about 16 where the rule lost none. On ordinary nights neither beat the rule.
+- **Words reach every twin the same way: the model extracts the conditions, the twin compares every action.**
+  `dtcore.agent.advise` works with all four twins (`tools/advise_events.py`). With a perfect reader, an event the twin
+  is not told costs 15 lost riders a day at the bike station and 16.5 of 60 minutes outside the band in the incubator,
+  but next to nothing for the battery (utility 0.0004) and the UAV (planner value 0.003, and only with the wing at
+  40 % damage): outside information is worth what the decision is sensitive to. Two local models (Qwen3.5-9B, gpt-oss-20b), on 9
+  held-out events per twin: an event that states its numbers is read right in 27 and 30 of 30 cells, and one that
+  changes nothing is left alone in 20 and 19 of 20; one the what-if cannot express is recognized in 14 and 15 of 20.
+  A vague event is not solved: the model has to guess a number, and for the incubator the guesses (an outdoor
+  temperature for the room) made the twin's choice worse than not knowing, 30 to 54 minutes outside the band against 8.
 
 | Twin | Domain | What it does | Source | Status |
 |---|---|---|---|---|

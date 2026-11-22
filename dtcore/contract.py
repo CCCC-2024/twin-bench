@@ -44,6 +44,10 @@ class Twin:
         return None
 
     # For an LLM agent (agent.py); a twin implements these only if an agent is to work with it.
+    actions = ()        # the what-if inputs that are the twin's own action; every other input is a condition
+    conditions = {}     # each condition, the inputs of best(): name -> the JSON schema of its value (type, description,
+                        # minimum, maximum), which agent.advise gives a language model as a tool's parameters
+
     def brief(self):
         """The system and its state now, in words, and what whatif() takes (each scenario keyword: meaning, unit,
         allowed values) and returns."""
@@ -52,4 +56,9 @@ class Twin:
     def whatif(self, **scenario):
         """The what-if for an agent: predict() for one scenario, reduced to a few named numbers {name: number}.
         Raise ValueError for a scenario the twin cannot simulate."""
+        raise NotImplementedError
+
+    def best(self, **conditions):
+        """The twin's own choice under these conditions: every action compared by the twin's model. Returns the
+        action's inputs and a few named numbers. Raise ValueError for conditions the twin cannot simulate."""
         raise NotImplementedError

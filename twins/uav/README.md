@@ -74,3 +74,8 @@ node web/checks/check_uav.js twins/uav/results web    # UAV WEB CHECK OK
 - Readings = interpolated precomputed strain + noise (σ = 150), divided by load; the twin assumes σ = 125 / √load.
 - The authors' measurement generator uses scipy's `LinearNDInterpolator`; once the true damage drifts off the grid by
   rounding, readings differ slightly between scipy versions. Compare runs within one environment.
+- For an LLM agent (`dtcore.agent.advise`): `best(growth_factor)` is the maneuver under the policy recomputed with
+  damage growing that many times as often (both transition probabilities times the factor, up to 3). At twice the
+  growth the policy differs in 3 of 25 states, region 1 at 40 %, where it turns gently one damage level earlier
+  *(test)*; elsewhere an event of that kind changes nothing. Above about 3 the planner's last state (both regions at
+  80 %, where nothing more can be lost) starts to rule the policy, so the input stops there.

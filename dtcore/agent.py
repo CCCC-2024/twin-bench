@@ -1,9 +1,10 @@
 """An LLM agent that works with any twin through the twin's what-if (docs/architecture.md).
 
 ask(llm, twin, request, choices=None, turns=10) holds one conversation with a language model about one twin:
-  llm      llm(messages) -> reply (str): the model. messages are {"role": "system" | "user" | "assistant",
-           "content": str}, as in the OpenAI chat API; chat_model(name, url) is such a model, served that way
-           (Ollama and LM Studio serve local models so)
+  llm      llm(messages, tools=None) -> reply (str): the model. messages are {"role": "system" | "user" |
+           "assistant", "content": str} and tools are function definitions, both as in the OpenAI chat API; a
+           tool call is replied as the JSON {"name": ..., "arguments": {...}}, and a model without tools may ignore
+           them. chat_model(name, url) is such a model, served that way (Ollama and LM Studio serve local models so)
   twin     a Twin with brief() and whatif(**scenario) (contract.py): the system in words, and its what-if
   request  what the agent is asked, in words: a decision, or a question such as how to adapt to a new condition
   choices  when the answer is to be used as an action, the scenarios it may choose from; otherwise None. Only their
@@ -11,6 +12,18 @@ ask(llm, twin, request, choices=None, turns=10) holds one conversation with a la
   turns    the most replies the model may give
 The model may run the what-if as often as its turns allow, then answers. Returns dict(answer, choice, asked, error):
 its answer in words, the scenario it chose (with choices), the scenarios it ran, and why there is no answer, if so.
+
+advise(llm, twin, event, turns=2) splits the work the other way: the model only extracts, from an event in words, the
+conditions it means for the twin's what-if; the twin then compares every action itself, twin.best(**conditions). The
+model chooses nothing and computes nothing. It answers with one of three calls, as a tool call where the server has
+tools (llm(messages, tools)) and as the same JSON in its reply where not:
+  conditions  the event changes these inputs (twin.conditions: name -> the JSON schema of its value)
+  no_effect   the event changes nothing the choice depends on: the twin's usual choice, twin.best()
+  cannot      the event matters but the inputs cannot express it: no action
+A call that is not one of these, or conditions the twin cannot run (best raises ValueError or TypeError), is told
+back to the model with the reason, up to `turns` replies. Returns dict(said, conditions, best, reply, replies, error):
+the call it ended with (None if never a valid one), the conditions, the twin's best action under them, the last
+reply, the number of replies, and why there is no action, if so.
 """
 import json
 import urllib.error
@@ -24,6 +37,54 @@ else, either
 You have at most %d replies.
 
 The twin: %s"""
+
+
+ADVISE_PROMPT = """You read events for a digital twin of a real system: a model kept in step with the system's data that \
+can simulate it. The twin chooses its own action by comparing every one; you only tell it what the event the user \
+describes changes. Answer with exactly one call:
+  conditions  the event changes inputs of the twin's what-if. Give only the inputs it changes, as numbers; where the \
+event states no number, give your best estimate.
+  no_effect   the event changes nothing the twin's choice depends on. Argument: why.
+  cannot      the event matters to the choice, but these inputs cannot express it. Argument: why.
+Call it as a tool; without tools, reply with one JSON object and nothing else: {"name": "<call>", "arguments": {...}}.
+
+The inputs of conditions: %s
+
+The twin: %s"""
+
+
+def _calls(twin):
+    """The three calls of advise as tool definitions; the twin's conditions are the parameters of the first."""
+    why = dict(type="object", properties=dict(why=dict(type="string")), required=["why"])
+    described = (("conditions", "The event changes these inputs of the twin's what-if.",
+                  dict(type="object", properties=twin.conditions, additionalProperties=False)),
+                 ("no_effect", "The event changes nothing the twin's choice depends on.", why),
+                 ("cannot", "The event matters to the twin's choice, but the inputs cannot express it.", why))
+    return [dict(type="function", function=dict(name=n, description=d, parameters=p)) for n, d, p in described]
+
+
+def advise(llm, twin, event, turns=2):
+    messages = [dict(role="system", content=ADVISE_PROMPT % (json.dumps(twin.conditions), twin.brief())),
+                dict(role="user", content=event)]
+    tools = _calls(twin)
+    for n in range(1, turns + 1):
+        reply = llm(messages, tools)
+        said = _parse(reply)
+        name, given = said.get("name"), said.get("arguments")
+        out = dict(said=None, conditions=None, best=None)
+        if name == "cannot":                                    # only its name counts; why is for a person
+            return dict(out, said=name, reply=reply, replies=n, error=_why(given))
+        if name == "no_effect" or (name == "conditions" and isinstance(given, dict)):
+            conditions = {k: v for k, v in given.items() if k not in twin.actions} if name == "conditions" else {}
+            out = dict(said=name, conditions=conditions, best=None)
+            try:
+                return dict(out, best=twin.best(**conditions), reply=reply, replies=n, error=None)
+            except (TypeError, ValueError) as e:
+                error = f"the twin cannot run {json.dumps(conditions)}: {e}"
+        else:
+            error = "not one of the calls conditions, no_effect, cannot"
+        messages += [dict(role="assistant", content=reply), dict(role="user", content=f"No: {error}. Answer again.")]
+    return dict(out, reply=reply, replies=turns, error=error)
 
 
 def ask(llm, twin, request, choices=None, turns=10):
@@ -55,6 +116,10 @@ def ask(llm, twin, request, choices=None, turns=10):
     return dict(answer=None, choice=None, asked=asked, error=f"no valid answer in {turns} replies")
 
 
+def _why(given):
+    return str(next(iter(given.values()), "") if isinstance(given, dict) else given)
+
+
 def _parse(reply):
     """The JSON object in a reply (a model may wrap it in text or a code block), or {}."""
     try:
@@ -71,19 +136,32 @@ def _key(scenario):
     return json.dumps(scenario, sort_keys=True)                         # so 3.0 or true is not the setting 3 or 1
 
 
-def chat_model(name, url, max_tokens=4096, reasoning=None):
+def chat_model(name, url, max_tokens=4096, reasoning=None, use_tools=False):
     """llm(messages) -> reply from the model `name` served with the OpenAI chat API at `url` (Ollama:
     http://localhost:11434/v1), with temperature 0: its most likely reply. max_tokens caps each reply, thinking
     included: Qwen3.5-9B once thought for over 30,000 tokens. A reply cut there is empty, which ask() does not accept,
     and so is one the server answers with an error (Ollama could not parse some of gpt-oss-20b's output). reasoning is
-    sent as reasoning_effort: "none" stops Qwen3.5-9B thinking; gpt-oss-20b thinks least at "low"."""
-    def llm(messages):
+    sent as reasoning_effort: "none" stops Qwen3.5-9B thinking; gpt-oss-20b thinks least at "low". The tools
+    are sent only with use_tools=True, and the model's first tool call is then the reply, as {"name": ...,
+    "arguments": {...}}. Off by default: in advise, both models read events as well without tool calls and said
+    cannot more reliably (tools/advise_events.py --tools)."""
+    def llm(messages, tools=None):
         options = dict(model=name, messages=messages, temperature=0, max_tokens=max_tokens)
-        body = json.dumps(options if reasoning is None else dict(options, reasoning_effort=reasoning)).encode()
-        request = urllib.request.Request(f"{url}/chat/completions", body, {"Content-Type": "application/json"})
+        if reasoning is not None:
+            options["reasoning_effort"] = reasoning
+        if tools and use_tools:
+            options["tools"] = tools
+        request = urllib.request.Request(f"{url}/chat/completions", json.dumps(options).encode(),
+                                         {"Content-Type": "application/json"})
         try:
             with urllib.request.urlopen(request, timeout=600) as response:
-                return json.load(response)["choices"][0]["message"]["content"]
+                message = json.load(response)["choices"][0]["message"]
         except urllib.error.HTTPError:
             return ""
+        for call in message.get("tool_calls") or []:
+            try:
+                return json.dumps(dict(name=call["function"]["name"], arguments=json.loads(call["function"]["arguments"])))
+            except ValueError:                                              # arguments that are not JSON
+                return call["function"]["arguments"]
+        return message.get("content") or ""
     return llm

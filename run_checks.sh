@@ -14,7 +14,7 @@ check() {   # check <text the last line must contain> <command...>
   local want=$1; shift
   local last
   last=$("$@" 2>&1 | tail -1)
-  if [[ $last == *"$want"* ]]; then echo "ok    $*"; else echo "FAIL  $*  ->  $last"; fails=$((fails + 1)); fi
+  if [[ $last == *"$want"* && $last != *failed* && $last != *error* ]]; then echo "ok    $*"; else echo "FAIL  $*  ->  $last"; fails=$((fails + 1)); fi
 }
 
 check "passed"              $PY -m pytest -q

@@ -6,6 +6,21 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- dtcore: `agent.advise(llm, twin, event)`: the model only extracts, from an event in words, the conditions for the
+  twin's what-if; the twin compares every action, `best(**conditions)` (new optional `Twin.best`, `Twin.actions` and
+  `Twin.conditions`: each condition's JSON schema). The model answers with one of three calls, `conditions`,
+  `no_effect` or `cannot`, and is told once what was wrong with a call the twin cannot run. `llm(messages, tools=None)`:
+  `chat_model(..., use_tools=True)` sends the calls as tools (off by default: no better at reading, worse at `cannot`).
+  All four twins write `brief`, `whatif` and `best`: incubator (set point; room temperature), battery (retirement;
+  fade factor), uav (maneuver; damage-growth factor), bikeshare (start; demand factors). `tools/advise_events.py`
+  runs four kinds of event on each, 4 dev and 9 held-out test events per twin, and scores a choice by the twin's
+  what-if under reference conditions (`twins/*/results/advise_events.json`: a perfect reader, Qwen3.5-9B and
+  gpt-oss-20b, each also with tool calls and with one reply only).
+- bikeshare: rate models that forget. `DiscountedRates(half_life_days)` weights earlier days down exponentially;
+  `SelectedRates(candidates)` uses the candidate whose day-ahead forecasts had the smallest recent error.
+  `scripts/compare_forgetting.py` compares them with windows of 7–120 days over 2018
+  (`results/compare_forgetting.json`): on Nov–Dec forgetting halves the forecast error and loses 0.85 ± 0.33 fewer
+  riders a day; on May–Oct no rate model decides differently.
 - dtcore: `agent`, an LLM agent that works with any twin through the twin's what-if: `agent.ask(llm, twin, request,
   choices=None)` answers a request in words (a decision, or a question about a new condition) after running
   `twin.whatif(**scenario)`; `agent.chat_model` reaches a model served with the OpenAI chat API (Ollama, LM Studio),
@@ -33,6 +48,10 @@ versions follow [Semantic Versioning](https://semver.org/).
 - Prompts sent to a model are named `<PURPOSE>_PROMPT`: bikeshare `NIGHTLY` is now `NIGHTLY_PROMPT`,
   `new_conditions.py`'s `CHECK` is `CHECK_PROMPT`, and `dtcore.agent`'s `PROTOCOL` is `SYSTEM_PROMPT`. The shell shows this panel for any twin
   with `renderAgent`; `check_bikeshare.js` checks every cost the experiment saved.
+
+### Fixed
+- `run_checks.sh` reported the tests as passed when some had failed (the summary line "2 failed, 57 passed" contains
+  "passed"); a line with "failed" or "error" now fails the check.
 
 ## [0.4.0] - 2026-10-22
 

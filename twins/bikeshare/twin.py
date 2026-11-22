@@ -14,6 +14,7 @@ decide()           before midnight: the number of bikes to start the next day wi
                      AgentPolicy  the LLM agent (dtcore.agent) chooses, running the twin's what-if
                    A policy is asked only at 23:00 once the next day can be forecast: decide(twin) -> action.
 brief(), whatif()  the twin for an LLM agent: the station in words, and the what-if of a truck as three numbers.
+best(...)          the best start under an event's demand: every start compared at once (dtcore.agent.advise).
 """
 import numpy as np
 
@@ -56,6 +57,13 @@ class AgentPolicy:
 
 class StationTwin(Twin):
     capabilities = ("update", "predict", "whatif", "decide")
+    actions = ("set_bikes",)
+    conditions = dict(
+        rent_factor=dict(type="number", minimum=0, description="rentals are this many times the usual (1: as usual)"),
+        return_factor=dict(type="number", minimum=0, description="returns are this many times the usual (1: as usual)"),
+        from_hour=dict(type="integer", minimum=0, maximum=23, description="clock hour the factors start at (default 0)"),
+        to_hour=dict(type="integer", minimum=1, maximum=24,
+                     description="clock hour the factors end at, not included (default 24)"))
 
     def __init__(self, C, rates=None, policy=None):
         self.C = C
@@ -118,3 +126,9 @@ class StationTwin(Twin):
         p = self.predict(24, set_bikes, rent_factor, return_factor, from_hour, to_hour)
         return dict(lost_rentals=round(float(p["lost_rent"].sum()), 2),
                     lost_returns=round(float(p["lost_return"].sum()), 2), expected_lost=round(p["expected_lost"], 2))
+
+    def best(self, rent_factor=1.0, return_factor=1.0, from_hour=0, to_hour=24):
+        self.whatif(0, rent_factor, return_factor, from_hour, to_hour)          # raises for an event it cannot run
+        p = self.predict(24, 0, rent_factor, return_factor, from_hour, to_hour)
+        s, cost = model.best_start(p["rent_rate"], p["return_rate"], self.C)    # every start at once
+        return dict(set_bikes=s, expected_lost=round(cost, 2))

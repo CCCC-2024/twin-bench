@@ -46,8 +46,8 @@ class UAVModel:
         planner = Planner(self.gm)
         self.SR = np.array([[planner.state_reward_function(s, c) for c in self.C] for s in self.S])   # 25 x 2
 
-    def _T(self, control):
-        p, S = self.p[control], self.S
+    def _T(self, control, growth=1.0):
+        p, S = self.p[control] * growth, self.S
         T = np.zeros((25, 25))
         for i, s1 in enumerate(S):
             for j, s2 in enumerate(S):
@@ -59,15 +59,20 @@ class UAVModel:
                 elif d1 == 0 and d2 == 20: T[i, j] = p * (1 - p)
         return T
 
-    def policy(self, alpha2=2.5):
-        """Value iteration exactly as planner.getPolicy, with the control-reward weight as a parameter."""
+    def values(self, alpha2=2.5, growth=1.0):
+        """Value iteration exactly as planner.getPolicy, with the control-reward weight as a parameter: the value of
+        each maneuver in each damage state (25 x 2). growth: what if damage grows that many times as fast (both
+        maneuvers' transition probabilities times growth, at most 1)."""
+        T = self.T if growth == 1.0 else [self._T(c, growth) for c in self.C]
         R = self.SR + alpha2 * np.array([[self.gm.control_reward_function(ci) for ci in range(2)]])
         V = np.zeros(25)
         for _ in range(2, 100):
-            v = np.stack([R[:, ci] + self.T[ci] @ V for ci in range(2)], axis=1)
+            v = np.stack([R[:, ci] + T[ci] @ V for ci in range(2)], axis=1)
             V = self.gamma * v.max(axis=1)
-        Q = np.stack([R[:, ci] + self.T[ci] @ V for ci in range(2)], axis=1)
-        return np.argmax(Q, axis=1)
+        return np.stack([R[:, ci] + T[ci] @ V for ci in range(2)], axis=1)
+
+    def policy(self, alpha2=2.5, growth=1.0):
+        return np.argmax(self.values(alpha2, growth), axis=1)
 
     def likelihood(self, m, ci):
         from scipy.stats import norm

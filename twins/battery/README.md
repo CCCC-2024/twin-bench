@@ -102,3 +102,9 @@ The service decides the first time capacity is ≤ 95 %, using only what it has 
 - The model has no usage inputs (charging rate is fixed per cell), so it cannot answer "what if we use it differently".
 - Open: `live/twin_service.py` runs `ParticleFilter` and `decide_online` itself rather than `BatteryTwin` through
   `dtcore.run`, a second copy of the twin's loop; it stays until the live demo is redesigned.
+- For an LLM agent (`dtcore.agent.advise`): `best(fade_factor)` is the retirement decision if the cell loses
+  capacity that many times as fast from now on; the end of life moves to where the faded projection reaches the
+  capacity the twin's own projection ends at. The paper's example cell retires at cycle 508, or 477 with a 1.5 times
+  faster fade *(test)*. The utility is flat near its best: keeping 508 costs 0.0004 of utility on average over three
+  test cells, and two of them retire at once either way (`results/advise_events.json`). The fade factor is our
+  what-if, not the paper's.

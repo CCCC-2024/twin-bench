@@ -69,3 +69,16 @@ def test_alarm_is_on_for_half_the_tempeh_run():
     rec = Recorder("incubator-tempeh")
     run(RecordedBox("tempeh_2023"), IncubatorTwin(), recorder=rec)
     assert round(float(np.mean([r["est"]["anomaly"] for r in rec.rows])), 2) == 0.49
+
+
+def test_with_a_colder_room_the_twins_best_set_point_is_higher():
+    """For an LLM agent: the twin, with its copy of the controller and a band, compares every set point."""
+    box = SimBox(controller=Controller(desired=37.0, lower_bound=1.0))
+    twin = IncubatorTwin(controller=box.ctrl, band=(36.0, 38.0))
+    run(box, twin, max_steps=1200)                                              # an hour in, room at 22 °C
+    assert twin.best() == dict(desired=37.25, minutes_outside=0.2, energy_Wh=8.5)
+    assert twin.best(T_room=12) == dict(desired=37.75, minutes_outside=4.1, energy_Wh=14.7)
+    assert twin.whatif(37.25, T_room=12)["minutes_outside"] == 20.6             # the usual set point in the cold room
+    for bad in (dict(desired=37.1), dict(desired=45.0), dict(desired=37.0, T_room=80)):
+        with pytest.raises(ValueError):
+            twin.whatif(**bad)

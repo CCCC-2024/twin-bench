@@ -71,20 +71,30 @@ def decide_paper(cell, pf_res, threshold=0.95, q_obs=None):
                 oracle_in_measured=x_oracle <= cell["last_measured_cycle"])
 
 
-def decide_online(q_hist, q0, log10_a, b, eol_pred, weights=WEIGHTS):
+def decide_online(q_hist, q0, log10_a, b, eol_pred, weights=WEIGHTS, fade_factor=1.0):
     """Retirement decision using only what the twin knows now.
 
     Unlike `decide_paper` (and the upstream script), the candidate range ends at the twin's
     *predicted* end of life, not the cell's true one, which an online twin cannot know.
     q_hist: normalized capacities measured so far, starting at cycle 2.
+    fade_factor: what if the cell loses capacity that many times as fast from now on (a harsher or milder use than
+    the one it was fitted on); the end of life moves to where it reaches the capacity the twin's own projection ends
+    at. 1 is that projection.
     Returns the suggested retirement cycle and the utility curve the twin sees.
     """
     k_now = len(q_hist) + 1                       # cycle of the latest measurement
     horizon = int(min(eol_pred, HORIZON_CAP))
+    project = lambda k: power_law(k, log10_a, b)
+    if fade_factor != 1.0:                        # same capacity at the end of life as the twin's own projection
+        now, end = power_law(k_now, log10_a, b), power_law(horizon, log10_a, b)
+        project = lambda k: now - fade_factor * (now - power_law(k, log10_a, b))
+        ahead = np.arange(k_now + 1, HORIZON_CAP)
+        below = np.where(project(ahead) <= end)[0]
+        horizon = int(ahead[below[0]]) if len(below) else HORIZON_CAP
     if horizon - 1 <= k_now:
         return dict(x_twin=k_now, xs=np.array([k_now]), utility=np.array([np.nan]), horizon=horizon)
     future = np.arange(k_now + 1, horizon)
-    cap_ah = np.concatenate([q_hist, power_law(future, log10_a, b)]) * q0
+    cap_ah = np.concatenate([q_hist, project(future)]) * q0
     xs = np.arange(k_now, horizon - 1)
     u = utility_curve(cap_ah, xs, weights)
     return dict(x_twin=int(xs[np.argmax(u)]), xs=xs, utility=u, horizon=horizon)

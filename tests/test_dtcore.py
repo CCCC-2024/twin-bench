@@ -114,10 +114,18 @@ class Dial(Twin):
     def brief(self):
         return "A dial. whatif(n=...) turns it to n, a whole number from 0 to 4, and returns miss: how far off n is."
 
-    def whatif(self, n):
+    actions = ("n",)
+    conditions = dict(shift=dict(type="integer", minimum=0, maximum=1, description="the best setting is this much higher"))
+
+    def whatif(self, n, shift=0):
         if type(n) is not int or not 0 <= n <= 4:
             raise ValueError("n must be a whole number from 0 to 4")
-        return {"miss": abs(n - 3)}
+        return {"miss": abs(n - 3 - shift)}
+
+    def best(self, shift=0):
+        if shift not in (0, 1):
+            raise ValueError("shift must be 0 or 1")
+        return {"n": 3 + shift, "miss": 0}
 
 
 class FixedModel:
@@ -127,7 +135,7 @@ class FixedModel:
     def __init__(self, *answers):
         self.answers, self.sent = answers, []
 
-    def __call__(self, messages):
+    def __call__(self, messages, tools=None):
         self.sent.append(list(messages))
         return self.answers[len(messages) // 2 - 1]                  # system + request, then one exchange per reply
 
@@ -150,3 +158,74 @@ def test_the_agent_is_told_what_was_wrong_and_gives_no_answer_when_its_turns_run
     told = [conversation[-1]["content"] for conversation in llm.sent[1:]]
     assert "Not understood" in told[0] and "n must be a whole number from 0 to 4" in told[1]
     assert '{"n": 3.0} is not one of the choices' in told[2]                     # 3.0 is not the setting 3
+
+
+def call(name, **arguments):
+    return json.dumps(dict(name=name, arguments=arguments))
+
+
+def test_advise_has_the_model_extract_the_conditions_and_the_twin_choose():
+    llm = FixedModel("The event shifts it: " + call("conditions", shift=1, n=0))   # an action it should not give, too
+    advice = agent.advise(llm, Dial(), "The best setting moved up by one.")
+    assert advice == dict(said="conditions", conditions={"shift": 1}, best={"n": 4, "miss": 0}, reply=llm.answers[0],
+                          replies=1, error=None)
+    assert '"shift": {"type": "integer"' in llm.sent[0][0]["content"] and "A dial." in llm.sent[0][0]["content"]
+    polished = agent.advise(FixedModel('{"name": "no_effect", "arguments": "polish changes nothing"}'), Dial(), "x")
+    assert polished["conditions"] == {} and polished["best"] == {"n": 3, "miss": 0}     # the twin's usual choice
+    cannot = agent.advise(FixedModel(call("cannot", why="the dial has no colour input")), Dial(), "Paint it red.")
+    assert cannot["said"] == "cannot" and cannot["best"] is None and cannot["error"] == "the dial has no colour input"
+
+
+def test_advise_tells_the_model_what_was_wrong_and_gives_no_action_when_its_turns_run_out():
+    llm = FixedModel('{"conditions": {"shift": 1}}', call("conditions", shift=5), call("conditions", shift=1))
+    advice = agent.advise(llm, Dial(), "x", turns=3)
+    assert advice["best"] == {"n": 4, "miss": 0} and advice["replies"] == 3
+    told = [conversation[-1]["content"] for conversation in llm.sent[1:]]
+    assert "not one of the calls" in told[0] and "shift must be 0 or 1" in told[1]
+    for reply in (call("conditions", shift=5), call("conditions", tilt=2), "It moves up."):   # twice the same
+        advice = agent.advise(FixedModel(reply, reply), Dial(), "x")
+        assert advice["best"] is None and advice["replies"] == 2 and advice["error"]
+
+
+def test_the_conditions_a_twin_declares_are_the_inputs_of_its_best():
+    import inspect
+    from twins.battery import BatteryTwin
+    from twins.bikeshare import StationTwin
+    from twins.incubator import IncubatorTwin
+    from twins.uav import UAVTwin
+    for twin in (Dial, BatteryTwin, StationTwin, IncubatorTwin, UAVTwin):
+        assert list(twin.conditions) == list(inspect.signature(twin.best).parameters)[1:]      # after self
+        assert not set(twin.actions) & set(twin.conditions)
+
+
+def test_an_event_matters_where_the_decision_is_sensitive_to_it():
+    """tools/advise_events.py with a perfect reader (twins/*/results/advise_events.json): how much worse the twin's
+    usual choice is than its best when the event's conditions are known, averaged over the states."""
+    from pathlib import Path
+    cost = {}
+    for name in ("bikeshare", "incubator", "battery", "uav"):
+        saved = json.loads((Path(__file__).parents[1] / "twins" / name / "results" / "advise_events.json").read_text())
+        rows = list(saved["states"].values())
+        cost[name] = round(sum(r["stated"]["not_told"]["extra"] for r in rows) / len(rows), 4)
+        assert all(r["stated"]["reference"]["extra"] == 0 and r["nothing"]["not_told"]["extra"] == 0 for r in rows)
+        assert all(r["inexpressible"]["reference"]["right"] for r in rows)
+    assert cost == dict(bikeshare=15.24, incubator=16.5, battery=0.0004, uav=0.0027)
+
+
+def test_two_local_models_read_stated_events_but_their_guess_at_a_vague_one_can_cost_more_than_not_knowing():
+    """tools/advise_events.py with Qwen3.5-9B and gpt-oss-20b on the test events, the 20 cells of each kind over the
+    four twins (30 stated): the right readings, and for the incubator's vague events the minutes outside the band."""
+    from pathlib import Path
+    cells = []
+    for name in ("bikeshare", "incubator", "battery", "uav"):
+        saved = json.loads((Path(__file__).parents[1] / "twins" / name / "results" / "advise_events.json").read_text())
+        cells += [(name, event.split("-")[0], row) for state in saved["states"].values() for event, row in state.items()
+                  if saved["events"][event]["split"] == "test"]
+    right = lambda model, kind: sum(row[model]["right"] for _, k, row in cells if k == kind)
+    count = lambda model: [right(model, kind) for kind in ("stated", "nothing", "inexpressible")]
+    assert count("reference") == [30, 20, 20]
+    assert count("qwen3.5:9b") == [27, 20, 14] and count("gpt-oss:20b") == [30, 19, 15]
+    assert count("qwen3.5:9b, tools") == [30, 20, 8] and count("gpt-oss:20b, tools") == [30, 19, 14]   # cannot: worse
+    vague = [row for name, kind, row in cells if (name, kind) == ("incubator", "vague")]
+    mean = lambda who: round(sum(row[who]["extra"] for row in vague) / len(vague), 1)
+    assert [mean(w) for w in ("reference", "not_told", "gpt-oss:20b", "qwen3.5:9b")] == [0.9, 8.0, 29.6, 53.5]

@@ -174,6 +174,27 @@ from `results/compare_rates.json`):
 - The twin's all-history rates, learned from Jan–Oct, are about twice the Nov–Dec demand (weekday rentals 292 vs 139 a
   day), and after 218 weekdays each new one moves them by about 1/220, so the twin adapts slowly *(test)*. The page's
   simulated station uses the Nov–Dec average, so the gap shows there.
+- <a id="forgetting"></a>Forgetting (`scripts/compare_forgetting.py`, `results/compare_forgetting.json`, *(test)*): the
+  same twin with rate models that forget differently. `HistoricalRates(window_days=n)` keeps the last n days;
+  `DiscountedRates(n)` weights every earlier day down by half every n days (a discount factor, West & Harrison 1997);
+  `SelectedRates` runs all of them and each night uses the one whose day-ahead forecasts had the smallest error over
+  the last 28 days. How much to forget is chosen on May–Oct and reported on Nov–Dec.
+
+  | rate model | Nov–Dec forecast RMSE (rentals / returns per hour) | Nov–Dec lost per day |
+  |---|---|---|
+  | all earlier days | 10.12 / 9.88 | 8.43 |
+  | last 30 days (the paper's) | 6.17 / 6.04 | 7.79 |
+  | last 21 days (chosen on May–Oct) | 5.72 / 5.59 | 7.57 |
+  | half-life 5 days | 5.41 / 5.29 | 7.51 |
+  | selected by the twin | 5.67 / 5.48 | 7.54 |
+  | best possible start, in hindsight | | 4.67 |
+
+  All earlier days minus last 21 days: 0.85 ± 0.33 lost per day; minus selected: 0.89 ± 0.30. Three limits. On
+  May–Oct every rate model loses 75.8–76.0 a day, so the choice made there (21 days) is within noise: at a busy
+  station one truck a night cannot use a better forecast. Among the models that remember about a month or less the
+  Nov–Dec differences are within noise too (last 21 days minus selected: 0.03 ± 0.12). And the selecting twin kept
+  using "all earlier days" on 9 of the first 10 November days: the Jan–Oct average happened to fit October, and 28
+  days of errors take time to turn. One station, one season change.
 - The capacity (30) comes from the station table in the upstream repository; its date is unknown.
 - Where a learned forecast plugs in: every rate the twin uses comes from its rate model (`StationTwin(C, rates)`,
   `rates.py`), which `predict` and `decide` ask for the hours ahead. `RNNRates` runs the authors' trained VP-RNN

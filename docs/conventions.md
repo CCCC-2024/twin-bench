@@ -52,6 +52,7 @@ Create only the folders you use; delete empty ones.
 | Page export | `scripts/export_web.py` | writes `web/<name>_*.js` and `results/ref_web_<name>.json`; with `--replay-only`, only the git-ignored files from recordings that may not be committed (`run_checks.sh` builds them that way) |
 | Comparison of a twin's parts | `scripts/compare_<part>.py` | runs the same twin and Source once per implementation of one part (section "Parts of a twin"); writes `results/compare_<part>.json` |
 | Comparison with upstream | `scripts/crosscheck_upstream.py` | runs the authors' code on our inputs; kept when a test compares against its saved answers, so `results/` stays regenerable; a comparison made once and only reported goes in the README |
+| Events in words on every twin | `tools/advise_events.py` | one script for all twins, since it uses only the Twin interface; writes each twin's `results/advise_events.json` |
 | Results | `results/` | say what it is, no dates: `baseline.csv`, `step1_decisions.json`; dates go on experiment folders |
 | Runtime databases | `results/*.db` by default, `DT_DB` to move | not results; git-ignored |
 
