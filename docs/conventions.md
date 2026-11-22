@@ -12,7 +12,7 @@ run_checks.sh      every check, the same list CI runs
 dtcore/            the skeleton; no domain concepts
 twins/<name>/      one folder per twin
 web/               the shared page
-docs/              architecture, adding a twin, these conventions
+docs/              architecture, tools and steps, adding a twin, design decisions, these conventions
 tests/             tests for dtcore and each twin (pytest)
 tools/             helper scripts shared by twins
 .github/           CI, Pages deployment, issue and PR templates

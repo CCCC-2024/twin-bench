@@ -115,7 +115,7 @@ python twins/bikeshare/scripts/compare_policy.py qwen3.5:9b
 dtcore/            the skeleton: Source, Twin, run(), Recorder; agent (an LLM agent for any twin)
 twins/<name>/      one folder per twin, importable as twins.<name>: README, code, scripts/, results/, fetch_upstream.sh
 web/               the shared page: one shell, one module per twin, JS checked against Python
-docs/              architecture, adding a twin, file conventions
+docs/              architecture, tools and steps, adding a twin, design decisions, file conventions
 tests/             tests for dtcore and the twins (pytest)
 tools/             helper scripts (fetching pinned upstream code)
 ```
@@ -139,7 +139,8 @@ twin's README gives the result and where the script is.
 
 Start from [twins/_template](twins/_template/) and follow [docs/adding-a-twin.md](docs/adding-a-twin.md):
 describe the six elements, then add the model, observations, update, predict, decide and the page one step at a time,
-each with its own check. Proposals for new domains are welcome — open an issue with the *New twin* template.
+each with its own check. [docs/tools.md](docs/tools.md) says which tools each part of a twin needs and what the field
+uses instead; [docs/design-decisions.md](docs/design-decisions.md) says what was tried and why. Proposals for new domains are welcome — open an issue with the *New twin* template.
 
 ## Data and licenses
 

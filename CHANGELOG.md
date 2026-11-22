@@ -6,6 +6,8 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- docs: `tools.md` (the typical code and tools of a digital twin, what this repository uses and what the field uses,
+  and what worked when adding a language model) and `design-decisions.md` (what was tried and why).
 - dtcore: `agent.advise(llm, twin, event)`: the model only extracts, from an event in words, the conditions for the
   twin's what-if; the twin compares every action, `best(**conditions)` (new optional `Twin.best`, `Twin.actions` and
   `Twin.conditions`: each condition's JSON schema). The model answers with one of three calls, `conditions`,
