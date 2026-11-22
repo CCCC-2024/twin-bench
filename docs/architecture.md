@@ -72,7 +72,7 @@ read right (27 and 30 of 30) and one that changes nothing is left alone (20 and 
 no input for is called `cannot` in 14 and 15 of 20; and a vague event is the open problem, since the model must guess
 a number and the twin then acts on it: for the incubator ("someone left the window open on a cold winter night") both
 models gave the room an outdoor temperature, and the twin's choice was outside the band 30 to 54 minutes of 60 where
-not knowing the event cost 8. A guess from words should be confirmed by a person or given as a range before a twin
+not knowing the event cost 8; gpt-oss-120b on a B200 did no better (in five runs, 29.6 or 8.4). A guess from words should be confirmed by a person or given as a range before a twin
 acts on it. Published agent-with-twin systems draw the same line: the
 model selects and parameterizes tools and never computes numbers (Mylonas et al. 2026, arXiv 2609.22476, a control-room twin where
 only 39 % of answers had numbers supported by the backend once that layer was removed; Kleiman et al. 2025,

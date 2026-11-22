@@ -117,6 +117,152 @@
    "split": "test",
    "text": "A tray of cold samples will be put into the box in ten minutes.",
    "reference": "cannot"
+  },
+  "vague-11": {
+   "split": "test2",
+   "text": "The air conditioning in the lab stopped working an hour ago on a hot summer day.",
+   "reference": [
+    {
+     "T_room": 27
+    },
+    {
+     "T_room": 30
+    },
+    {
+     "T_room": 33
+    }
+   ]
+  },
+  "vague-12": {
+   "split": "test2",
+   "text": "The lab's heating broke overnight during a cold snap, and the room feels chilly.",
+   "reference": [
+    {
+     "T_room": 18
+    },
+    {
+     "T_room": 16
+    },
+    {
+     "T_room": 14
+    }
+   ]
+  },
+  "vague-13": {
+   "split": "test2",
+   "text": "The incubator was moved next to a sunny window this afternoon.",
+   "reference": [
+    {
+     "T_room": 26
+    },
+    {
+     "T_room": 29
+    },
+    {
+     "T_room": 32
+    }
+   ]
+  },
+  "vague-14": {
+   "split": "test2",
+   "text": "Someone switched on a space heater right next to the incubator.",
+   "reference": [
+    {
+     "T_room": 28
+    },
+    {
+     "T_room": 32
+    },
+    {
+     "T_room": 36
+    }
+   ]
+  },
+  "vague-15": {
+   "split": "test2",
+   "text": "The incubator has been carried into the walk-in cold room.",
+   "reference": [
+    {
+     "T_room": 8
+    },
+    {
+     "T_room": 4
+    },
+    {
+     "T_room": 2
+    }
+   ]
+  },
+  "vague-16": {
+   "split": "test2",
+   "text": "The incubator now stands in the warm room used for drying glassware.",
+   "reference": [
+    {
+     "T_room": 30
+    },
+    {
+     "T_room": 35
+    },
+    {
+     "T_room": 40
+    }
+   ]
+  },
+  "vague-17": {
+   "split": "test2",
+   "text": "The building's thermostat was turned down for the weekend to save energy.",
+   "reference": [
+    {
+     "T_room": 19
+    },
+    {
+     "T_room": 17
+    },
+    {
+     "T_room": 15
+    }
+   ]
+  },
+  "vague-18": {
+   "split": "test2",
+   "text": "It is a freezing winter morning and the ventilation is blowing outside air into the lab.",
+   "reference": [
+    {
+     "T_room": 18
+    },
+    {
+     "T_room": 15
+    },
+    {
+     "T_room": 12
+    }
+   ]
+  },
+  "stated-11": {
+   "split": "test2",
+   "text": "The room will be held at 20 °C for the next hour.",
+   "reference": [
+    {
+     "T_room": 20
+    }
+   ]
+  },
+  "nothing-11": {
+   "split": "test2",
+   "text": "The lab got a new coffee machine.",
+   "reference": [
+    {}
+   ]
+  },
+  "inexpressible-11": {
+   "split": "test2",
+   "text": "The heater is being replaced with one twice as powerful.",
+   "reference": "cannot"
+  },
+  "inexpressible-12": {
+   "split": "test2",
+   "text": "From now on the temperature sensor reads half a degree too high.",
+   "reference": "cannot"
   }
  },
  "states": {
@@ -230,6 +376,48 @@
      "energy_Wh": 14.7,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 12
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 12}}",
+     "desired": 37.75,
+     "minutes_outside": 4.1,
+     "energy_Wh": 14.7,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 12
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 12}}",
+     "desired": 37.75,
+     "minutes_outside": 4.1,
+     "energy_Wh": 14.7,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 12
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 12}}",
+     "desired": 37.75,
+     "minutes_outside": 4.1,
+     "energy_Wh": 14.7,
+     "extra": 0.0,
+     "right": true
     }
    },
    "vague": {
@@ -325,6 +513,45 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"conditions\",\"arguments\":{\"T_room\":0}}",
+     "desired": 35.0,
+     "minutes_outside": 60.0,
+     "energy_Wh": 18.4,
+     "extra": 54.8667
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": -5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": -5}}",
+     "desired": 35.0,
+     "minutes_outside": 60.0,
+     "energy_Wh": 18.4,
+     "extra": 54.8667
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": -5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": -5}}",
+     "desired": 35.0,
+     "minutes_outside": 60.0,
+     "energy_Wh": 18.4,
+     "extra": 54.8667
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": -5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": -5}}",
      "desired": 35.0,
      "minutes_outside": 60.0,
      "energy_Wh": 18.4,
@@ -426,6 +653,42 @@
      "energy_Wh": 8.5,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Changing the label on the door does not alter the room temperature, set point, or any other input that influences the incubator's temperature control model.\"}}",
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Adding a label to the door does not change the incubator's air temperature, set point, or room temperature, which are the only inputs affecting the twin's what‑if simulation.\"}}",
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Changing the label on the door does not affect the incubator's air temperature, room temperature, or set point, which are the only inputs the twin uses for its what-if calculations.\"}}",
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
     }
    },
    "inexpressible": {
@@ -486,6 +749,30 @@
      "error": "The event of holding the lid open for five minutes affects the incubator’s internal temperature dynamics (e.g., heat loss, mixing), but the twin’s decision model only accepts the room temperature (T_room) as an input. Since the lid opening does not map to any of the defined inputs, it cannot be expressed in the current what-if interface.",
      "reply": "{\"name\":\"cannot\",\"arguments\":\"The event of holding the lid open for five minutes affects the incubator’s internal temperature dynamics (e.g., heat loss, mixing), but the twin’s decision model only accepts the room temperature (T_room) as an input. Since the lid opening does not map to any of the defined inputs, it cannot be expressed in the current what-if interface.\"}",
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event describes opening the lid, which affects heat loss but does not change the room temperature input (T_room) used by the twin's what-if model. Since the twin's decision only depends on T_room and desired set point, and neither is altered, the event has no effect on the inputs.\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, tools": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "Opening the lid changes heat loss and airflow, affecting the incubator’s internal temperature dynamics, which is not represented by the room temperature input",
+     "reply": "{\"name\":\"cannot\",\"arguments\":{\"why\":\"Opening the lid changes heat loss and airflow, affecting the incubator’s internal temperature dynamics, which is not represented by the room temperature input\"}}",
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event describes opening the lid, which affects heat loss but the twin's inputs only include room temperature (T_room) and set point; lid state is not represented, so it does not change any input variables.\"}}",
+     "right": false
     }
    },
    "stated-1": {
@@ -592,6 +879,48 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"conditions\",\"arguments\":{\"T_room\":31}}",
+     "desired": 37.25,
+     "minutes_outside": 3.1,
+     "energy_Wh": 3.4,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 31
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 31}}",
+     "desired": 37.25,
+     "minutes_outside": 3.1,
+     "energy_Wh": 3.4,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 31
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 31}}",
+     "desired": 37.25,
+     "minutes_outside": 3.1,
+     "energy_Wh": 3.4,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 31
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 31}}",
      "desired": 37.25,
      "minutes_outside": 3.1,
      "energy_Wh": 3.4,
@@ -708,6 +1037,48 @@
      "energy_Wh": 12.9,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 15
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 15}}",
+     "desired": 37.5,
+     "minutes_outside": 2.3,
+     "energy_Wh": 12.9,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 15
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 15}}",
+     "desired": 37.5,
+     "minutes_outside": 2.3,
+     "energy_Wh": 12.9,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 15
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 15}}",
+     "desired": 37.5,
+     "minutes_outside": 2.3,
+     "energy_Wh": 12.9,
+     "extra": 0.0,
+     "right": true
     }
    },
    "stated-3": {
@@ -819,6 +1190,48 @@
      "energy_Wh": 11.4,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 18
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 18}}",
+     "desired": 37.5,
+     "minutes_outside": 1.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 18
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 18}}",
+     "desired": 37.5,
+     "minutes_outside": 1.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 18
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 18}}",
+     "desired": 37.5,
+     "minutes_outside": 1.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0,
+     "right": true
     }
    },
    "vague-1": {
@@ -914,6 +1327,45 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"conditions\",\"arguments\":{\"T_room\":35}}",
+     "desired": 37.0,
+     "minutes_outside": 8.5,
+     "energy_Wh": 1.2,
+     "extra": 2.5333
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 35
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
+     "desired": 37.0,
+     "minutes_outside": 8.5,
+     "energy_Wh": 1.2,
+     "extra": 2.5333
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 30
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 30}}",
+     "desired": 37.25,
+     "minutes_outside": 2.4,
+     "energy_Wh": 4.2,
+     "extra": 1.7333
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 35
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
      "desired": 37.0,
      "minutes_outside": 8.5,
      "energy_Wh": 1.2,
@@ -1017,6 +1469,45 @@
      "minutes_outside": 60.0,
      "energy_Wh": 18.4,
      "extra": 56.7667
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": -5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": -5}}",
+     "desired": 35.0,
+     "minutes_outside": 60.0,
+     "energy_Wh": 18.4,
+     "extra": 56.7667
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 5}}",
+     "desired": 37.25,
+     "minutes_outside": 21.6,
+     "energy_Wh": 18.7,
+     "extra": 14.2
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 5}}",
+     "desired": 37.25,
+     "minutes_outside": 21.6,
+     "energy_Wh": 18.7,
+     "extra": 14.2
     }
    },
    "nothing-1": {
@@ -1120,6 +1611,42 @@
      "energy_Wh": 8.8,
      "extra": 0.0,
      "right": false
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Changing ceiling lights to LED does not significantly alter the room temperature input that the incubator twin uses for its what-if simulation.\"}}",
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Changing ceiling lights to LED does not significantly affect the room temperature, which is the only input the twin's what‑if model uses.\"}}",
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Changing ceiling lights to LED does not significantly alter the room temperature input that the incubator twin uses for its what-if simulation.\"}}",
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
     }
    },
    "nothing-2": {
@@ -1217,6 +1744,42 @@
      "energy_Wh": 8.5,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Changing the inventory number does not affect the incubator's temperature, set point, or room temperature, which are the only inputs the twin uses to simulate performance.\"}}",
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Changing the inventory number does not affect the incubator's temperature, set point, or room temperature, which are the only inputs that influence the twin's what‑if simulation.\"}}",
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Changing the inventory number does not affect the incubator's temperature, set point, or room temperature, which are the only inputs the twin uses to simulate performance.\"}}",
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
     }
    },
    "inexpressible-1": {
@@ -1277,6 +1840,30 @@
      "error": null,
      "reply": "{\"name\":\"no_effect\",\"arguments\":\"The event describes a change in the heater's power supply, which does not alter the inputs (desired set point or room temperature) that the twin’s what-if function uses to compute its outputs.\"}",
      "right": false
+    },
+    "gpt-oss:120b": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "The event reduces heater power, affecting the incubator's ability to maintain temperature, but the twin's what-if model only accepts changes to set point (desired) and room temperature (T_room). Heater power cannot be expressed as an input.",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"reason\": \"The event reduces heater power, affecting the incubator's ability to maintain temperature, but the twin's what-if model only accepts changes to set point (desired) and room temperature (T_room). Heater power cannot be expressed as an input.\"}}",
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "Halving the heater's power changes the incubator's heating capability and thus the air temperature trajectory, which is not represented by the available input T_room",
+     "reply": "{\"name\":\"cannot\",\"arguments\":{\"why\":\"Halving the heater's power changes the incubator's heating capability and thus the air temperature trajectory, which is not represented by the available input T_room\"}}",
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "The event reduces heater power, affecting the incubator's ability to maintain temperature, but the twin's what-if model only accepts changes to set point (desired) and room temperature (T_room). Heater power cannot be expressed as an input.",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"reason\": \"The event reduces heater power, affecting the incubator's ability to maintain temperature, but the twin's what-if model only accepts changes to set point (desired) and room temperature (T_room). Heater power cannot be expressed as an input.\"}}",
+     "right": true
     }
    },
    "inexpressible-2": {
@@ -1334,6 +1921,996 @@
      "replies": 1,
      "error": "The event describes a tray of cold samples being added to the incubator, which would affect the internal air temperature and possibly the heater's load. However, the twin’s what-if interface only accepts the room temperature (T_room) as an input; it does not allow specifying changes to the internal air temperature or the presence of cold samples. Therefore, this event cannot be expressed through the available inputs.",
      "reply": "{\"name\":\"cannot\",\"arguments\":\"The event describes a tray of cold samples being added to the incubator, which would affect the internal air temperature and possibly the heater's load. However, the twin’s what-if interface only accepts the room temperature (T_room) as an input; it does not allow specifying changes to the internal air temperature or the presence of cold samples. Therefore, this event",
+     "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event describes adding cold samples to the incubator, which may affect the internal air temperature, but the twin's only input is the room temperature (T_room). Since the room temperature is unchanged, this event does not affect any input the twin uses for its what-if simulation.\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, tools": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "Adding cold samples changes the incubator's internal air temperature dynamics, affecting minutes_outside and energy use, but this effect is not represented by the room temperature input T_room",
+     "reply": "{\"name\":\"cannot\",\"arguments\":{\"why\":\"Adding cold samples changes the incubator's internal air temperature dynamics, affecting minutes_outside and energy use, but this effect is not represented by the room temperature input T_room\"}}",
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event describes adding cold samples, which affects the incubator's internal air temperature dynamics, not the room temperature input (T_room) that the twin's what-if model uses.\"}}",
+     "right": false
+    }
+   },
+   "vague-11": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 1.7333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 30
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 30}}",
+     "desired": 37.25,
+     "minutes_outside": 2.4,
+     "energy_Wh": 4.2,
+     "extra": 1.7333
+    }
+   },
+   "vague-12": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 12.0667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 16
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 16}}",
+     "desired": 37.5,
+     "minutes_outside": 1.8,
+     "energy_Wh": 12.1,
+     "extra": 0.5333
+    }
+   },
+   "vague-13": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.7333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 29
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 29}}",
+     "desired": 37.25,
+     "minutes_outside": 1.1,
+     "energy_Wh": 4.4,
+     "extra": 0.7333
+    }
+   },
+   "vague-14": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 4.5
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 32
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 32}}",
+     "desired": 37.0,
+     "minutes_outside": 4.8,
+     "energy_Wh": 2.5,
+     "extra": 4.2
+    }
+   },
+   "vague-15": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 5.4333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 4
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 4}}",
+     "desired": 36.25,
+     "minutes_outside": 41.6,
+     "energy_Wh": 18.7,
+     "extra": 13.3333
+    }
+   },
+   "vague-16": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 3.3
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 35
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
+     "desired": 37.0,
+     "minutes_outside": 8.5,
+     "energy_Wh": 1.2,
+     "extra": 0.5
+    }
+   },
+   "vague-17": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 10.2
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 17
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
+     "desired": 37.5,
+     "minutes_outside": 1.4,
+     "energy_Wh": 11.8,
+     "extra": 0.0
+    }
+   },
+   "vague-18": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 12.8667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 15
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 15}}",
+     "desired": 37.5,
+     "minutes_outside": 2.3,
+     "energy_Wh": 12.9,
+     "extra": 3.0667
+    }
+   },
+   "stated-11": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 4.6
+    },
+    "best": {
+     "desired": 37.5,
+     "minutes_outside": 0.5,
+     "energy_Wh": 9.9
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 20
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 20}}",
+     "desired": 37.5,
+     "minutes_outside": 0.5,
+     "energy_Wh": 9.9,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "nothing-11": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "inexpressible-11": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   },
+   "inexpressible-12": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   }
+  },
+  "an hour in at 37 °C, room at 18 °C": {
+   "vague-11": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 7.4667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 30
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 30}}",
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 3.9,
+     "extra": 1.9333
+    }
+   },
+   "vague-12": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 1.0667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 16
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 16}}",
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 12.1,
+     "extra": 1.0667
+    }
+   },
+   "vague-13": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 6.4
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 29
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 29}}",
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 4.8,
+     "extra": 0.5
+    }
+   },
+   "vague-14": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 7.7667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 32
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 32}}",
+     "desired": 37.0,
+     "minutes_outside": 2.0,
+     "energy_Wh": 2.9,
+     "extra": 1.9
+    }
+   },
+   "vague-15": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 4.0333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 4
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 4}}",
+     "desired": 37.75,
+     "minutes_outside": 41.4,
+     "energy_Wh": 18.7,
+     "extra": 2.2
+    }
+   },
+   "vague-16": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 7.2
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 35
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
+     "desired": 37.0,
+     "minutes_outside": 1.5,
+     "energy_Wh": 1.0,
+     "extra": 1.2
+    }
+   },
+   "vague-17": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 0.1333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 17
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.8,
+     "extra": 0.1333
+    }
+   },
+   "vague-18": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 3.3333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 15
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 15}}",
+     "desired": 37.75,
+     "minutes_outside": 0.9,
+     "energy_Wh": 13.2,
+     "extra": 0.0
+    }
+   },
+   "stated-11": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 10.0
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 20
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 20}}",
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 10.0,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "nothing-11": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "inexpressible-11": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   },
+   "inexpressible-12": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   }
+  },
+  "an hour in at 37 °C, room at 26 °C": {
+   "vague-11": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 1.9333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 30
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 30}}",
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 3.9,
+     "extra": 1.9333
+    }
+   },
+   "vague-12": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 13.0
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 16
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 16}}",
+     "desired": 37.75,
+     "minutes_outside": 2.4,
+     "energy_Wh": 12.5,
+     "extra": 0.0
+    }
+   },
+   "vague-13": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 0.5
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 29
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 29}}",
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 4.8,
+     "extra": 0.5
+    }
+   },
+   "vague-14": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 2.5667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 32
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 32}}",
+     "desired": 37.0,
+     "minutes_outside": 2.0,
+     "energy_Wh": 2.9,
+     "extra": 1.9333
+    }
+   },
+   "vague-15": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 6.4
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 4
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 4}}",
+     "desired": 38.25,
+     "minutes_outside": 44.5,
+     "energy_Wh": 18.7,
+     "extra": 2.5
+    }
+   },
+   "vague-16": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 2.8333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 35
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
+     "desired": 37.0,
+     "minutes_outside": 0.3,
+     "energy_Wh": 1.0,
+     "extra": 1.1667
+    }
+   },
+   "vague-17": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 11.7333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 17
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
+     "desired": 37.75,
+     "minutes_outside": 1.8,
+     "energy_Wh": 11.8,
+     "extra": 0.0
+    }
+   },
+   "vague-18": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 14.2
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 15
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 15}}",
+     "desired": 37.75,
+     "minutes_outside": 2.9,
+     "energy_Wh": 13.3,
+     "extra": 0.0
+    }
+   },
+   "stated-11": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 5.7
+    },
+    "best": {
+     "desired": 37.75,
+     "minutes_outside": 0.2,
+     "energy_Wh": 10.5
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 20
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 20}}",
+     "desired": 37.75,
+     "minutes_outside": 0.2,
+     "energy_Wh": 10.5,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "nothing-11": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "inexpressible-11": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   },
+   "inexpressible-12": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   }
+  },
+  "an hour in at 36.5 °C, room at 22 °C": {
+   "vague-11": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 1.6667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 30
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 30}}",
+     "desired": 37.25,
+     "minutes_outside": 3.0,
+     "energy_Wh": 4.2,
+     "extra": 1.6667
+    }
+   },
+   "vague-12": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 11.9333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 16
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 16}}",
+     "desired": 37.5,
+     "minutes_outside": 1.9,
+     "energy_Wh": 12.1,
+     "extra": 0.5667
+    }
+   },
+   "vague-13": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 0.6333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 29
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 29}}",
+     "desired": 37.25,
+     "minutes_outside": 2.2,
+     "energy_Wh": 4.5,
+     "extra": 0.6333
+    }
+   },
+   "vague-14": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 4.2667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 32
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 32}}",
+     "desired": 37.0,
+     "minutes_outside": 5.5,
+     "energy_Wh": 2.6,
+     "extra": 4.3333
+    }
+   },
+   "vague-15": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 5.4667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 4
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 4}}",
+     "desired": 36.25,
+     "minutes_outside": 41.3,
+     "energy_Wh": 18.7,
+     "extra": 13.3667
+    }
+   },
+   "vague-16": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 3.3
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 35
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
+     "desired": 37.0,
+     "minutes_outside": 9.2,
+     "energy_Wh": 1.2,
+     "extra": 0.7
+    }
+   },
+   "vague-17": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 10.3
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 17
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
+     "desired": 37.5,
+     "minutes_outside": 1.5,
+     "energy_Wh": 11.8,
+     "extra": 0.0
+    }
+   },
+   "vague-18": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 12.9333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 15
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 15}}",
+     "desired": 37.5,
+     "minutes_outside": 2.3,
+     "energy_Wh": 12.8,
+     "extra": 3.0333
+    }
+   },
+   "stated-11": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 4.5
+    },
+    "best": {
+     "desired": 37.5,
+     "minutes_outside": 0.8,
+     "energy_Wh": 9.9
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 20
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 20}}",
+     "desired": 37.5,
+     "minutes_outside": 0.8,
+     "energy_Wh": 9.9,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "nothing-11": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "inexpressible-11": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   },
+   "inexpressible-12": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
      "right": true
     }
    }

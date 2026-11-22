@@ -45,6 +45,8 @@ Building the twins, rather than reading about them, turned up these (details and
   changes nothing is left alone in 20 and 19 of 20; one the what-if cannot express is recognized in 14 and 15 of 20.
   A vague event is not solved: the model has to guess a number, and for the incubator the guesses (an outdoor
   temperature for the room) made the twin's choice worse than not knowing, 30 to 54 minutes outside the band against 8.
+  A model six times larger (gpt-oss-120b, on one B200) read every stated event too, and guessed outdoor temperatures
+  as well: in five runs at temperature 0, never better than not knowing.
 
 | Twin | Domain | What it does | Source | Status |
 |---|---|---|---|---|

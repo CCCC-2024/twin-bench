@@ -117,6 +117,32 @@
    "split": "test",
    "text": "Airspace rules allow only gentle 2g turns today.",
    "reference": "cannot"
+  },
+  "stated-11": {
+   "split": "test2",
+   "text": "Damage will grow 2.5 times as often as usual from now on.",
+   "reference": [
+    {
+     "growth_factor": 2.5
+    }
+   ]
+  },
+  "nothing-11": {
+   "split": "test2",
+   "text": "The ground station's software was updated.",
+   "reference": [
+    {}
+   ]
+  },
+  "inexpressible-11": {
+   "split": "test2",
+   "text": "Fuel is low: the drone must land within ten turns.",
+   "reference": "cannot"
+  },
+  "inexpressible-12": {
+   "split": "test2",
+   "text": "Each 3g turn now saves twice as much time as before.",
+   "reference": "cannot"
   }
  },
  "states": {
@@ -221,6 +247,45 @@
      "value": -0.031,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "3g",
+     "value": -0.031,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "3g",
+     "value": -0.031,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "3g",
+     "value": -0.031,
+     "extra": 0.0,
+     "right": true
     }
    },
    "vague": {
@@ -303,6 +368,42 @@
      "reply": "{\"name\":\"conditions\",\"arguments\":{\"growth_factor\":2}}",
      "maneuver": "3g",
      "value": -0.031,
+     "extra": 0.0
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "3g",
+     "value": -0.031,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "3g",
+     "value": -0.01,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "3g",
+     "value": -0.01,
      "extra": 0.0
     }
    },
@@ -392,6 +493,39 @@
      "value": 0.012,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Repainting the drone does not change the wing damage growth rate or any input the twin uses for its what-if simulation.\"}}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Repainting the drone's exterior does not influence wing damage growth or maneuver performance, which are the only inputs affecting the twin's what‑if calculation.\"}}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Repainting the drone does not change the wing damage growth rate or any input the twin uses for its what-if evaluation.\"}}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0,
+     "right": true
     }
    },
    "inexpressible": {
@@ -452,6 +586,30 @@
      "error": "The event changes the planner's reward weighting (speed vs wing health), which is not represented by the growth_factor input. The twin's what-if function only accepts a maneuver and a growth_factor, so this information cannot be expressed as an input.",
      "reply": "{\"name\":\"cannot\",\"arguments\":\"The event changes the planner's reward weighting (speed vs wing health), which is not represented by the growth_factor input. The twin's what-if function only accepts a maneuver and a growth_factor, so this information cannot be expressed as an input.\"}",
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "The event changes the planner's weighting of speed versus wing health, but the twin's what‑if model only accepts a numeric growth_factor input. There is no input to represent a change in the relative importance of speed, so the effect cannot be expressed with the available inputs.",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"reason\": \"The event changes the planner's weighting of speed versus wing health, but the twin's what‑if model only accepts a numeric growth_factor input. There is no input to represent a change in the relative importance of speed, so the effect cannot be expressed with the available inputs.\"}}",
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"The event changes the planner's reward weighting (speed prioritized) but does not affect the wing damage growth factor input used by the twin's what‑if simulation.\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event only changes the planner's weighting of speed versus wing health, which is not represented by the numeric growth_factor input. No numeric input changes.\"}}",
+     "right": false
     }
    },
    "stated-1": {
@@ -550,6 +708,45 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"conditions\",\"arguments\":{\"growth_factor\":0.5}}",
+     "maneuver": "3g",
+     "value": 0.034,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 0.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 0.5}}",
+     "maneuver": "3g",
+     "value": 0.034,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 0.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 0.5}}",
+     "maneuver": "3g",
+     "value": 0.034,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 0.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 0.5}}",
      "maneuver": "3g",
      "value": 0.034,
      "extra": 0.0,
@@ -656,6 +853,45 @@
      "value": -0.071,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 3
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 3}}",
+     "maneuver": "3g",
+     "value": -0.071,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 3
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 3}}",
+     "maneuver": "3g",
+     "value": -0.071,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 3
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 3}}",
+     "maneuver": "3g",
+     "value": -0.071,
+     "extra": 0.0,
+     "right": true
     }
    },
    "stated-3": {
@@ -758,6 +994,45 @@
      "value": -0.01,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "3g",
+     "value": -0.01,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "3g",
+     "value": -0.01,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "3g",
+     "value": -0.01,
+     "extra": 0.0,
+     "right": true
     }
    },
    "vague-1": {
@@ -849,6 +1124,42 @@
      "maneuver": "3g",
      "value": -0.031,
      "extra": 0.0
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "3g",
+     "value": -0.031,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "3g",
+     "value": -0.031,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "3g",
+     "value": -0.031,
+     "extra": 0.0
     }
    },
    "vague-2": {
@@ -925,6 +1236,36 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"no_effect\",\"arguments\":\"The calm air forecast does not alter the wing damage growth rate or any other input that the twin uses to evaluate its next maneuver.\"}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Calm, cool air does not affect the drone's wing damage growth or maneuver choices, so it does not change any inputs the twin uses.\"}}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Calm air does not affect wing damage growth or maneuver choice.\"}}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Calm, cool air does not affect the drone's wing damage growth or maneuver choices, so it does not change any inputs the twin uses.\"}}",
      "maneuver": "3g",
      "value": 0.012,
      "extra": 0.0
@@ -1012,6 +1353,39 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"no_effect\",\"arguments\":\"The event of adding a logo to the drone's tail does not influence the twin's decision-making inputs, which are solely concerned with wing damage growth factors.\"}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Adding a logo to the tail does not affect wing damage rates or the growth_factor input used by the twin's decision model.\"}}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Adding a logo to the tail does not influence wing damage growth or the drone's maneuver choices, which are the only inputs affecting the twin's what‑if simulation.\"}}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Adding a logo to the tail does not affect wing damage rates or the growth_factor input used by the twin's decision model.\"}}",
      "maneuver": "3g",
      "value": 0.012,
      "extra": 0.0,
@@ -1104,6 +1478,39 @@
      "value": 0.012,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Changing the console colour theme does not affect the drone's wing damage percentages, growth factor, or maneuver choice, which are the only inputs the twin uses for its what-if simulation.\"}}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Changing the console colour theme does not affect wing damage growth or maneuver choices, which are the only inputs the twin's what‑if uses.\"}}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Changing the console colour theme does not affect the drone's wing damage percentages, maneuver choice, or growth_factor input used by the twin's planner.\"}}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0,
+     "right": true
     }
    },
    "inexpressible-1": {
@@ -1166,6 +1573,30 @@
      "error": "The event changes the damage estimate of region 2, but the twin's decision model only accepts a growth_factor input. No other inputs are available to express this change.",
      "reply": "{\"name\":\"cannot\",\"arguments\":\"The event changes the damage estimate of region 2, but the twin's decision model only accepts a growth_factor input. No other inputs are available to express this change.\"}",
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event only changes the current damage level of region 2, which is not an input to the what-if function (only growth_factor is considered).\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Repairing region 2 changes the current damage state, but the twin's what‑if inputs are only maneuver and growth_factor; the decision model does not depend on the present damage levels.\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Repair changes current damage levels but the twin's what-if inputs only include growth_factor; the event does not alter growth_factor, so it does not affect the twin's choice.\"}}",
+     "right": false
     }
    },
    "inexpressible-2": {
@@ -1229,6 +1660,98 @@
      "replies": 1,
      "error": "The event restricts the available maneuver to only 2g, which affects the twin's decision but cannot be represented by the numeric inputs (growth_factor) of the what-if function.",
      "reply": "{\"name\":\"cannot\",\"arguments\":{\"reason\":\"The event restricts the available maneuver to only 2g, which affects the twin's decision but cannot be represented by the numeric inputs (growth_factor) of the what-if function.\"}}",
+     "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 0.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 0.5}}",
+     "right": false
+    },
+    "gpt-oss:120b, tools": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "The event restricts the allowed maneuver to 2g, which influences the twin's decision, but the only modifiable input is growth_factor; maneuver restriction cannot be expressed.",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"The event restricts the allowed maneuver to 2g, which influences the twin's decision, but the only modifiable input is growth_factor; maneuver restriction cannot be expressed.\"}}",
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event only restricts the maneuver to 2g turns, which does not change the growth_factor input (remains at 1). The twin's choice depends on growth_factor, so there is no effect on that input.\"}}",
+     "right": false
+    }
+   },
+   "stated-11": {
+    "not_told": {
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0
+    },
+    "best": {
+     "maneuver": "3g",
+     "value": -0.051
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2.5}}",
+     "maneuver": "3g",
+     "value": -0.051,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "nothing-11": {
+    "not_told": {
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0
+    },
+    "best": {
+     "maneuver": "3g",
+     "value": 0.012
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
+     "maneuver": "3g",
+     "value": 0.012,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "inexpressible-11": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   },
+   "inexpressible-12": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
      "right": true
     }
    }
@@ -1334,6 +1857,45 @@
      "value": -0.622,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.622,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.622,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.622,
+     "extra": 0.0,
+     "right": true
     }
    },
    "vague": {
@@ -1414,6 +1976,42 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"conditions\",\"arguments\":{\"growth_factor\":2}}",
+     "maneuver": "2g",
+     "value": -0.622,
+     "extra": -0.0013
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.622,
+     "extra": -0.0013
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.622,
+     "extra": -0.0013
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
      "maneuver": "2g",
      "value": -0.622,
      "extra": -0.0013
@@ -1505,6 +2103,39 @@
      "value": -0.593,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Repainting the drone does not change the wing damage rates or the growth_factor input that the twin uses for its what-if simulation.\"}}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Repainting the drone's exterior does not influence wing damage growth or maneuver performance, which are the factors the twin's decision depends on.\"}}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Repainting the drone does not change the wing damage growth factor or any input that influences the twin's reward calculation.\"}}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0,
+     "right": true
     }
    },
    "inexpressible": {
@@ -1565,6 +2196,30 @@
      "error": "The event indicates a change in the planner’s reward weighting (speed matters more), but the what-if function only accepts a growth_factor input. No input can capture this change.",
      "reply": "{\"name\":\"cannot\",\"arguments\":\"The event indicates a change in the planner’s reward weighting (speed matters more), but the what-if function only accepts a growth_factor input. No input can capture this change.\"}",
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "The event changes the planner's weighting of speed versus wing health, which is not represented by the available input 'growth_factor'.",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"reason\": \"The event changes the planner's weighting of speed versus wing health, which is not represented by the available input 'growth_factor'.\"}}",
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "The event changes the planner's reward weighting (speed vs wing health), which is not captured by the growth_factor input.",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"The event changes the planner's reward weighting (speed vs wing health), which is not captured by the growth_factor input.\"}}",
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event only states that speed matters more, but the twin's decision inputs only include growth_factor affecting damage frequency. No input captures urgency weighting, so the event does not change any known input.\"}}",
+     "right": false
     }
    },
    "stated-1": {
@@ -1663,6 +2318,45 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"conditions\",\"arguments\":{\"growth_factor\":0.5}}",
+     "maneuver": "3g",
+     "value": -0.57,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 0.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 0.5}}",
+     "maneuver": "3g",
+     "value": -0.57,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 0.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 0.5}}",
+     "maneuver": "3g",
+     "value": -0.57,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 0.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 0.5}}",
      "maneuver": "3g",
      "value": -0.57,
      "extra": 0.0,
@@ -1769,6 +2463,45 @@
      "value": -0.639,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 3
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 3}}",
+     "maneuver": "2g",
+     "value": -0.639,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 3
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 3}}",
+     "maneuver": "2g",
+     "value": -0.639,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 3
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 3}}",
+     "maneuver": "2g",
+     "value": -0.639,
+     "extra": 0.0,
+     "right": true
     }
    },
    "stated-3": {
@@ -1871,6 +2604,45 @@
      "value": -0.613,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "3g",
+     "value": -0.613,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "3g",
+     "value": -0.613,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "3g",
+     "value": -0.613,
+     "extra": 0.0,
+     "right": true
     }
    },
    "vague-1": {
@@ -1962,6 +2734,42 @@
      "maneuver": "2g",
      "value": -0.622,
      "extra": -0.0013
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.622,
+     "extra": -0.0013
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.622,
+     "extra": -0.0013
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.622,
+     "extra": -0.0013
     }
    },
    "vague-2": {
@@ -2038,6 +2846,36 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"no_effect\",\"arguments\":\"The calm air forecast does not alter the wing damage growth rate or any other input that the twin uses to evaluate its next maneuver.\"}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Calm, cool air does not affect the wing damage growth rate or any input the twin uses for its decision.\"}}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Calm air does not change wing damage growth rate or maneuver options, so it does not affect the inputs the twin uses for its what‑if simulation.\"}}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Calm, cool air does not affect the wing damage growth rate or any input the twin uses for its decision.\"}}",
      "maneuver": "3g",
      "value": -0.593,
      "extra": 0.0
@@ -2125,6 +2963,39 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"no_effect\",\"arguments\":\"The event of adding a logo to the drone's tail does not influence the twin's decision-making inputs, which are solely concerned with wing damage growth factors.\"}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Adding a logo to the tail does not affect wing damage rates or the growth_factor input used by the twin's what-if model.\"}}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Adding a logo to the tail does not influence wing damage growth or maneuver choices, which are the only inputs affecting the twin's what‑if.\"}}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Adding a logo to the tail does not affect wing damage rates or the growth_factor input used by the twin's decision model.\"}}",
      "maneuver": "3g",
      "value": -0.593,
      "extra": 0.0,
@@ -2217,6 +3088,39 @@
      "value": -0.593,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Changing the console colour theme does not affect the drone's wing damage percentages, maneuver choice, or growth_factor input used by the twin's planner.\"}}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Changing the console colour theme does not affect wing damage growth or maneuver choices, which are the only inputs the twin's what‑if model uses.\"}}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Changing the console colour theme does not affect the drone's wing damage percentages, maneuver choices, or growth_factor input used by the twin's planner.\"}}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0,
+     "right": true
     }
    },
    "inexpressible-1": {
@@ -2279,6 +3183,30 @@
      "error": "The event changes the damage state of region 2, but the twin’s decision model only accepts a growth_factor input. There is no parameter to represent a repair or a change in current damage percentages, so the event cannot be expressed with the available inputs.",
      "reply": "{\"name\":\"cannot\",\"arguments\":\"The event changes the damage state of region 2, but the twin’s decision model only accepts a growth_factor input. There is no parameter to represent a repair or a change in current damage percentages, so the event cannot be expressed with the available inputs.\"}",
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event updates the wing's damage state, but the twin's decision model only takes 'maneuver' and 'growth_factor' as inputs. Since damage levels are not among the inputs, the repair does not affect the twin's choice.\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"why\": \"Repair changes current damage levels, but the what-if inputs are only maneuver and growth_factor; damage estimates are not inputs to the choice.\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event updates the wing's damage state, but the twin's decision inputs are only maneuver and growth_factor; damage levels are not part of the what-if inputs.\"}}",
+     "right": false
     }
    },
    "inexpressible-2": {
@@ -2342,6 +3270,96 @@
      "replies": 1,
      "error": "The event restricts the maneuver to only 2g turns, which is a constraint on the twin's action choice. However, the available input for the twin is only the growth_factor, which does not capture the restriction on the maneuver type. Therefore, the event matters to the twin's decision but cannot be expressed with the current inputs.",
      "reply": "{\"name\":\"cannot\",\"arguments\":\"The event restricts the maneuver to only 2g turns, which is a constraint on the twin's action choice. However, the available input for the twin is only the growth_factor, which does not capture the restriction on the maneuver type. Therefore, the event matters to the twin's decision but cannot be expressed with the current inputs.\"}",
+     "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event only restricts the maneuver to 2g turns, which is the default condition (growth_factor=1). It does not change any input the twin uses for its what‑if evaluation.\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, tools": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "The event restricts the allowed maneuver to only 2g turns, which changes the set of possible maneuvers the twin can choose but does not affect the growth_factor input; this restriction cannot be expressed by the available what‑if inputs.",
+     "reply": "{\"name\":\"cannot\",\"arguments\":{\"why\":\"The event restricts the allowed maneuver to only 2g turns, which changes the set of possible maneuvers the twin can choose but does not affect the growth_factor input; this restriction cannot be expressed by the available what‑if inputs.\"}}",
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event restricts the maneuver to 2g, but the twin's what-if input only includes growth_factor. Since growth_factor remains at its default value of 1 (as usual), this event does not change any input the twin uses for its decision.\"}}",
+     "right": false
+    }
+   },
+   "stated-11": {
+    "not_told": {
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.011
+    },
+    "best": {
+     "maneuver": "2g",
+     "value": -0.631
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2.5}}",
+     "maneuver": "2g",
+     "value": -0.631,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "nothing-11": {
+    "not_told": {
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0
+    },
+    "best": {
+     "maneuver": "3g",
+     "value": -0.593
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
+     "maneuver": "3g",
+     "value": -0.593,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "inexpressible-11": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   },
+   "inexpressible-12": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
      "right": true
     }
    }
@@ -2447,6 +3465,45 @@
      "value": -0.906,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.906,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.906,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.906,
+     "extra": 0.0,
+     "right": true
     }
    },
    "vague": {
@@ -2529,6 +3586,42 @@
      "reply": "{\"name\":\"conditions\",\"arguments\":{\"growth_factor\":2}}",
      "maneuver": "2g",
      "value": -0.906,
+     "extra": 0.0
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "2g",
+     "value": -0.904,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.906,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "2g",
+     "value": -0.904,
      "extra": 0.0
     }
    },
@@ -2618,6 +3711,39 @@
      "value": -0.899,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Repainting the drone's color does not affect wing damage percentages, growth factor, or maneuver choices, which are the only inputs the twin uses for its reward calculation.\"}}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Repainting the drone's color does not influence wing damage growth or maneuver performance, which are the only inputs affecting the twin's what‑if calculations.\"}}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Repainting the drone's color does not influence the wing damage percentages, growth factor, or maneuver choices that affect the twin's reward calculation.\"}}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0,
+     "right": true
     }
    },
    "inexpressible": {
@@ -2681,6 +3807,30 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"conditions\",\"arguments\":{\"growth_factor\":2}}",
+     "right": false
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event only changes the relative importance of speed versus wing health, but the twin's what-if inputs only include growth_factor affecting damage frequency. No input can capture the changed priority, so the event does not change any existing input.\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"The event changes the importance of speed versus wing health in the reward calculation, which is not represented by the growth_factor input. It does not affect how often wing damage grows.\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event only changes the relative importance of speed versus wing health, but the twin's what-if inputs only include growth_factor for damage frequency. No input can capture the changed priority, so the event does not affect any existing input.\"}}",
      "right": false
     }
    },
@@ -2780,6 +3930,45 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"conditions\",\"arguments\":{\"growth_factor\":0.5}}",
+     "maneuver": "2g",
+     "value": -0.891,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 0.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 0.5}}",
+     "maneuver": "2g",
+     "value": -0.891,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 0.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 0.5}}",
+     "maneuver": "2g",
+     "value": -0.891,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 0.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 0.5}}",
      "maneuver": "2g",
      "value": -0.891,
      "extra": 0.0,
@@ -2886,6 +4075,45 @@
      "value": -0.905,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 3
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 3}}",
+     "maneuver": "2g",
+     "value": -0.905,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 3
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 3}}",
+     "maneuver": "2g",
+     "value": -0.905,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 3
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 3}}",
+     "maneuver": "2g",
+     "value": -0.905,
+     "extra": 0.0,
+     "right": true
     }
    },
    "stated-3": {
@@ -2988,6 +4216,45 @@
      "value": -0.904,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "2g",
+     "value": -0.904,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "2g",
+     "value": -0.904,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 1.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 1.5}}",
+     "maneuver": "2g",
+     "value": -0.904,
+     "extra": 0.0,
+     "right": true
     }
    },
    "vague-1": {
@@ -3079,6 +4346,42 @@
      "maneuver": "2g",
      "value": -0.906,
      "extra": 0.0
+    },
+    "gpt-oss:120b": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.906,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, tools": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.906,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2}}",
+     "maneuver": "2g",
+     "value": -0.906,
+     "extra": 0.0
     }
    },
    "vague-2": {
@@ -3155,6 +4458,36 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"no_effect\",\"arguments\":\"The forecast of calm, cool air does not influence the twin’s decision-making inputs; it does not alter wing damage growth or maneuver choice.\"}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Calm, cool air does not affect the wing damage growth rate or any other input the twin uses for its decision.\"}}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Calm, cool air does not affect wing damage growth or maneuver choice.\"}}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Calm, cool air does not affect the wing damage growth rate or any other input the twin uses for its decision.\"}}",
      "maneuver": "2g",
      "value": -0.899,
      "extra": 0.0
@@ -3242,6 +4575,39 @@
      "replies": 1,
      "error": null,
      "reply": "{\"name\":\"no_effect\",\"arguments\":\"The event of adding a logo to the drone's tail does not influence the twin's decision-making inputs, which are solely concerned with wing damage growth factors.\"}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Adding a logo to the tail does not influence the wing damage growth factor or any other input the twin uses for its maneuver decision.\"}}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Adding a logo to the tail is cosmetic and does not affect wing damage growth or the drone's maneuver choices.\"}}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Adding a logo to the tail does not change the wing damage rates or the growth_factor input that the twin uses for its what-if calculations.\"}}",
      "maneuver": "2g",
      "value": -0.899,
      "extra": 0.0,
@@ -3334,6 +4700,39 @@
      "value": -0.899,
      "extra": 0.0,
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The colour theme change does not affect the drone's wing damage levels or the growth factor, which are the only inputs the twin uses to evaluate maneuvers.\"}}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\":\"no_effect\",\"arguments\":{\"why\":\"Changing the console colour theme does not affect wing damage growth or maneuver choices, which are the only inputs the twin's what‑if uses.\"}}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0,
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"Changing the console colour theme is a visual UI change and does not alter the drone's wing damage percentages, maneuver choice, or growth factor, which are the only inputs the twin uses for its decision.\"}}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0,
+     "right": true
     }
    },
    "inexpressible-1": {
@@ -3396,6 +4795,30 @@
      "error": "The event changes the damage state of wing region 2, which influences the drone’s expected reward, but the what-if function’s inputs (maneuver and growth_factor) do not include a parameter for current wing damage. Therefore the event matters to the twin’s decision but cannot be expressed through the available inputs.",
      "reply": "{\"name\":\"cannot\",\"arguments\":{\"reason\":\"The event changes the damage state of wing region 2, which influences the drone’s expected reward, but the what-if function’s inputs (maneuver and growth_factor) do not include a parameter for current wing damage. Therefore the event matters to the twin’s decision but cannot be expressed through the available inputs.\"}}",
      "right": true
+    },
+    "gpt-oss:120b": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event only updates the wing's damage estimate for region 2, but the twin's decision model only takes 'growth_factor' as an input. Since growth_factor is unchanged, the event does not affect the twin's choice.\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, tools": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"why\": \"Repair changes the current damage level of region 2, but the twin's what-if only depends on maneuver and growth_factor, so it does not affect the inputs.\"}}",
+     "right": false
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event only changes the current damage level of region 2, but the twin's what‑if model only takes the growth_factor as an input. Since growth_factor is unchanged, the event does not affect any input the twin uses for its decision.\"}}",
+     "right": false
     }
    },
    "inexpressible-2": {
@@ -3460,6 +4883,96 @@
      "error": null,
      "reply": "{\"name\":\"no_effect\",\"arguments\":\"The event only restricts maneuvers to 2g turns, which do not alter the damage growth rate; thus it does not change the twin's growth_factor input.\"}",
      "right": false
+    },
+    "gpt-oss:120b": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "The event restricts the drone to only 2g turns, which influences the twin's decision, but the only controllable input defined for the what‑if model is growth_factor. There is no input for maneuver constraints, so this effect cannot be expressed with the available inputs.",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"reason\": \"The event restricts the drone to only 2g turns, which influences the twin's decision, but the only controllable input defined for the what‑if model is growth_factor. There is no input for maneuver constraints, so this effect cannot be expressed with the available inputs.\"}}",
+     "right": true
+    },
+    "gpt-oss:120b, tools": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "The event restricts the allowed maneuver to 2g, which influences the twin's decision but is not represented by the what-if inputs (maneuver and growth_factor).",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"The event restricts the allowed maneuver to 2g, which influences the twin's decision but is not represented by the what-if inputs (maneuver and growth_factor).\"}}",
+     "right": true
+    },
+    "gpt-oss:120b, 1 reply": {
+     "said": "no_effect",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"no_effect\", \"arguments\": {\"reason\": \"The event restricts maneuver choice to 2g turns, but the twin's what-if input only includes growth_factor. Since growth_factor is unchanged, the event does not modify any input the twin uses.\"}}",
+     "right": false
+    }
+   },
+   "stated-11": {
+    "not_told": {
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0
+    },
+    "best": {
+     "maneuver": "2g",
+     "value": -0.907
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "growth_factor": 2.5
+     },
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2.5}}",
+     "maneuver": "2g",
+     "value": -0.907,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "nothing-11": {
+    "not_told": {
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0
+    },
+    "best": {
+     "maneuver": "2g",
+     "value": -0.899
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {},
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
+     "maneuver": "2g",
+     "value": -0.899,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "inexpressible-11": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   },
+   "inexpressible-12": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
     }
    }
   }

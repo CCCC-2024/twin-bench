@@ -17,7 +17,7 @@ versions follow [Semantic Versioning](https://semver.org/).
   fade factor), uav (maneuver; damage-growth factor), bikeshare (start; demand factors). `tools/advise_events.py`
   runs four kinds of event on each, 4 dev and 9 held-out test events per twin, and scores a choice by the twin's
   what-if under reference conditions (`twins/*/results/advise_events.json`: a perfect reader, Qwen3.5-9B and
-  gpt-oss-20b, each also with tool calls and with one reply only).
+  gpt-oss-20b, each also with tool calls and with one reply only; gpt-oss-120b on a cluster GPU).
 - bikeshare: rate models that forget. `DiscountedRates(half_life_days)` weights earlier days down exponentially;
   `SelectedRates(candidates)` uses the candidate whose day-ahead forecasts had the smallest recent error.
   `scripts/compare_forgetting.py` compares them with windows of 7–120 days over 2018

@@ -205,15 +205,15 @@ def test_an_event_matters_where_the_decision_is_sensitive_to_it():
     cost = {}
     for name in ("bikeshare", "incubator", "battery", "uav"):
         saved = json.loads((Path(__file__).parents[1] / "twins" / name / "results" / "advise_events.json").read_text())
-        rows = list(saved["states"].values())
+        rows = [r for r in saved["states"].values() if "stated" in r]       # the states every event is scored in
         cost[name] = round(sum(r["stated"]["not_told"]["extra"] for r in rows) / len(rows), 4)
         assert all(r["stated"]["reference"]["extra"] == 0 and r["nothing"]["not_told"]["extra"] == 0 for r in rows)
         assert all(r["inexpressible"]["reference"]["right"] for r in rows)
     assert cost == dict(bikeshare=15.24, incubator=16.5, battery=0.0004, uav=0.0027)
 
 
-def test_two_local_models_read_stated_events_but_their_guess_at_a_vague_one_can_cost_more_than_not_knowing():
-    """tools/advise_events.py with Qwen3.5-9B and gpt-oss-20b on the test events, the 20 cells of each kind over the
+def test_local_models_read_stated_events_but_their_guess_at_a_vague_one_can_cost_more_than_not_knowing():
+    """tools/advise_events.py with Qwen3.5-9B, gpt-oss-20b and gpt-oss-120b on the test events, the 20 cells of each kind over the
     four twins (30 stated): the right readings, and for the incubator's vague events the minutes outside the band."""
     from pathlib import Path
     cells = []
@@ -226,6 +226,8 @@ def test_two_local_models_read_stated_events_but_their_guess_at_a_vague_one_can_
     assert count("reference") == [30, 20, 20]
     assert count("qwen3.5:9b") == [27, 20, 14] and count("gpt-oss:20b") == [30, 19, 15]
     assert count("qwen3.5:9b, tools") == [30, 20, 8] and count("gpt-oss:20b, tools") == [30, 19, 14]   # cannot: worse
+    assert count("gpt-oss:120b") == [30, 20, 11]           # a larger model (on a B200): no better at saying cannot
     vague = [row for name, kind, row in cells if (name, kind) == ("incubator", "vague")]
     mean = lambda who: round(sum(row[who]["extra"] for row in vague) / len(vague), 1)
     assert [mean(w) for w in ("reference", "not_told", "gpt-oss:20b", "qwen3.5:9b")] == [0.9, 8.0, 29.6, 53.5]
+    assert mean("gpt-oss:120b") == 29.6                     # it too gave the room an outdoor temperature
