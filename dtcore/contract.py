@@ -47,6 +47,8 @@ class Twin:
     actions = ()        # the what-if inputs that are the twin's own action; every other input is a condition
     conditions = {}     # each condition, the inputs of best(): name -> the JSON schema of its value (type, description,
                         # minimum, maximum), which agent.advise gives a language model as a tool's parameters
+    objective = None    # (the number whatif() and best() return that the decision optimizes, +1 if lower is better,
+                        # -1 if higher), so agent.advise can compare actions over a range of conditions
 
     def brief(self):
         """The system and its state now, in words, and what whatif() takes (each scenario keyword: meaning, unit,

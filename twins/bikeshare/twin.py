@@ -58,6 +58,7 @@ class AgentPolicy:
 class StationTwin(Twin):
     capabilities = ("update", "predict", "whatif", "decide")
     actions = ("set_bikes",)
+    objective = ("expected_lost", +1)
     conditions = dict(
         rent_factor=dict(type="number", minimum=0, description="rentals are this many times the usual (1: as usual)"),
         return_factor=dict(type="number", minimum=0, description="returns are this many times the usual (1: as usual)"),

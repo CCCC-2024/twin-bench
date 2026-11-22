@@ -14,6 +14,7 @@ from dtcore import Twin
 class UAVTwin(Twin):
     capabilities = ("update", "predict", "whatif", "decide")
     actions = ("maneuver",)
+    objective = ("value", -1)
     conditions = dict(growth_factor=dict(type="number", minimum=0, maximum=3, description=
                                          "wing damage grows this many times as often as usual from now on (1: as usual)"))
 

@@ -1832,6 +1832,7 @@
      "conditions": {
       "fade_factor": 1.2
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"fade_factor\": 1.2}}",
@@ -1857,6 +1858,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -1871,6 +1873,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -1881,6 +1884,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -3577,6 +3581,7 @@
      "conditions": {
       "fade_factor": 1.2
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"fade_factor\": 1.2}}",
@@ -3602,6 +3607,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -3616,6 +3622,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -3626,6 +3633,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -5322,6 +5330,7 @@
      "conditions": {
       "fade_factor": 1.2
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"fade_factor\": 1.2}}",
@@ -5347,6 +5356,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -5361,6 +5371,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -5371,6 +5382,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",

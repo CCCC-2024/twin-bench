@@ -115,6 +115,7 @@ class Dial(Twin):
         return "A dial. whatif(n=...) turns it to n, a whole number from 0 to 4, and returns miss: how far off n is."
 
     actions = ("n",)
+    objective = ("miss", +1)
     conditions = dict(shift=dict(type="integer", minimum=0, maximum=1, description="the best setting is this much higher"))
 
     def whatif(self, n, shift=0):
@@ -167,8 +168,8 @@ def call(name, **arguments):
 def test_advise_has_the_model_extract_the_conditions_and_the_twin_choose():
     llm = FixedModel("The event shifts it: " + call("conditions", shift=1, n=0))   # an action it should not give, too
     advice = agent.advise(llm, Dial(), "The best setting moved up by one.")
-    assert advice == dict(said="conditions", conditions={"shift": 1}, best={"n": 4, "miss": 0}, reply=llm.answers[0],
-                          replies=1, error=None)
+    assert advice == dict(said="conditions", conditions={"shift": 1}, best={"n": 4, "miss": 0}, regret=None,
+                          reply=llm.answers[0], replies=1, error=None)
     assert '"shift": {"type": "integer"' in llm.sent[0][0]["content"] and "A dial." in llm.sent[0][0]["content"]
     polished = agent.advise(FixedModel('{"name": "no_effect", "arguments": "polish changes nothing"}'), Dial(), "x")
     assert polished["conditions"] == {} and polished["best"] == {"n": 3, "miss": 0}     # the twin's usual choice
@@ -187,6 +188,16 @@ def test_advise_tells_the_model_what_was_wrong_and_gives_no_action_when_its_turn
         assert advice["best"] is None and advice["replies"] == 2 and advice["error"]
 
 
+def test_with_ranges_the_twin_takes_the_action_whose_worst_regret_over_the_range_is_smallest():
+    llm = FixedModel(call("conditions", shift={"low": 0, "high": 1}))
+    advice = agent.advise(llm, Dial(), "The best setting may have moved up.", ranges=True)
+    assert advice["best"] == {"n": 3, "miss": 0} and advice["regret"] == 1          # n=3 and n=4 each miss by 1 at worst
+    assert "range" in llm.sent[0][0]["content"]
+    bad = agent.advise(FixedModel(call("conditions", shift={"low": 1, "high": 0}), call("conditions", shift=1)), Dial(),
+                       "x", ranges=True)
+    assert bad["best"] == {"n": 4, "miss": 0} and bad["replies"] == 2               # told the range was backwards
+
+
 def test_the_conditions_a_twin_declares_are_the_inputs_of_its_best():
     import inspect
     from twins.battery import BatteryTwin
@@ -195,7 +206,7 @@ def test_the_conditions_a_twin_declares_are_the_inputs_of_its_best():
     from twins.uav import UAVTwin
     for twin in (Dial, BatteryTwin, StationTwin, IncubatorTwin, UAVTwin):
         assert list(twin.conditions) == list(inspect.signature(twin.best).parameters)[1:]      # after self
-        assert not set(twin.actions) & set(twin.conditions)
+        assert not set(twin.actions) & set(twin.conditions) and twin.objective[1] in (1, -1)
 
 
 def test_an_event_matters_where_the_decision_is_sensitive_to_it():

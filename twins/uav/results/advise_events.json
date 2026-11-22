@@ -1704,6 +1704,7 @@
      "conditions": {
       "growth_factor": 2.5
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2.5}}",
@@ -1726,6 +1727,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -1739,6 +1741,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -1749,6 +1752,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -3312,6 +3316,7 @@
      "conditions": {
       "growth_factor": 2.5
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2.5}}",
@@ -3334,6 +3339,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -3347,6 +3353,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -3357,6 +3364,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -4924,6 +4932,7 @@
      "conditions": {
       "growth_factor": 2.5
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"growth_factor\": 2.5}}",
@@ -4946,6 +4955,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -4959,6 +4969,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -4969,6 +4980,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",

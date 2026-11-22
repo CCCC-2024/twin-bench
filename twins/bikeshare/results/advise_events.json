@@ -2017,6 +2017,7 @@
       "rent_factor": 2,
       "return_factor": 2
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 2, \"return_factor\": 2}}",
@@ -2037,6 +2038,7 @@
       "rent_factor": 0.4,
       "return_factor": 0.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4}}",
@@ -2058,6 +2060,7 @@
       "from_hour": 7,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 3, \"from_hour\": 7, \"to_hour\": 12}}",
@@ -2080,6 +2083,7 @@
       "from_hour": 6,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 6, \"to_hour\": 12}}",
@@ -2102,6 +2106,7 @@
       "from_hour": 12,
       "to_hour": 22
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 12, \"to_hour\": 22}}",
@@ -2123,6 +2128,7 @@
       "from_hour": 7,
       "to_hour": 10
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 3, \"from_hour\": 7, \"to_hour\": 10}}",
@@ -2143,6 +2149,7 @@
       "rent_factor": 1.4,
       "return_factor": 1.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 1.4, \"return_factor\": 1.4}}",
@@ -2163,6 +2170,7 @@
       "rent_factor": 0.6,
       "return_factor": 0.6
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.6, \"return_factor\": 0.6}}",
@@ -2188,6 +2196,7 @@
       "from_hour": 8,
       "to_hour": 11
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 2, \"from_hour\": 8, \"to_hour\": 11}}",
@@ -2210,6 +2219,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -2223,6 +2233,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -2233,6 +2244,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -3919,6 +3931,7 @@
       "rent_factor": 2,
       "return_factor": 2
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 2, \"return_factor\": 2}}",
@@ -3939,6 +3952,7 @@
       "rent_factor": 0.4,
       "return_factor": 0.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4}}",
@@ -3960,6 +3974,7 @@
       "from_hour": 7,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 3, \"from_hour\": 7, \"to_hour\": 12}}",
@@ -3982,6 +3997,7 @@
       "from_hour": 6,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 6, \"to_hour\": 12}}",
@@ -4004,6 +4020,7 @@
       "from_hour": 12,
       "to_hour": 22
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 12, \"to_hour\": 22}}",
@@ -4025,6 +4042,7 @@
       "from_hour": 7,
       "to_hour": 10
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 3, \"from_hour\": 7, \"to_hour\": 10}}",
@@ -4045,6 +4063,7 @@
       "rent_factor": 1.4,
       "return_factor": 1.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 1.4, \"return_factor\": 1.4}}",
@@ -4065,6 +4084,7 @@
       "rent_factor": 0.6,
       "return_factor": 0.6
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.6, \"return_factor\": 0.6}}",
@@ -4090,6 +4110,7 @@
       "from_hour": 8,
       "to_hour": 11
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 2, \"from_hour\": 8, \"to_hour\": 11}}",
@@ -4112,6 +4133,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -4125,6 +4147,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -4135,6 +4158,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -5828,6 +5852,7 @@
       "rent_factor": 2,
       "return_factor": 2
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 2, \"return_factor\": 2}}",
@@ -5848,6 +5873,7 @@
       "rent_factor": 0.4,
       "return_factor": 0.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4}}",
@@ -5869,6 +5895,7 @@
       "from_hour": 7,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 3, \"from_hour\": 7, \"to_hour\": 12}}",
@@ -5891,6 +5918,7 @@
       "from_hour": 6,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 6, \"to_hour\": 12}}",
@@ -5913,6 +5941,7 @@
       "from_hour": 12,
       "to_hour": 22
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 12, \"to_hour\": 22}}",
@@ -5934,6 +5963,7 @@
       "from_hour": 7,
       "to_hour": 10
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 3, \"from_hour\": 7, \"to_hour\": 10}}",
@@ -5954,6 +5984,7 @@
       "rent_factor": 1.4,
       "return_factor": 1.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 1.4, \"return_factor\": 1.4}}",
@@ -5974,6 +6005,7 @@
       "rent_factor": 0.6,
       "return_factor": 0.6
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.6, \"return_factor\": 0.6}}",
@@ -5999,6 +6031,7 @@
       "from_hour": 8,
       "to_hour": 11
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 2, \"from_hour\": 8, \"to_hour\": 11}}",
@@ -6021,6 +6054,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -6034,6 +6068,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -6044,6 +6079,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -6064,6 +6100,7 @@
       "rent_factor": 2,
       "return_factor": 2
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 2, \"return_factor\": 2}}",
@@ -6084,6 +6121,7 @@
       "rent_factor": 0.4,
       "return_factor": 0.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4}}",
@@ -6105,6 +6143,7 @@
       "from_hour": 7,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 3, \"from_hour\": 7, \"to_hour\": 12}}",
@@ -6127,6 +6166,7 @@
       "from_hour": 6,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 6, \"to_hour\": 12}}",
@@ -6149,6 +6189,7 @@
       "from_hour": 12,
       "to_hour": 22
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 12, \"to_hour\": 22}}",
@@ -6170,6 +6211,7 @@
       "from_hour": 7,
       "to_hour": 10
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 3, \"from_hour\": 7, \"to_hour\": 10}}",
@@ -6190,6 +6232,7 @@
       "rent_factor": 1.4,
       "return_factor": 1.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 1.4, \"return_factor\": 1.4}}",
@@ -6210,6 +6253,7 @@
       "rent_factor": 0.6,
       "return_factor": 0.6
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.6, \"return_factor\": 0.6}}",
@@ -6235,6 +6279,7 @@
       "from_hour": 8,
       "to_hour": 11
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 2, \"from_hour\": 8, \"to_hour\": 11}}",
@@ -6257,6 +6302,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -6270,6 +6316,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -6280,6 +6327,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -6300,6 +6348,7 @@
       "rent_factor": 2,
       "return_factor": 2
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 2, \"return_factor\": 2}}",
@@ -6320,6 +6369,7 @@
       "rent_factor": 0.4,
       "return_factor": 0.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4}}",
@@ -6341,6 +6391,7 @@
       "from_hour": 7,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 3, \"from_hour\": 7, \"to_hour\": 12}}",
@@ -6363,6 +6414,7 @@
       "from_hour": 6,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 6, \"to_hour\": 12}}",
@@ -6385,6 +6437,7 @@
       "from_hour": 12,
       "to_hour": 22
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 12, \"to_hour\": 22}}",
@@ -6406,6 +6459,7 @@
       "from_hour": 7,
       "to_hour": 10
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 3, \"from_hour\": 7, \"to_hour\": 10}}",
@@ -6426,6 +6480,7 @@
       "rent_factor": 1.4,
       "return_factor": 1.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 1.4, \"return_factor\": 1.4}}",
@@ -6446,6 +6501,7 @@
       "rent_factor": 0.6,
       "return_factor": 0.6
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.6, \"return_factor\": 0.6}}",
@@ -6471,6 +6527,7 @@
       "from_hour": 8,
       "to_hour": 11
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 2, \"from_hour\": 8, \"to_hour\": 11}}",
@@ -6493,6 +6550,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -6506,6 +6564,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -6516,6 +6575,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -6536,6 +6596,7 @@
       "rent_factor": 2,
       "return_factor": 2
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 2, \"return_factor\": 2}}",
@@ -6556,6 +6617,7 @@
       "rent_factor": 0.4,
       "return_factor": 0.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4}}",
@@ -6577,6 +6639,7 @@
       "from_hour": 7,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 3, \"from_hour\": 7, \"to_hour\": 12}}",
@@ -6599,6 +6662,7 @@
       "from_hour": 6,
       "to_hour": 12
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 6, \"to_hour\": 12}}",
@@ -6621,6 +6685,7 @@
       "from_hour": 12,
       "to_hour": 22
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.4, \"return_factor\": 0.4, \"from_hour\": 12, \"to_hour\": 22}}",
@@ -6642,6 +6707,7 @@
       "from_hour": 7,
       "to_hour": 10
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 3, \"from_hour\": 7, \"to_hour\": 10}}",
@@ -6662,6 +6728,7 @@
       "rent_factor": 1.4,
       "return_factor": 1.4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 1.4, \"return_factor\": 1.4}}",
@@ -6682,6 +6749,7 @@
       "rent_factor": 0.6,
       "return_factor": 0.6
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"rent_factor\": 0.6, \"return_factor\": 0.6}}",
@@ -6707,6 +6775,7 @@
       "from_hour": 8,
       "to_hour": 11
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"return_factor\": 2, \"from_hour\": 8, \"to_hour\": 11}}",
@@ -6729,6 +6798,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -6742,6 +6812,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -6752,6 +6823,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",

@@ -22,11 +22,12 @@ states, judged by the perfect reader alone.
 
 MODEL reference is no language model: it answers with the (middle) reference, so its rows are what a perfect reader
 gives. A row is named by the model and how it was run: ", tools" (the calls as tool calls, not as JSON in the
-reply), ", 1 reply" (no second reply after an error) and ", reasoning medium" or ", reasoning high" (rows without
+reply), ", ranges" (a vague event's conditions as ranges, agent.advise(ranges=True)), ", 1 reply" (no second reply
+after an error) and ", reasoning medium" or ", reasoning high" (rows without
 it ran with the least: low for gpt-oss, none for Qwen). Writes twins/<name>/results/advise_events.json, adding to it
 row by row.
 
-Usage: python tools/advise_events.py MODEL [MODEL ...] [--url URL] [--reasoning none] [--max-tokens N] [--tools] [--turns 1]
+Usage: python tools/advise_events.py MODEL [MODEL ...] [--url URL] [--reasoning none] [--max-tokens N] [--tools] [--ranges] [--turns 1]
                                      [--twins incubator battery ...] [--split dev]
 """
 import argparse
@@ -43,10 +44,10 @@ ROOT = Path(__file__).resolve().parents[1]
 CANNOT = "cannot"       # reference of an event the what-if has no input for: the right answer is the call cannot
 HOURS = dict(from_hour=7, to_hour=10)
 
-# twin -> the number of whatif() a choice is scored by, +1 if lower is better or -1 if higher, and its events:
-# name -> (text, reference conditions: one, or for a vague event a mild, a middle and a strong one)
+# twin -> its events: name -> (text, reference conditions: one, or for a vague event a mild, a middle and a strong one).
+# A choice is scored by the twin's objective (Twin.objective).
 EVENTS = dict(
-    bikeshare=("expected_lost", +1, {
+    bikeshare={
         "stated": ("Tomorrow a subway line near the station is closed from 7:00 to 10:00. In those hours about three "
                    "times the usual number of people will rent bikes here; returns stay as usual.", dict(rent_factor=3, **HOURS)),
         "vague": ("A subway line near the station is closed tomorrow morning.",
@@ -90,8 +91,8 @@ EVENTS = dict(
                       dict(return_factor=2, from_hour=8, to_hour=11)),
         "nothing-11": ("The map panel at the station is updated tomorrow.", {}),
         "inexpressible-11": ("Tomorrow the station gets ten extra docks.", CANNOT),
-        "inexpressible-12": ("Tomorrow the operator can send a second truck at noon.", CANNOT)}),
-    incubator=("minutes_outside", +1, {
+        "inexpressible-12": ("Tomorrow the operator can send a second truck at noon.", CANNOT)},
+    incubator={
         "stated": ("The building's heating is off tonight; the room will be at about 12 °C for the next hour.", dict(T_room=12)),
         "vague": ("The building's heating is off tonight and it is freezing outside.", [dict(T_room=t) for t in (16, 12, 8)]),
         "nothing": ("A new label was put on the door of the box.", {}),
@@ -123,8 +124,8 @@ EVENTS = dict(
         "stated-11": ("The room will be held at 20 °C for the next hour.", dict(T_room=20)),
         "nothing-11": ("The lab got a new coffee machine.", {}),
         "inexpressible-11": ("The heater is being replaced with one twice as powerful.", CANNOT),
-        "inexpressible-12": ("From now on the temperature sensor reads half a degree too high.", CANNOT)}),
-    battery=("utility", -1, {
+        "inexpressible-12": ("From now on the temperature sensor reads half a degree too high.", CANNOT)},
+    battery={
         "stated": ("From now on this cell is fast-charged; cells used this way lose capacity about 1.5 times as fast.",
                    dict(fade_factor=1.5)),
         "vague": ("From now on this cell does much harsher duty: fast charging in a hot room.",
@@ -147,8 +148,8 @@ EVENTS = dict(
         "stated-11": ("From now on the cell loses capacity 1.2 times as fast as it does now.", dict(fade_factor=1.2)),
         "nothing-11": ("The cell's log files were moved to a new server.", {}),
         "inexpressible-11": ("The cell will sit unused in storage for six months before its next cycle.", CANNOT),
-        "inexpressible-12": ("The cell's internal resistance has just doubled.", CANNOT)}),
-    uav=("value", -1, {
+        "inexpressible-12": ("The cell's internal resistance has just doubled.", CANNOT)},
+    uav={
         "stated": ("Strong gusts are forecast on the route; wing damage will grow about twice as often as usual.",
                    dict(growth_factor=2)),
         "vague": ("Strong gusts are forecast on the route.", [dict(growth_factor=f) for f in (1.5, 2, 3)]),
@@ -168,7 +169,7 @@ EVENTS = dict(
         "stated-11": ("Damage will grow 2.5 times as often as usual from now on.", dict(growth_factor=2.5)),
         "nothing-11": ("The ground station's software was updated.", {}),
         "inexpressible-11": ("Fuel is low: the drone must land within ten turns.", CANNOT),
-        "inexpressible-12": ("Each 3g turn now saves twice as much time as before.", CANNOT)}),
+        "inexpressible-12": ("Each 3g turn now saves twice as much time as before.", CANNOT)},
 )
 
 
@@ -220,8 +221,9 @@ def reference_model(reference):
     return lambda messages, tools=None: json.dumps(call)
 
 
-def extra(twin, key, sign, action, references):
+def extra(twin, action, references):
     """How much worse `action` is than the twin's best under the reference conditions, averaged over them."""
+    key, sign = twin.objective
     take = lambda a: {k: a[k] for k in twin.actions}
     return round(float(np.mean([sign * (twin.whatif(**take(action), **r)[key] - twin.whatif(**take(twin.best(**r)), **r)[key])
                                 for r in references])), 4) + 0.0
@@ -239,11 +241,12 @@ parser.add_argument("--url", default="http://localhost:11434/v1", help="the serv
 parser.add_argument("--reasoning", help="reasoning_effort for the models, e.g. none or low (default: theirs)")
 parser.add_argument("--max-tokens", type=int, default=4096, help="cap on each reply, thinking included (default 4096)")
 parser.add_argument("--tools", action="store_true", help="the calls as tool calls, not as JSON in the reply")
+parser.add_argument("--ranges", action="store_true", help="a vague event's conditions as ranges; the twin chooses robustly")
 parser.add_argument("--turns", type=int, default=2, help="replies the model may give to one event (default 2)")
 parser.add_argument("--twins", nargs="+", default=list(EVENTS), choices=list(EVENTS))
 parser.add_argument("--split", choices=("dev", "test", "test2"), help="only these events (default: all)")
 args = parser.parse_args()
-how = (", tools" if args.tools else "") + (", 1 reply" if args.turns == 1 else "") + \
+how = (", tools" if args.tools else "") + (", ranges" if args.ranges else "") + (", 1 reply" if args.turns == 1 else "") + \
     (f", reasoning {args.reasoning}" if args.reasoning in ("medium", "high") else "")
 rows_of = {m: m if m == "reference" else m + how for m in args.models}
 split = lambda name: "dev" if not name[-1].isdigit() else "test2" if int(name.split("-")[1]) >= 11 else "test"
@@ -251,11 +254,11 @@ kinds = ("stated", "vague", "nothing", "inexpressible")
 total = {}                                                      # (row, split, kind) -> the cells of every twin
 
 for twin_name in args.twins:
-    key, sign, events = EVENTS[twin_name]
+    events = EVENTS[twin_name]
     events = {n: (t, r if r == CANNOT or isinstance(r, list) else [r]) for n, (t, r) in events.items()}
     out = ROOT / "twins" / twin_name / "results" / "advise_events.json"
     res = json.loads(out.read_text()) if out.exists() else {}
-    res.update(scored_by=key, events={n: dict(split=split(n), text=t, reference=r) for n, (t, r) in events.items()})
+    res.update(events={n: dict(split=split(n), text=t, reference=r) for n, (t, r) in events.items()})
     states_ = res.setdefault("states", {})
     for label, twin, more in states(twin_name, extra=args.split in (None, "test2")):
         for name, (text, reference) in events.items():
@@ -264,20 +267,20 @@ for twin_name in args.twins:
             row = states_.setdefault(label, {}).setdefault(name, {})
             if reference != CANNOT:
                 usual = twin.best()
-                row["not_told"] = dict(usual, extra=extra(twin, key, sign, usual, reference))
+                row["not_told"] = dict(usual, extra=extra(twin, usual, reference))
                 if len(reference) == 1:
                     row["best"] = twin.best(**reference[0])
             for model, row_name in rows_of.items():
                 llm = reference_model(reference) if model == "reference" else \
                     agent.chat_model(model, args.url, max_tokens=args.max_tokens, reasoning=args.reasoning, use_tools=args.tools)
-                a = agent.advise(llm, twin, text, turns=args.turns)
-                told = dict(said=a["said"], conditions=a["conditions"], replies=a["replies"], error=a["error"],
+                a = agent.advise(llm, twin, text, turns=args.turns, ranges=args.ranges)
+                told = dict(said=a["said"], conditions=a["conditions"], regret=a["regret"], replies=a["replies"], error=a["error"],
                             reply=a["reply"].strip()[:400])
                 kind = name.split("-")[0]
                 if reference == CANNOT:
                     told["right"] = a["said"] == "cannot"
                 else:
-                    told.update(a["best"] or {}, extra=extra(twin, key, sign, a["best"] or usual, reference))
+                    told.update(a["best"] or {}, extra=extra(twin, a["best"] or usual, reference))
                     if kind != "vague":
                         told["right"] = a["best"] is not None and same(twin, a["conditions"], reference[0])
                 row[row_name] = told

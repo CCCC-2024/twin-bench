@@ -23,6 +23,7 @@ ANOMALY_N = 3       # ... for this many samples in a row -> anomaly
 class IncubatorTwin(Twin):
     capabilities = ("update", "predict", "whatif")       # no automatic decide
     actions = ("desired",)
+    objective = ("minutes_outside", +1)
     conditions = dict(T_room=dict(type="number", minimum=-20, maximum=50,
                                   description="temperature of the room around the box for the next hour, in °C"))
 

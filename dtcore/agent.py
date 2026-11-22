@@ -21,10 +21,17 @@ tools (llm(messages, tools)) and as the same JSON in its reply where not:
   no_effect   the event changes nothing the choice depends on: the twin's usual choice, twin.best()
   cannot      the event matters but the inputs cannot express it: no action
 A call that is not one of these, or conditions the twin cannot run (best raises ValueError or TypeError), is told
-back to the model with the reason, up to `turns` replies. Returns dict(said, conditions, best, reply, replies, error):
-the call it ended with (None if never a valid one), the conditions, the twin's best action under them, the last
-reply, the number of replies, and why there is no action, if so.
+back to the model with the reason, up to `turns` replies. Returns dict(said, conditions, best, regret, reply, replies,
+error): the call it ended with (None if never a valid one), the conditions, the twin's best action under them, the
+worst regret of that action over a range (below; else None), the last reply, the number of replies, and why there is
+no action, if so.
+
+With ranges=True the model gives a condition the event states no number for as a range, {"low": a, "high": b}. The twin then takes the low end, the middle and the high end of
+each range (every combination), finds its best action at each, and keeps the one whose worst regret over them is
+smallest: regret is how much worse an action is than the best one at that point, in the twin's objective
+(twin.objective). A wide range with a large regret is a reason to ask a person before acting.
 """
+import itertools
 import json
 import urllib.error
 import urllib.request
@@ -42,15 +49,21 @@ The twin: %s"""
 ADVISE_PROMPT = """You read events for a digital twin of a real system: a model kept in step with the system's data that \
 can simulate it. The twin chooses its own action by comparing every one; you only tell it what the event the user \
 describes changes. Answer with exactly one call:
-  conditions  the event changes inputs of the twin's what-if. Give only the inputs it changes, as numbers; where the \
-event states no number, give your best estimate.
-  no_effect   the event changes nothing the twin's choice depends on. Argument: why.
-  cannot      the event matters to the choice, but these inputs cannot express it. Argument: why.
+  conditions  the event changes inputs of the twin's what-if. Give only the inputs it changes, as numbers; %s
+  no_effect   the event changes neither how the system behaves nor what the decision is trying to achieve, such as \
+a new name, colour or label. Argument: why.
+  cannot      the event does change how the system behaves, what it can do, or what the decision is trying to \
+achieve, but none of these inputs describes that change. Such an event is never no_effect. Argument: why.
 Call it as a tool; without tools, reply with one JSON object and nothing else: {"name": "<call>", "arguments": {...}}.
 
 The inputs of conditions: %s
 
 The twin: %s"""
+ESTIMATE = "where the event states no number, give your best estimate."
+RANGE = """where the event states a number, even an approximate one such as "about three times", give that \
+number. Where it states none, start from the input's value now (the twin's description gives it; a factor of the usual \
+is 1 now) and give the range the input most likely lies in under the event, as {"low": <number>, "high": <number>}, \
+as narrow as you honestly can."""
 
 
 def _calls(twin):
@@ -58,26 +71,30 @@ def _calls(twin):
     why = dict(type="object", properties=dict(why=dict(type="string")), required=["why"])
     described = (("conditions", "The event changes these inputs of the twin's what-if.",
                   dict(type="object", properties=twin.conditions, additionalProperties=False)),
-                 ("no_effect", "The event changes nothing the twin's choice depends on.", why),
-                 ("cannot", "The event matters to the twin's choice, but the inputs cannot express it.", why))
+                 ("no_effect", "The event changes neither how the system behaves nor what the decision is for.", why),
+                 ("cannot", "The event changes the system or its goal in a way the inputs cannot express.", why))
     return [dict(type="function", function=dict(name=n, description=d, parameters=p)) for n, d, p in described]
 
 
-def advise(llm, twin, event, turns=2):
-    messages = [dict(role="system", content=ADVISE_PROMPT % (json.dumps(twin.conditions), twin.brief())),
-                dict(role="user", content=event)]
+def advise(llm, twin, event, turns=2, ranges=False):
+    prompt = ADVISE_PROMPT % (RANGE if ranges else ESTIMATE, json.dumps(twin.conditions), twin.brief())
+    messages = [dict(role="system", content=prompt), dict(role="user", content=event)]
     tools = _calls(twin)
     for n in range(1, turns + 1):
         reply = llm(messages, tools)
         said = _parse(reply)
         name, given = said.get("name"), said.get("arguments")
-        out = dict(said=None, conditions=None, best=None)
+        out = dict(said=None, conditions=None, best=None, regret=None)
         if name == "cannot":                                    # only its name counts; why is for a person
             return dict(out, said=name, reply=reply, replies=n, error=_why(given))
         if name == "no_effect" or (name == "conditions" and isinstance(given, dict)):
-            conditions = {k: v for k, v in given.items() if k not in twin.actions} if name == "conditions" else {}
-            out = dict(said=name, conditions=conditions, best=None)
+            conditions = {k: v.get("low") if isinstance(v, dict) and v.get("low") == v.get("high") else v
+                          for k, v in given.items() if k not in twin.actions} if name == "conditions" else {}
+            out = dict(said=name, conditions=conditions, best=None, regret=None)
             try:
+                if ranges and any(isinstance(v, dict) for v in conditions.values()):
+                    best, regret = robust_best(twin, conditions)
+                    return dict(out, best=best, regret=regret, reply=reply, replies=n, error=None)
                 return dict(out, best=twin.best(**conditions), reply=reply, replies=n, error=None)
             except (TypeError, ValueError) as e:
                 error = f"the twin cannot run {json.dumps(conditions)}: {e}"
@@ -85,6 +102,29 @@ def advise(llm, twin, event, turns=2):
             error = "not one of the calls conditions, no_effect, cannot"
         messages += [dict(role="assistant", content=reply), dict(role="user", content=f"No: {error}. Answer again.")]
     return dict(out, reply=reply, replies=turns, error=error)
+
+
+def robust_best(twin, conditions):
+    """The action with the smallest worst regret over the low end, middle and high end of every condition given as a
+    range {"low": a, "high": b}, and that regret; whole-number inputs take a whole-number middle."""
+    points = {}
+    for k, v in conditions.items():
+        if not isinstance(v, dict):
+            points[k] = [v]
+            continue
+        lo, hi = v.get("low"), v.get("high")
+        if not all(type(x) in (int, float) for x in (lo, hi)) or lo > hi:
+            raise ValueError(f'the range of {k} must be {{"low": a, "high": b}} with numbers a <= b')
+        mid = (lo + hi) / 2
+        points[k] = sorted({lo, int(round(mid)) if twin.conditions[k].get("type") == "integer" else mid, hi})
+    grid = [dict(zip(points, values)) for values in itertools.product(*points.values())]
+    key, sign = twin.objective
+    take = lambda a: {k: a[k] for k in twin.actions}
+    score = lambda action, c: sign * twin.whatif(**take(action), **c)[key]
+    bests = [twin.best(**c) for c in grid]
+    worst = lambda action: max(score(action, c) - score(b, c) for b, c in zip(bests, grid))
+    chosen = min(bests, key=worst)
+    return chosen, round(float(worst(chosen)), 4) + 0.0
 
 
 def ask(llm, twin, request, choices=None, turns=10):

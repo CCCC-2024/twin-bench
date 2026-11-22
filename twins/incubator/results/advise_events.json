@@ -1960,6 +1960,7 @@
      "conditions": {
       "T_room": 30
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 30}}",
@@ -1981,6 +1982,7 @@
      "conditions": {
       "T_room": 16
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 16}}",
@@ -2002,6 +2004,7 @@
      "conditions": {
       "T_room": 29
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 29}}",
@@ -2023,6 +2026,7 @@
      "conditions": {
       "T_room": 32
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 32}}",
@@ -2044,6 +2048,7 @@
      "conditions": {
       "T_room": 4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 4}}",
@@ -2065,6 +2070,7 @@
      "conditions": {
       "T_room": 35
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
@@ -2086,6 +2092,7 @@
      "conditions": {
       "T_room": 17
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
@@ -2107,6 +2114,7 @@
      "conditions": {
       "T_room": 15
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 15}}",
@@ -2133,6 +2141,7 @@
      "conditions": {
       "T_room": 20
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 20}}",
@@ -2158,6 +2167,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -2172,6 +2182,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -2182,6 +2193,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -2202,6 +2214,7 @@
      "conditions": {
       "T_room": 30
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 30}}",
@@ -2223,6 +2236,7 @@
      "conditions": {
       "T_room": 16
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 16}}",
@@ -2244,6 +2258,7 @@
      "conditions": {
       "T_room": 29
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 29}}",
@@ -2265,6 +2280,7 @@
      "conditions": {
       "T_room": 32
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 32}}",
@@ -2286,6 +2302,7 @@
      "conditions": {
       "T_room": 4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 4}}",
@@ -2307,6 +2324,7 @@
      "conditions": {
       "T_room": 35
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
@@ -2328,6 +2346,7 @@
      "conditions": {
       "T_room": 17
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
@@ -2349,6 +2368,7 @@
      "conditions": {
       "T_room": 15
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 15}}",
@@ -2375,6 +2395,7 @@
      "conditions": {
       "T_room": 20
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 20}}",
@@ -2400,6 +2421,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -2414,6 +2436,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -2424,6 +2447,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -2444,6 +2468,7 @@
      "conditions": {
       "T_room": 30
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 30}}",
@@ -2465,6 +2490,7 @@
      "conditions": {
       "T_room": 16
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 16}}",
@@ -2486,6 +2512,7 @@
      "conditions": {
       "T_room": 29
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 29}}",
@@ -2507,6 +2534,7 @@
      "conditions": {
       "T_room": 32
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 32}}",
@@ -2528,6 +2556,7 @@
      "conditions": {
       "T_room": 4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 4}}",
@@ -2549,6 +2578,7 @@
      "conditions": {
       "T_room": 35
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
@@ -2570,6 +2600,7 @@
      "conditions": {
       "T_room": 17
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
@@ -2591,6 +2622,7 @@
      "conditions": {
       "T_room": 15
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 15}}",
@@ -2617,6 +2649,7 @@
      "conditions": {
       "T_room": 20
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 20}}",
@@ -2642,6 +2675,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -2656,6 +2690,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -2666,6 +2701,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -2686,6 +2722,7 @@
      "conditions": {
       "T_room": 30
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 30}}",
@@ -2707,6 +2744,7 @@
      "conditions": {
       "T_room": 16
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 16}}",
@@ -2728,6 +2766,7 @@
      "conditions": {
       "T_room": 29
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 29}}",
@@ -2749,6 +2788,7 @@
      "conditions": {
       "T_room": 32
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 32}}",
@@ -2770,6 +2810,7 @@
      "conditions": {
       "T_room": 4
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 4}}",
@@ -2791,6 +2832,7 @@
      "conditions": {
       "T_room": 35
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
@@ -2812,6 +2854,7 @@
      "conditions": {
       "T_room": 17
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
@@ -2833,6 +2876,7 @@
      "conditions": {
       "T_room": 15
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 15}}",
@@ -2859,6 +2903,7 @@
      "conditions": {
       "T_room": 20
      },
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 20}}",
@@ -2884,6 +2929,7 @@
     "reference": {
      "said": "conditions",
      "conditions": {},
+     "regret": null,
      "replies": 1,
      "error": null,
      "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
@@ -2898,6 +2944,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
@@ -2908,6 +2955,7 @@
     "reference": {
      "said": "cannot",
      "conditions": null,
+     "regret": null,
      "replies": 1,
      "error": "not an input of the what-if",
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",

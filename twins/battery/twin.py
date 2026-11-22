@@ -20,6 +20,7 @@ DECIDE_AT = 0.95
 class BatteryTwin(Twin):
     capabilities = ("update", "predict", "whatif", "decide")
     actions = ("retire_at",)
+    objective = ("utility", -1)
     conditions = dict(fade_factor=dict(type="number", minimum=0.2, maximum=5, description=
                                        "the cell loses capacity this many times as fast from now on (1: as now)"))
 
