@@ -196,6 +196,9 @@ def test_with_ranges_the_twin_takes_the_action_whose_worst_regret_over_the_range
     bad = agent.advise(FixedModel(call("conditions", shift={"low": 1, "high": 0}), call("conditions", shift=1)), Dial(),
                        "x", ranges=True)
     assert bad["best"] == {"n": 4, "miss": 0} and bad["replies"] == 2               # told the range was backwards
+    unknown = agent.advise(FixedModel(call("conditions", tilt={"low": 0, "high": 1}), call("conditions", shift=1)),
+                           Dial(), "x", ranges=True)
+    assert unknown["best"] == {"n": 4, "miss": 0} and unknown["replies"] == 2       # told the dial has no tilt
 
 
 def test_the_conditions_a_twin_declares_are_the_inputs_of_its_best():

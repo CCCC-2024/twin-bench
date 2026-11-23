@@ -105,8 +105,10 @@ def advise(llm, twin, event, turns=2, ranges=False):
 
 
 def robust_best(twin, conditions):
-    """The action with the smallest worst regret over the low end, middle and high end of every condition given as a
-    range {"low": a, "high": b}, and that regret; whole-number inputs take a whole-number middle."""
+    """Of the twin's best actions at the low end, middle and high end of every condition given as a range
+    {"low": a, "high": b} (every combination), the one whose worst regret over those points is smallest, and that
+    regret; whole-number inputs take a whole-number middle. Only best() and whatif() are used, so the candidates are
+    those best actions, not every action."""
     points = {}
     for k, v in conditions.items():
         if not isinstance(v, dict):
@@ -116,7 +118,7 @@ def robust_best(twin, conditions):
         if not all(type(x) in (int, float) for x in (lo, hi)) or lo > hi:
             raise ValueError(f'the range of {k} must be {{"low": a, "high": b}} with numbers a <= b')
         mid = (lo + hi) / 2
-        points[k] = sorted({lo, int(round(mid)) if twin.conditions[k].get("type") == "integer" else mid, hi})
+        points[k] = sorted({lo, int(round(mid)) if twin.conditions.get(k, {}).get("type") == "integer" else mid, hi})
     grid = [dict(zip(points, values)) for values in itertools.product(*points.values())]
     key, sign = twin.objective
     take = lambda a: {k: a[k] for k in twin.actions}
