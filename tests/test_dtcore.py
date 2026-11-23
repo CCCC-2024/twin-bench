@@ -116,7 +116,8 @@ class Dial(Twin):
 
     actions = ("n",)
     objective = ("miss", +1)
-    conditions = dict(shift=dict(type="integer", minimum=0, maximum=1, description="the best setting is this much higher"))
+    conditions = dict(shift=dict(type="integer", minimum=0, maximum=1, default=0,
+                                 description="the best setting is this much higher"))
 
     def whatif(self, n, shift=0):
         if type(n) is not int or not 0 <= n <= 4:
@@ -199,6 +200,27 @@ def test_with_ranges_the_twin_takes_the_action_whose_worst_regret_over_the_range
     unknown = agent.advise(FixedModel(call("conditions", tilt={"low": 0, "high": 1}), call("conditions", shift=1)),
                            Dial(), "x", ranges=True)
     assert unknown["best"] == {"n": 4, "miss": 0} and unknown["replies"] == 2       # told the dial has no tilt
+
+
+def test_ranged_inputs_move_together_from_their_value_now_to_the_far_end_of_the_range():
+    class Tank(Dial):                                   # best() is asked at the points robust_best compares
+        conditions = dict(level=dict(type="number", default=10), hour=dict(type="integer", default=0))
+        asked = []
+
+        def whatif(self, n, level=10, hour=0):
+            return {"miss": abs(n - level / 10)}
+
+        def best(self, level=10, hour=0):
+            self.asked.append((level, hour))
+            return {"n": round(level / 10)}
+
+    tank = Tank()
+    best, regret = agent.robust_best(tank, dict(level={"low": 20, "high": 30}, hour={"low": 4, "high": 8}))
+    assert tank.asked == [(10, 0), (15.0, 2), (20.0, 4), (25.0, 6), (30.0, 8)]      # now first, although outside the range
+    assert best == {"n": 2} and regret == 1                                        # 1 off at now and at the far end
+    tank.asked.clear()
+    agent.robust_best(tank, dict(level={"low": 6, "high": 30}, hour=5))             # a range that reaches past now
+    assert tank.asked == [(6.0, 5), (12.0, 5), (18.0, 5), (24.0, 5), (30.0, 5), (10, 5)]
 
 
 def test_the_conditions_a_twin_declares_are_the_inputs_of_its_best():

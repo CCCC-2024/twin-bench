@@ -67,7 +67,26 @@ first: on 22 holiday, bad-weather and busy days of 2018, the start that a perfec
 rose together. The records can ground a reference; they cannot score this decision.
 
 ## Method
-(To be written when `checked` is frozen.)
+`checked` is `agent.advise(..., ranges=True)` as frozen in the commit that added this section (the next one after
+`41193e7`); `number` and `range` run the code as at `6363443` with today's `tools/advise_events.py`. Three things
+changed, all worked out on `test2` and none on `test3`:
+1. **The twin's choice** (`agent.robust_best`). The ranged inputs move together from each one's value now to the far
+   end of its range, in four even steps, and the value now is always a point. Before, every range gave its low end,
+   middle and high end, in every combination, and the value now was not among the points.
+2. **The prompt** asks for a range the model is confident holds the input, wide enough that the true value outside
+   it would be a surprise; before, for the range the input most likely lies in, as narrow as it honestly could.
+3. **The bike station's inputs** say who rents (people who take a bike from this station and ride away) and who
+   returns (people who arrive by bike and leave it here). Every twin's inputs now carry their value now (`default`).
+
+On `test2`, mean extra over the vague cells (development: these numbers chose the method and test nothing):
+- Change 1 alone, on the range readings saved in the earlier study (`develop.py`): incubator 1.9 to 3.7 minutes in
+  the seven configurations (the earlier rule 3.2 to 9.5; not told 6.0), with 0 to 4 % of cells harmed (0 to 23 %);
+  bike share 2.7 to 4.7 riders (3.1 to 4.9; not told 2.30), with 4 to 25 % harmed (8 to 35 %).
+- All three, two runs per configuration, which came out the same: gpt-oss-120b at low, incubator 2.19, bike share
+  1.77; at medium 1.83 and 1.75; gpt-oss-20b at low 1.92 and 2.47. Stated events 10 of 10 in each. `cannot` on the
+  bike station's 12 inexpressible cells: 4, 12 and 11.
+- Qwen3.5-9B was run once with change 2 only: with change 1 on those readings, incubator 5.3 (3.7 on its readings
+  with the earlier prompt). It was not run with all three before the freeze.
 
 ## Results
 (None yet.)

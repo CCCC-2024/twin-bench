@@ -24,7 +24,7 @@ class IncubatorTwin(Twin):
     capabilities = ("update", "predict", "whatif")       # no automatic decide
     actions = ("desired",)
     objective = ("minutes_outside", +1)
-    conditions = dict(T_room=dict(type="number", minimum=-20, maximum=50,
+    conditions = dict(T_room=dict(type="number", minimum=-20, maximum=50,       # its default, the room now: update()
                                   description="temperature of the room around the box for the next hour, in °C"))
 
     def __init__(self, p=PARAMS_2023, kalman_kw=None, controller=None, band=None):
@@ -46,6 +46,7 @@ class IncubatorTwin(Twin):
         self.streak = self.streak + 1 if abs(innov) > ANOMALY_C else 0
         self.anomaly = self.streak >= ANOMALY_N
         self.last = obs
+        self.conditions = dict(T_room=dict(type(self).conditions["T_room"], default=float(obs["T_room"])))
         return dict(t=obs["t"], T_est=float(self.kf.x[0]), T_heater_est=float(self.kf.x[1]),
                     T_heater_sd=float(np.sqrt(self.kf.P[1, 1])), innov=innov, anomaly=self.anomaly)
 

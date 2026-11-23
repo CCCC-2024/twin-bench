@@ -46,7 +46,8 @@ class Twin:
     # For an LLM agent (agent.py); a twin implements these only if an agent is to work with it.
     actions = ()        # the what-if inputs that are the twin's own action; every other input is a condition
     conditions = {}     # each condition, the inputs of best(): name -> the JSON schema of its value (type, description,
-                        # minimum, maximum), which agent.advise gives a language model as a tool's parameters
+                        # minimum, maximum, and default: its value now, which best() takes when it is left out), which
+                        # agent.advise gives a language model as a tool's parameters
     objective = None    # (the number whatif() and best() return that the decision optimizes, +1 if lower is better,
                         # -1 if higher), so agent.advise can compare actions over a range of conditions
 

@@ -21,8 +21,9 @@ class BatteryTwin(Twin):
     capabilities = ("update", "predict", "whatif", "decide")
     actions = ("retire_at",)
     objective = ("utility", -1)
-    conditions = dict(fade_factor=dict(type="number", minimum=0.2, maximum=5, description=
-                                       "the cell loses capacity this many times as fast from now on (1: as now)"))
+    conditions = dict(fade_factor=dict(
+        type="number", minimum=0.2, maximum=5, default=1,
+        description="the cell loses capacity this many times as fast from now on (1: as now)"))
 
     def __init__(self, q0, seed=0, decide_at=DECIDE_AT):
         self.q0, self.seed, self.decide_at = q0, seed, decide_at

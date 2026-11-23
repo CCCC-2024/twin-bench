@@ -18,6 +18,13 @@ versions follow [Semantic Versioning](https://semver.org/).
   runs four kinds of event on each, 4 dev and 9 held-out test events per twin, and scores a choice by the twin's
   what-if under reference conditions (`twins/*/results/advise_events.json`: a perfect reader, Qwen3.5-9B and
   gpt-oss-20b, each also with tool calls and with one reply only; gpt-oss-120b on a cluster GPU).
+- dtcore: `agent.robust_best` now moves the ranged inputs together from their value now to the far end of each range
+  (five points, and now itself), instead of every combination of each range's low end, middle and high end: an event
+  has one unknown size, and it may do less than the model thinks, down to nothing. Each condition in
+  `Twin.conditions` therefore carries `default`, its value now (all four twins; the incubator's is the room it last
+  measured). `advise(ranges=True)` asks for a range the model is confident of, not the narrowest; the bike station's
+  factors say who rents and who returns. Developed on the first two test sets, where the earlier rule did harm
+  (`tools/experiments/2026-11-23_checked_ranges/`, which registers a third set, `test3`, to test it).
 - dtcore: `agent.advise(..., ranges=True)`: for a vague event the model gives a range, `{"low": a, "high": b}`, and
   `agent.robust_best` takes, of the twin's best actions at the low, middle and high end of every range, the one whose
   worst regret over those points is smallest; `advise` returns that `regret` (else None). It needs the new

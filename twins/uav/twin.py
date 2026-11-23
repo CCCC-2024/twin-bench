@@ -15,7 +15,7 @@ class UAVTwin(Twin):
     capabilities = ("update", "predict", "whatif", "decide")
     actions = ("maneuver",)
     objective = ("value", -1)
-    conditions = dict(growth_factor=dict(type="number", minimum=0, maximum=3, description=
+    conditions = dict(growth_factor=dict(type="number", minimum=0, maximum=3, default=1, description=
                                          "wing damage grows this many times as often as usual from now on (1: as usual)"))
 
     def __init__(self, model, alpha2=2.5):

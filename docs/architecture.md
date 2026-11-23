@@ -68,9 +68,11 @@ its `best`; the prompt and the tool definitions are made from that, so a new twi
 the reply as JSON, `{"name": ..., "arguments": {...}}`; `chat_model(use_tools=True)` sends them as tool calls instead,
 which read stated events as well but said `cannot` less often (8 and 14 of 20 against 14 and 15, Qwen3.5-9B and
 gpt-oss-20b). With `ranges=True` the model gives a vague event's inputs as ranges, `{"low": a, "high": b}`, and
-`agent.robust_best` takes, of the twin's best actions at the low end, middle and high end of every range, the one whose
-worst regret over those points is smallest; regret is in the twin's `objective` (the number `best` optimizes and its
-direction), and `advise` returns it. Results on held-out events (`tools/advise_events.py`; repeated runs in the frozen
+`agent.robust_best` moves the ranged inputs together, from each one's value now (the `default` in `twin.conditions`) to
+the far end of its range, and takes, of the twin's best actions at those points, the one whose worst regret over them
+is smallest; regret is in the twin's `objective` (the number `best` optimizes and its direction), and `advise` returns
+it. Until 11/23 the points were the low end, middle and high end of every range in every combination, without the
+value now; the results below are that rule's, and `tools/experiments/2026-11-23_checked_ranges/` tests the new one. Results on held-out events (`tools/advise_events.py`; repeated runs in the frozen
 study `tools/experiments/2026-11-22_event_reading/`): an event with its numbers is read right (27 to 30 of 30 on the
 first test set; 14 to 16 of 16 on the second, except 7 for Qwen3.5-9B asked for ranges, which named a call that does not
 exist); one that changes nothing is left alone (19 or 20 of 20); an event the what-if has no input for is called

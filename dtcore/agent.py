@@ -26,12 +26,13 @@ error): the call it ended with (None if never a valid one), the conditions, the 
 worst regret of that action over a range (below; else None), the last reply, the number of replies, and why there is
 no action, if so.
 
-With ranges=True the model gives a condition the event states no number for as a range, {"low": a, "high": b}. The twin then takes the low end, the middle and the high end of
-each range (every combination), finds its best action at each, and keeps the one whose worst regret over them is
-smallest: regret is how much worse an action is than the best one at that point, in the twin's objective
-(twin.objective). A wide range with a large regret is a reason to ask a person before acting.
+With ranges=True the model gives a condition the event states no number for as a range, {"low": a, "high": b}. An
+event has one unknown size, so the twin moves the ranged inputs together, from each one's value now (its default in
+twin.conditions) to the far end of its range, finds its best action at each step, and keeps the one whose worst regret
+over the steps is smallest (robust_best): regret is how much worse an action is than the best one at that point, in the
+twin's objective (twin.objective). The value now is always one of the points: the event may do less than the model
+thinks, down to nothing. A large regret is a reason to ask a person before acting.
 """
-import itertools
 import json
 import urllib.error
 import urllib.request
@@ -61,9 +62,9 @@ The inputs of conditions: %s
 The twin: %s"""
 ESTIMATE = "where the event states no number, give your best estimate."
 RANGE = """where the event states a number, even an approximate one such as "about three times", give that \
-number. Where it states none, start from the input's value now (the twin's description gives it; a factor of the usual \
-is 1 now) and give the range the input most likely lies in under the event, as {"low": <number>, "high": <number>}, \
-as narrow as you honestly can."""
+number. Where it states none, start from the input's value now (its default) and give a range you are confident \
+holds the input under the event, as {"low": <number>, "high": <number>}: wide enough that you would be surprised to \
+find the true value outside it."""
 
 
 def _calls(twin):
@@ -105,21 +106,30 @@ def advise(llm, twin, event, turns=2, ranges=False):
 
 
 def robust_best(twin, conditions):
-    """Of the twin's best actions at the low end, middle and high end of every condition given as a range
-    {"low": a, "high": b} (every combination), the one whose worst regret over those points is smallest, and that
-    regret; whole-number inputs take a whole-number middle. Only best() and whatif() are used, so the candidates are
-    those best actions, not every action."""
-    points = {}
+    """The twin's action for conditions of which some are ranges {"low": a, "high": b}, and its worst regret.
+
+    An event has one unknown size, so the ranged inputs move together: from each one's value now (the default in
+    twin.conditions) to the end of its range farther from that, in four even steps (five points; whole-number inputs
+    rounded). The range is thus widened to now: the event may do less than the model thinks, down to nothing. A range
+    that reaches past now starts at its other end instead, and now is a sixth point. Of the twin's best actions at
+    these points, the one whose worst regret over them is smallest is chosen. Only best() and whatif() are used, so
+    the candidates are those best actions, not every action."""
+    fixed, paths = {}, {}
     for k, v in conditions.items():
         if not isinstance(v, dict):
-            points[k] = [v]
+            fixed[k] = v
             continue
-        lo, hi = v.get("low"), v.get("high")
+        if k not in twin.conditions:
+            raise TypeError(f"{k} is not an input of the twin")
+        lo, hi, now = v.get("low"), v.get("high"), twin.conditions[k]["default"]
         if not all(type(x) in (int, float) for x in (lo, hi)) or lo > hi:
             raise ValueError(f'the range of {k} must be {{"low": a, "high": b}} with numbers a <= b')
-        mid = (lo + hi) / 2
-        points[k] = sorted({lo, int(round(mid)) if twin.conditions.get(k, {}).get("type") == "integer" else mid, hi})
-    grid = [dict(zip(points, values)) for values in itertools.product(*points.values())]
+        near, far = sorted((lo, hi), key=lambda x: abs(x - now))
+        start = near if (near - now) * (far - now) < 0 else now
+        path = [start + (far - start) * step / 4 for step in range(5)] + [now]
+        paths[k] = [int(round(x)) for x in path] if twin.conditions[k].get("type") == "integer" else path
+    grid = [dict(fixed, **{k: path[j] for k, path in paths.items()}) for j in range(6)]
+    grid = [c for j, c in enumerate(grid) if c not in grid[:j]]
     key, sign = twin.objective
     take = lambda a: {k: a[k] for k in twin.actions}
     score = lambda action, c: sign * twin.whatif(**take(action), **c)[key]

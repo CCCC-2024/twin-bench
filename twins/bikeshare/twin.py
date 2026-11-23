@@ -54,10 +54,15 @@ class StationTwin(Twin):
     actions = ("set_bikes",)
     objective = ("expected_lost", +1)
     conditions = dict(
-        rent_factor=dict(type="number", minimum=0, description="rentals are this many times the usual (1: as usual)"),
-        return_factor=dict(type="number", minimum=0, description="returns are this many times the usual (1: as usual)"),
-        from_hour=dict(type="integer", minimum=0, maximum=23, description="clock hour the factors start at (default 0)"),
-        to_hour=dict(type="integer", minimum=1, maximum=24,
+        rent_factor=dict(type="number", minimum=0, default=1,
+                         description="rentals (people who take a bike from this station and ride away) are this "
+                                     "many times the usual (1: as usual)"),
+        return_factor=dict(type="number", minimum=0, default=1,
+                           description="returns (people who arrive at this station by bike and leave it here) are "
+                                       "this many times the usual (1: as usual)"),
+        from_hour=dict(type="integer", minimum=0, maximum=23, default=0,
+                       description="clock hour the factors start at (default 0)"),
+        to_hour=dict(type="integer", minimum=1, maximum=24, default=24,
                      description="clock hour the factors end at, not included (default 24)"))
 
     def __init__(self, C, rates=None, policy=None):
