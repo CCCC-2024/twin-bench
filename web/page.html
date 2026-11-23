@@ -1548,6 +1548,7 @@ const Bike = (function () {
     if (said && said.name === 'cannot') return { cannot: String(Object.values(args)[0] ?? '') };
     if (!said || !['conditions', 'no_effect'].includes(said.name)) return {};
     const given = said.name === 'conditions' ? args : {};
+    if (Object.keys(given).some(k => !['rent_factor', 'return_factor', 'from_hour', 'to_hour', 'set_bikes'].includes(k))) return {};   // as advise: an input the twin does not have
     const v = ['rent_factor', 'return_factor', 'from_hour', 'to_hour'].map((k, i) => given[k] ?? [1, 1, 0, 24][i]);
     const ok = v.slice(0, 2).every(f => typeof f === 'number' && f >= 0) && v.slice(2).every(Number.isInteger) && 0 <= v[2] && v[2] < v[3] && v[3] <= 24;
     return ok ? { inputs: v } : {};
