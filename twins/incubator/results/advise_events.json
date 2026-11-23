@@ -263,6 +263,147 @@
    "split": "test2",
    "text": "From now on the temperature sensor reads half a degree too high.",
    "reference": "cannot"
+  },
+  "vague-21": {
+   "split": "test3",
+   "text": "The incubator now sits in the server room, which is kept cold for the computers.",
+   "reference": [
+    {
+     "T_room": 20
+    },
+    {
+     "T_room": 18
+    },
+    {
+     "T_room": 16
+    }
+   ]
+  },
+  "vague-22": {
+   "split": "test3",
+   "text": "The lab's door to the loading dock is propped open on a frosty morning.",
+   "reference": [
+    {
+     "T_room": 17
+    },
+    {
+     "T_room": 13
+    },
+    {
+     "T_room": 9
+    }
+   ]
+  },
+  "vague-23": {
+   "split": "test3",
+   "text": "The incubator was put in the greenhouse on a sunny day.",
+   "reference": [
+    {
+     "T_room": 30
+    },
+    {
+     "T_room": 35
+    },
+    {
+     "T_room": 40
+    }
+   ]
+  },
+  "vague-24": {
+   "split": "test3",
+   "text": "The lab's air conditioning is stuck at full power, and people are putting on jackets.",
+   "reference": [
+    {
+     "T_room": 19
+    },
+    {
+     "T_room": 17
+    },
+    {
+     "T_room": 15
+    }
+   ]
+  },
+  "vague-25": {
+   "split": "test3",
+   "text": "The incubator was wheeled into a corridor that is not heated in winter.",
+   "reference": [
+    {
+     "T_room": 16
+    },
+    {
+     "T_room": 13
+    },
+    {
+     "T_room": 10
+    }
+   ]
+  },
+  "vague-26": {
+   "split": "test3",
+   "text": "A technician opened all the windows to air the lab on a cool autumn day.",
+   "reference": [
+    {
+     "T_room": 17
+    },
+    {
+     "T_room": 14
+    },
+    {
+     "T_room": 11
+    }
+   ]
+  },
+  "vague-27": {
+   "split": "test3",
+   "text": "The building's heating starts an hour late this morning, after a cool night.",
+   "reference": [
+    {
+     "T_room": 21
+    },
+    {
+     "T_room": 19
+    },
+    {
+     "T_room": 17
+    }
+   ]
+  },
+  "vague-28": {
+   "split": "test3",
+   "text": "The incubator stands in the plant room, next to the hot-water tanks.",
+   "reference": [
+    {
+     "T_room": 30
+    },
+    {
+     "T_room": 33
+    },
+    {
+     "T_room": 36
+    }
+   ]
+  },
+  "stated-21": {
+   "split": "test3",
+   "text": "The room will be at 27 °C for the next hour.",
+   "reference": [
+    {
+     "T_room": 27
+    }
+   ]
+  },
+  "nothing-21": {
+   "split": "test3",
+   "text": "The lab's fire extinguisher was replaced with a new one.",
+   "reference": [
+    {}
+   ]
+  },
+  "inexpressible-21": {
+   "split": "test3",
+   "text": "The fan inside the incubator has stopped, so the air no longer mixes.",
+   "reference": "cannot"
   }
  },
  "states": {
@@ -2199,6 +2340,247 @@
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
      "right": true
     }
+   },
+   "vague-21": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 8.5667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 18
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 18}}",
+     "desired": 37.5,
+     "minutes_outside": 1.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0
+    }
+   },
+   "vague-22": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 14.3667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 13
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 13}}",
+     "desired": 37.75,
+     "minutes_outside": 3.4,
+     "energy_Wh": 14.1,
+     "extra": 0.8333
+    }
+   },
+   "vague-23": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 3.3
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 35
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
+     "desired": 37.0,
+     "minutes_outside": 8.5,
+     "energy_Wh": 1.2,
+     "extra": 0.5
+    }
+   },
+   "vague-24": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 10.2
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 17
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
+     "desired": 37.5,
+     "minutes_outside": 1.4,
+     "energy_Wh": 11.8,
+     "extra": 0.0
+    }
+   },
+   "vague-25": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 15.9333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 13
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 13}}",
+     "desired": 37.75,
+     "minutes_outside": 3.4,
+     "energy_Wh": 14.1,
+     "extra": 0.0
+    }
+   },
+   "vague-26": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 14.4
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 14
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 14}}",
+     "desired": 37.75,
+     "minutes_outside": 2.8,
+     "energy_Wh": 13.5,
+     "extra": 0.0
+    }
+   },
+   "vague-27": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 5.9333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 19
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 19}}",
+     "desired": 37.5,
+     "minutes_outside": 0.7,
+     "energy_Wh": 10.7,
+     "extra": 0.0
+    }
+   },
+   "vague-28": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 5.5
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 33
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 33}}",
+     "desired": 37.0,
+     "minutes_outside": 5.8,
+     "energy_Wh": 2.2,
+     "extra": 2.6667
+    }
+   },
+   "stated-21": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.25,
+     "minutes_outside": 0.1,
+     "energy_Wh": 5.7
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 27
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 27}}",
+     "desired": 37.25,
+     "minutes_outside": 0.1,
+     "energy_Wh": 5.7,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "nothing-21": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {},
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
+     "desired": 37.25,
+     "minutes_outside": 0.2,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "inexpressible-21": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "regret": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
    }
   },
   "an hour in at 37 °C, room at 18 °C": {
@@ -2444,6 +2826,247 @@
     }
    },
    "inexpressible-12": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "regret": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   },
+   "vague-21": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 18
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 18}}",
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0
+    }
+   },
+   "vague-22": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 5.7667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 13
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 13}}",
+     "desired": 37.75,
+     "minutes_outside": 2.7,
+     "energy_Wh": 14.1,
+     "extra": 0.8667
+    }
+   },
+   "vague-23": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 7.2
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 35
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
+     "desired": 37.0,
+     "minutes_outside": 1.5,
+     "energy_Wh": 1.0,
+     "extra": 1.2
+    }
+   },
+   "vague-24": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 0.1333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 17
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.8,
+     "extra": 0.1333
+    }
+   },
+   "vague-25": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 6.2333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 13
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 13}}",
+     "desired": 37.75,
+     "minutes_outside": 2.7,
+     "energy_Wh": 14.1,
+     "extra": 0.0
+    }
+   },
+   "vague-26": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 4.6
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 14
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 14}}",
+     "desired": 37.75,
+     "minutes_outside": 1.9,
+     "energy_Wh": 13.5,
+     "extra": 0.0
+    }
+   },
+   "vague-27": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 19
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 19}}",
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 10.7,
+     "extra": 0.0
+    }
+   },
+   "vague-28": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 10.1667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 33
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 33}}",
+     "desired": 37.0,
+     "minutes_outside": 1.2,
+     "energy_Wh": 2.2,
+     "extra": 1.2
+    }
+   },
+   "stated-21": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.0
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 27
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 27}}",
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.0,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "nothing-21": {
+    "not_told": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {},
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
+     "desired": 37.5,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.4,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "inexpressible-21": {
     "reference": {
      "said": "cannot",
      "conditions": null,
@@ -2707,6 +3330,247 @@
      "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
      "right": true
     }
+   },
+   "vague-21": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 9.5667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 18
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 18}}",
+     "desired": 37.75,
+     "minutes_outside": 0.9,
+     "energy_Wh": 11.4,
+     "extra": 0.0
+    }
+   },
+   "vague-22": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 15.2
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 13
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 13}}",
+     "desired": 37.75,
+     "minutes_outside": 4.4,
+     "energy_Wh": 14.5,
+     "extra": 0.9667
+    }
+   },
+   "vague-23": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 2.8333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 35
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
+     "desired": 37.0,
+     "minutes_outside": 0.3,
+     "energy_Wh": 1.0,
+     "extra": 1.1667
+    }
+   },
+   "vague-24": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 11.7333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 17
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
+     "desired": 37.75,
+     "minutes_outside": 1.8,
+     "energy_Wh": 11.8,
+     "extra": 0.0
+    }
+   },
+   "vague-25": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 15.9333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 13
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 13}}",
+     "desired": 37.75,
+     "minutes_outside": 4.4,
+     "energy_Wh": 14.5,
+     "extra": 0.0
+    }
+   },
+   "vague-26": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 14.8667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 14
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 14}}",
+     "desired": 37.75,
+     "minutes_outside": 3.6,
+     "energy_Wh": 13.5,
+     "extra": 0.0
+    }
+   },
+   "vague-27": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 7.4667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 19
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 19}}",
+     "desired": 37.75,
+     "minutes_outside": 0.0,
+     "energy_Wh": 11.0,
+     "extra": 0.7
+    }
+   },
+   "vague-28": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 4.0
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 33
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 33}}",
+     "desired": 37.0,
+     "minutes_outside": 1.2,
+     "energy_Wh": 2.2,
+     "extra": 1.1667
+    }
+   },
+   "stated-21": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.0
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 27
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 27}}",
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.0,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "nothing-21": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {},
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
+     "desired": 37.25,
+     "minutes_outside": 0.0,
+     "energy_Wh": 6.3,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "inexpressible-21": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "regret": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
    }
   },
   "an hour in at 36.5 °C, room at 22 °C": {
@@ -2952,6 +3816,247 @@
     }
    },
    "inexpressible-12": {
+    "reference": {
+     "said": "cannot",
+     "conditions": null,
+     "regret": null,
+     "replies": 1,
+     "error": "not an input of the what-if",
+     "reply": "{\"name\": \"cannot\", \"arguments\": {\"why\": \"not an input of the what-if\"}}",
+     "right": true
+    }
+   },
+   "vague-21": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 8.4333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 18
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 18}}",
+     "desired": 37.5,
+     "minutes_outside": 1.2,
+     "energy_Wh": 11.4,
+     "extra": 0.0
+    }
+   },
+   "vague-22": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 14.4333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 13
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 13}}",
+     "desired": 37.75,
+     "minutes_outside": 3.3,
+     "energy_Wh": 14.1,
+     "extra": 0.8333
+    }
+   },
+   "vague-23": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 3.3
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 35
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 35}}",
+     "desired": 37.0,
+     "minutes_outside": 9.2,
+     "energy_Wh": 1.2,
+     "extra": 0.7
+    }
+   },
+   "vague-24": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 10.3
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 17
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 17}}",
+     "desired": 37.5,
+     "minutes_outside": 1.5,
+     "energy_Wh": 11.8,
+     "extra": 0.0
+    }
+   },
+   "vague-25": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 15.9333
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 13
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 13}}",
+     "desired": 37.75,
+     "minutes_outside": 3.3,
+     "energy_Wh": 14.1,
+     "extra": 0.0
+    }
+   },
+   "vague-26": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 14.4667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 14
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 14}}",
+     "desired": 37.75,
+     "minutes_outside": 2.8,
+     "energy_Wh": 13.5,
+     "extra": 0.0
+    }
+   },
+   "vague-27": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 5.8667
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 19
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 19}}",
+     "desired": 37.5,
+     "minutes_outside": 1.0,
+     "energy_Wh": 10.6,
+     "extra": 0.0
+    }
+   },
+   "vague-28": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 5.3
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 33
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 33}}",
+     "desired": 37.0,
+     "minutes_outside": 6.3,
+     "energy_Wh": 2.1,
+     "extra": 3.1
+    }
+   },
+   "stated-21": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.25,
+     "minutes_outside": 0.3,
+     "energy_Wh": 5.7
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {
+      "T_room": 27
+     },
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {\"T_room\": 27}}",
+     "desired": 37.25,
+     "minutes_outside": 0.3,
+     "energy_Wh": 5.7,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "nothing-21": {
+    "not_told": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 0.0
+    },
+    "best": {
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5
+    },
+    "reference": {
+     "said": "conditions",
+     "conditions": {},
+     "regret": null,
+     "replies": 1,
+     "error": null,
+     "reply": "{\"name\": \"conditions\", \"arguments\": {}}",
+     "desired": 37.25,
+     "minutes_outside": 0.5,
+     "energy_Wh": 8.5,
+     "extra": 0.0,
+     "right": true
+    }
+   },
+   "inexpressible-21": {
     "reference": {
      "said": "cannot",
      "conditions": null,

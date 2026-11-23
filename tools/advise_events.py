@@ -18,7 +18,11 @@ second held-out set written on 11/22 after the results on "test" had been seen, 
 (asking for a range for a vague event): mostly vague events, for the two twins whose decision depends on them, with
 more states (EXTRA_STATES) so that each vague event is scored in several. Its references were committed before any
 language model was run on it. A vague test2 event is kept only if not knowing it costs something in at least half its
-states, judged by the perfect reader alone.
+states, judged by the perfect reader alone. Those numbered 21 and up are "test3", a third held-out set written on
+11/23 after the results on "test2" had been seen and before anything was changed because of them, in the same states
+as test2. Its bike-share events are of three sorts: 21-24 state the hours and whether rentals or returns change, so
+that one input is left vague; 25-28 are the same four situations in words that state neither (same references); 29-31
+change the whole day, with references measured in the station's own 2018 records.
 
 MODEL reference is no language model: it answers with the (middle) reference, so its rows are what a perfect reader
 gives. A row is named by the model and how it was run: ", tools" (the calls as tool calls, not as JSON in the
@@ -41,6 +45,7 @@ import numpy as np
 from dtcore import agent, run
 
 ROOT = Path(__file__).resolve().parents[1]
+SPLITS = ("dev", "test", "test2", "test3")      # an event's split by its number: none, 1-3, 11 and up, 21 and up
 CANNOT = "cannot"       # reference of an event the what-if has no input for: the right answer is the call cannot
 HOURS = dict(from_hour=7, to_hour=10)
 
@@ -91,7 +96,48 @@ EVENTS = dict(
                       dict(return_factor=2, from_hour=8, to_hour=11)),
         "nothing-11": ("The map panel at the station is updated tomorrow.", {}),
         "inexpressible-11": ("Tomorrow the station gets ten extra docks.", CANNOT),
-        "inexpressible-12": ("Tomorrow the operator can send a second truck at noon.", CANNOT)},
+        "inexpressible-12": ("Tomorrow the operator can send a second truck at noon.", CANNOT),
+        # test3. 21-24 and 25-28: four situations, each written twice, with the same references (my estimates, stated
+        # before any model was run). 21-24 state the hours and the side, leaving one factor vague; 25-28 state neither.
+        # Kept by test2's rule (not knowing the event costs something in at least half the states, by the perfect
+        # reader alone): one situation drafted first, a game ending at 22:00, cost nothing and was replaced by 22 / 26.
+        # 29-31 are kept whatever they cost: they are there to show whether a reading does harm.
+        "vague-21": ("Tomorrow the subway station next to the bike station is closed from 7:00 to 10:00. In those "
+                     "hours many more people than usual will rent bikes here; returns stay as usual.",
+                     [dict(rent_factor=f, from_hour=7, to_hour=10) for f in (2, 3, 4)]),
+        "vague-22": ("An open-air concert on the square next to the station ends at noon tomorrow. From 12:00 to 15:00 "
+                     "many more people than usual will rent bikes here; returns stay as usual.",
+                     [dict(rent_factor=f, from_hour=12, to_hour=15) for f in (2, 3, 4)]),
+        "vague-23": ("A job fair opens tomorrow in the hall next to the station. From 8:00 to 11:00 many more people "
+                     "than usual will return bikes here; rentals stay as usual.",
+                     [dict(return_factor=f, from_hour=8, to_hour=11) for f in (2, 3, 4)]),
+        "vague-24": ("A food market is held tomorrow on the square next to the station. From 11:00 to 14:00 many more "
+                     "people than usual will return bikes here; rentals stay as usual.",
+                     [dict(return_factor=f, from_hour=11, to_hour=14) for f in (2, 3, 4)]),
+        "vague-25": ("The subway station next to the bike station is closed tomorrow during the morning rush.",
+                     [dict(rent_factor=f, from_hour=7, to_hour=10) for f in (2, 3, 4)]),
+        "vague-26": ("An open-air concert on the square next to the station ends at noon tomorrow.",
+                     [dict(rent_factor=f, from_hour=12, to_hour=15) for f in (2, 3, 4)]),
+        "vague-27": ("A job fair opens tomorrow morning in the hall next to the station, and many visitors are "
+                     "expected to come by bike.", [dict(return_factor=f, from_hour=8, to_hour=11) for f in (2, 3, 4)]),
+        "vague-28": ("A lunchtime food market is held tomorrow on the square next to the station, and many people are "
+                     "expected to cycle there.", [dict(return_factor=f, from_hour=11, to_hour=14) for f in (2, 3, 4)]),
+        # 29-31: the day's rentals and returns over the usual for that kind of day (the last 30 days' mean), on the
+        # days of 2018 from February on that a rule picks from the station's records and the authors' weather file;
+        # references are the quartile nearest 1, the median and the other quartile, of rentals and returns alike.
+        # 29: rain in at least 8 of the 15 hours from 7:00 to 22:00 (12 days): 0.45, 0.26, 0.21.
+        # 30: the 8 federal holidays (Presidents' Day to Christmas): 0.82, 0.77, 0.59.
+        # 31: a high of 33 °C or more (7 days): 1.0, 0.87, 0.71.
+        "vague-29": ("Steady rain is forecast for most of tomorrow, from the morning into the night.",
+                     [dict(rent_factor=f, return_factor=f) for f in (0.45, 0.26, 0.21)]),
+        "vague-30": ("Tomorrow is a federal public holiday.",
+                     [dict(rent_factor=f, return_factor=f) for f in (0.82, 0.77, 0.59)]),
+        "vague-31": ("A heat wave: tomorrow's high will be about 34 °C (93 °F).",
+                     [dict(rent_factor=f, return_factor=f) for f in (1.0, 0.87, 0.71)]),
+        "stated-21": ("Tomorrow from 17:00 to 20:00 rentals will be about 2.5 times the usual; returns stay as usual.",
+                      dict(rent_factor=2.5, from_hour=17, to_hour=20)),
+        "nothing-21": ("The station's payment kiosk gets a new screen tomorrow; it works as before.", {}),
+        "inexpressible-21": ("Tomorrow five of the station's bikes have flat tyres and cannot be rented.", CANNOT)},
     incubator={
         "stated": ("The building's heating is off tonight; the room will be at about 12 °C for the next hour.", dict(T_room=12)),
         "vague": ("The building's heating is off tonight and it is freezing outside.", [dict(T_room=t) for t in (16, 12, 8)]),
@@ -124,7 +170,27 @@ EVENTS = dict(
         "stated-11": ("The room will be held at 20 °C for the next hour.", dict(T_room=20)),
         "nothing-11": ("The lab got a new coffee machine.", {}),
         "inexpressible-11": ("The heater is being replaced with one twice as powerful.", CANNOT),
-        "inexpressible-12": ("From now on the temperature sensor reads half a degree too high.", CANNOT)},
+        "inexpressible-12": ("From now on the temperature sensor reads half a degree too high.", CANNOT),
+        # test3. References are my estimates of the room for the next hour, stated before any model was run. Kept by
+        # test2's rule (not knowing the event costs something in at least half the states, by the perfect reader
+        # alone): of 16 drafts, 9 passed and the first 8 are here. The 7 dropped were five warm rooms (26 to 42 °C),
+        # an unheated shed in winter (8 to -2 °C) and a slightly warmer lab (23 to 27 °C): there the perfect reader
+        # does no better than the twin that is not told.
+        "vague-21": ("The incubator now sits in the server room, which is kept cold for the computers.",
+                     [dict(T_room=t) for t in (20, 18, 16)]),
+        "vague-22": ("The lab's door to the loading dock is propped open on a frosty morning.", [dict(T_room=t) for t in (17, 13, 9)]),
+        "vague-23": ("The incubator was put in the greenhouse on a sunny day.", [dict(T_room=t) for t in (30, 35, 40)]),
+        "vague-24": ("The lab's air conditioning is stuck at full power, and people are putting on jackets.",
+                     [dict(T_room=t) for t in (19, 17, 15)]),
+        "vague-25": ("The incubator was wheeled into a corridor that is not heated in winter.", [dict(T_room=t) for t in (16, 13, 10)]),
+        "vague-26": ("A technician opened all the windows to air the lab on a cool autumn day.",
+                     [dict(T_room=t) for t in (17, 14, 11)]),
+        "vague-27": ("The building's heating starts an hour late this morning, after a cool night.",
+                     [dict(T_room=t) for t in (21, 19, 17)]),
+        "vague-28": ("The incubator stands in the plant room, next to the hot-water tanks.", [dict(T_room=t) for t in (30, 33, 36)]),
+        "stated-21": ("The room will be at 27 °C for the next hour.", dict(T_room=27)),
+        "nothing-21": ("The lab's fire extinguisher was replaced with a new one.", {}),
+        "inexpressible-21": ("The fan inside the incubator has stopped, so the air no longer mixes.", CANNOT)},
     battery={
         "stated": ("From now on this cell is fast-charged; cells used this way lose capacity about 1.5 times as fast.",
                    dict(fade_factor=1.5)),
@@ -173,7 +239,7 @@ EVENTS = dict(
 )
 
 
-EXTRA_STATES = dict(bikeshare=("2018-11-07", "2018-11-14", "2018-12-05"),       # nights, for test2 events only
+EXTRA_STATES = dict(bikeshare=("2018-11-07", "2018-11-14", "2018-12-05"),       # nights, for test2 and test3 events only
                     incubator=((37.0, 18.0), (37.0, 26.0), (36.5, 22.0)))          # (set point, room °C)
 
 
@@ -244,12 +310,12 @@ parser.add_argument("--tools", action="store_true", help="the calls as tool call
 parser.add_argument("--ranges", action="store_true", help="a vague event's conditions as ranges; the twin chooses robustly")
 parser.add_argument("--turns", type=int, default=2, help="replies the model may give to one event (default 2)")
 parser.add_argument("--twins", nargs="+", default=list(EVENTS), choices=list(EVENTS))
-parser.add_argument("--split", choices=("dev", "test", "test2"), help="only these events (default: all)")
+parser.add_argument("--split", choices=SPLITS, help="only these events (default: all)")
 args = parser.parse_args()
 how = (", tools" if args.tools else "") + (", ranges" if args.ranges else "") + (", 1 reply" if args.turns == 1 else "") + \
     (f", reasoning {args.reasoning}" if args.reasoning in ("medium", "high") else "")
 rows_of = {m: m if m == "reference" else m + how for m in args.models}
-split = lambda name: "dev" if not name[-1].isdigit() else "test2" if int(name.split("-")[1]) >= 11 else "test"
+split = lambda name: SPLITS[0] if not name[-1].isdigit() else SPLITS[min(int(name.split("-")[1]) // 10, 2) + 1]
 kinds = ("stated", "vague", "nothing", "inexpressible")
 total = {}                                                      # (row, split, kind) -> the cells of every twin
 
@@ -260,9 +326,9 @@ for twin_name in args.twins:
     res = json.loads(out.read_text()) if out.exists() else {}
     res.update(events={n: dict(split=split(n), text=t, reference=r) for n, (t, r) in events.items()})
     states_ = res.setdefault("states", {})
-    for label, twin, more in states(twin_name, extra=args.split in (None, "test2")):
+    for label, twin, more in states(twin_name, extra=args.split in (None, "test2", "test3")):
         for name, (text, reference) in events.items():
-            if args.split not in (None, split(name)) or (more and split(name) != "test2"):
+            if args.split not in (None, split(name)) or (more and split(name) not in ("test2", "test3")):
                 continue
             row = states_.setdefault(label, {}).setdefault(name, {})
             if reference != CANNOT:
@@ -289,7 +355,7 @@ for twin_name in args.twins:
 
 for row_name in rows_of.values():
     print(f"\n{row_name}")
-    for s in ("dev", "test", "test2"):
+    for s in SPLITS:
         for kind in kinds:
             cells = total.get((row_name, s, kind), [])
             if not cells:

@@ -134,7 +134,7 @@ UNINFORMED = dict(incubator={"T_room": {"low": -20, "high": 50}},
                   bikeshare={"rent_factor": {"low": 0, "high": 4}, "return_factor": {"low": 0, "high": 4}})
 for twin in TWINS:
     cells = [(label, ev) for label in STATES[twin] for ev in EVENTS[twin]
-             if ev.startswith("vague-") and int(ev[6:]) >= 11]
+             if ev.startswith("vague-") and 11 <= int(ev[6:]) < 21]
     told = [extra(STATES[twin][l], choose(STATES[twin][l], UNINFORMED[twin], "frozen"), references(twin, e))
             for l, e in cells]
     nt = [extra(STATES[twin][l], best(STATES[twin][l], {}), references(twin, e)) for l, e in cells]
