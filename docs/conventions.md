@@ -14,7 +14,7 @@ twins/<name>/      one folder per twin
 web/               the shared page
 docs/              architecture, tools and steps, adding a twin, design decisions, these conventions
 tests/             tests for dtcore and each twin (pytest)
-tools/             helper scripts shared by twins
+tools/             helper scripts shared by twins; tools/experiments/ for studies across twins (section 3)
 .github/           CI, Pages deployment, issue and PR templates
 ```
 
@@ -99,6 +99,8 @@ A twin's estimator, forecaster or policy is a part (`docs/architecture.md`). Whe
 ## 3. experiments/
 
 - One folder per study: `experiments/YYYY-MM-DD_<short-name>/`, dated by its start, e.g. `2026-10-02_noros_repro`.
+- A study of one twin goes in that twin's folder; a study across twins, run by a script in `tools/`, goes in
+  `tools/experiments/` (e.g. `2026-11-22_event_reading`, runs of `tools/advise_events.py`).
 - The folder holds the study's own scripts, outputs and a `README.md` (question, how to run, result, conclusion).
 - Frozen when done: no new studies inside it, no edits to its results. Continuing means a new folder.
 - Code that others start to depend on (a check, the package) moves out of experiments into the package or `scripts/`.

@@ -67,13 +67,20 @@ condition once as data, `twin.conditions` (name -> the JSON schema of its value,
 its `best`; the prompt and the tool definitions are made from that, so a new twin writes no prompt. The calls go in
 the reply as JSON, `{"name": ..., "arguments": {...}}`; `chat_model(use_tools=True)` sends them as tool calls instead,
 which read stated events as well but said `cannot` less often (8 and 14 of 20 against 14 and 15, Qwen3.5-9B and
-gpt-oss-20b). Three results on 9 held-out events per twin (`tools/advise_events.py`): an event with its numbers is
-read right (27 and 30 of 30) and one that changes nothing is left alone (20 and 19 of 20); an event the what-if has
-no input for is called `cannot` in 14 and 15 of 20; and a vague event is the open problem, since the model must guess
-a number and the twin then acts on it: for the incubator ("someone left the window open on a cold winter night") both
-models gave the room an outdoor temperature, and the twin's choice was outside the band 30 to 54 minutes of 60 where
-not knowing the event cost 8; gpt-oss-120b on a B200 did no better (in five runs, 29.6 or 8.4). A guess from words should be confirmed by a person or given as a range before a twin
-acts on it. Published agent-with-twin systems draw the same line: the
+gpt-oss-20b). With `ranges=True` the model gives a vague event's inputs as ranges, `{"low": a, "high": b}`, and
+`agent.robust_best` takes, of the twin's best actions at the low end, middle and high end of every range, the one whose
+worst regret over those points is smallest; regret is in the twin's `objective` (the number `best` optimizes and its
+direction), and `advise` returns it. Results on held-out events (`tools/advise_events.py`; repeated runs in the frozen
+study `tools/experiments/2026-11-22_event_reading/`): an event with its numbers is read right (27 to 30 of 30 on the
+first test set; 14 to 16 of 16 on the second, except 7 for Qwen3.5-9B asked for ranges, which named a call that does not
+exist); one that changes nothing is left alone (19 or 20 of 20); an event the what-if has no input for is called
+`cannot` in 10 to 15 of 20 at low reasoning effort, and in 18 and 19 of 20 on average by gpt-oss-120b at medium and
+high. A vague event is the open problem. On the second test set, acting on one guessed number was worse on average than
+not knowing the event in every configuration tried, for both twins whose decision depends on it (incubator: 6.2 to 14.6
+minutes of 60 outside the band, against 6.0 for the twin not told; bike share: 2.4 to 5.2 lost riders a day, against
+2.30). A range with the robust choice helped the incubator on average in 5 of 7 configurations (down to 3.2) and never
+the bike station, whose readings of several inputs together (rentals, returns, hours) mostly missed the event. A reading
+from words should be confirmed by a person before a twin acts on it. Published agent-with-twin systems draw the same line: the
 model selects and parameterizes tools and never computes numbers (Mylonas et al. 2026, arXiv 2609.22476, a control-room twin where
 only 39 % of answers had numbers supported by the backend once that layer was removed; Kleiman et al. 2025,
 arXiv 2505.13761: the model is "an interface and interpreter, not the source of truth"). All four twins write `brief`, `whatif` and `best`; `tools/advise_events.py` runs four

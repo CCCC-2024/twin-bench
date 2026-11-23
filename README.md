@@ -39,14 +39,20 @@ Building the twins, rather than reading about them, turned up these (details and
 - **Words reach every twin the same way: the model extracts the conditions, the twin compares every action.**
   `dtcore.agent.advise` works with all four twins (`tools/advise_events.py`). With a perfect reader, an event the twin
   is not told costs 15 lost riders a day at the bike station and 16.5 of 60 minutes outside the band in the incubator,
-  but next to nothing for the battery (utility 0.0004) and the UAV (planner value 0.003, and only with the wing at
-  40 % damage): outside information is worth what the decision is sensitive to. Two local models (Qwen3.5-9B, gpt-oss-20b), on 9
-  held-out events per twin: an event that states its numbers is read right in 27 and 30 of 30 cells, and one that
-  changes nothing is left alone in 20 and 19 of 20; one the what-if cannot express is recognized in 14 and 15 of 20.
-  A vague event is not solved: the model has to guess a number, and for the incubator the guesses (an outdoor
-  temperature for the room) made the twin's choice worse than not knowing, 30 to 54 minutes outside the band against 8.
-  A model six times larger (gpt-oss-120b, on one B200) read every stated event too, and guessed outdoor temperatures
-  as well: in five runs at temperature 0, never better than not knowing.
+  but next to nothing for the battery (utility 0.0004) and the UAV (planner value 0.003, and only with the wing at 40 %
+  damage): outside information is worth what the decision is sensitive to. Two local models (Qwen3.5-9B, gpt-oss-20b),
+  on 9 held-out events per twin: an event that states its numbers is read right in 27 and 30 of 30 cells, and one that
+  changes nothing is left alone in 20 and 19 of 20; one the what-if cannot express is recognized in 14 and 15 of 20. A
+  vague event is not solved: the model has to guess a number, and for the incubator the guesses (an outdoor temperature
+  for the room) made the twin's choice worse than not knowing, 30 to 54 minutes outside the band against 8. A model six
+  times larger (gpt-oss-120b, on one B200) read every stated event too at low effort; more effort made it recognize
+  inexpressible events (18 and 19 of 20, against 11 at low) but not guess better. On a second held-out set, registered
+  before any run (80 vague cells, 1 to 5 runs per configuration), acting on one guessed number was worse on average than
+  not knowing in every configuration, at both the incubator and the bike station. Asking for a range, with the twin
+  choosing the action whose worst regret is smallest (`advise(..., ranges=True)`), helped the incubator on average in 5
+  of 7 configurations (3.2 minutes against 6.0 at best) and never the bike station, where several inputs must be read
+  together and the ranges mostly missed the event ([study](tools/experiments/2026-11-22_event_reading/README.md)). Words
+  without numbers still need a person.
 
 | Twin | Domain | What it does | Source | Status |
 |---|---|---|---|---|

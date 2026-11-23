@@ -1,0 +1,224 @@
+{
+ "incubator": {
+  "vague-11": [
+   {
+    "T_room": 27
+   },
+   {
+    "T_room": 30
+   },
+   {
+    "T_room": 33
+   }
+  ],
+  "vague-12": [
+   {
+    "T_room": 18
+   },
+   {
+    "T_room": 16
+   },
+   {
+    "T_room": 14
+   }
+  ],
+  "vague-13": [
+   {
+    "T_room": 26
+   },
+   {
+    "T_room": 29
+   },
+   {
+    "T_room": 32
+   }
+  ],
+  "vague-14": [
+   {
+    "T_room": 28
+   },
+   {
+    "T_room": 32
+   },
+   {
+    "T_room": 36
+   }
+  ],
+  "vague-15": [
+   {
+    "T_room": 8
+   },
+   {
+    "T_room": 4
+   },
+   {
+    "T_room": 2
+   }
+  ],
+  "vague-16": [
+   {
+    "T_room": 30
+   },
+   {
+    "T_room": 35
+   },
+   {
+    "T_room": 40
+   }
+  ],
+  "vague-17": [
+   {
+    "T_room": 19
+   },
+   {
+    "T_room": 17
+   },
+   {
+    "T_room": 15
+   }
+  ],
+  "vague-18": [
+   {
+    "T_room": 18
+   },
+   {
+    "T_room": 15
+   },
+   {
+    "T_room": 12
+   }
+  ]
+ },
+ "bikeshare": {
+  "vague-11": [
+   {
+    "rent_factor": 1.5,
+    "return_factor": 1.5
+   },
+   {
+    "rent_factor": 2,
+    "return_factor": 2
+   },
+   {
+    "rent_factor": 3,
+    "return_factor": 3
+   }
+  ],
+  "vague-12": [
+   {
+    "rent_factor": 0.6,
+    "return_factor": 0.6
+   },
+   {
+    "rent_factor": 0.4,
+    "return_factor": 0.4
+   },
+   {
+    "rent_factor": 0.2,
+    "return_factor": 0.2
+   }
+  ],
+  "vague-13": [
+   {
+    "rent_factor": 2,
+    "from_hour": 7,
+    "to_hour": 12
+   },
+   {
+    "rent_factor": 3,
+    "from_hour": 7,
+    "to_hour": 12
+   },
+   {
+    "rent_factor": 4,
+    "from_hour": 7,
+    "to_hour": 12
+   }
+  ],
+  "vague-14": [
+   {
+    "rent_factor": 0.6,
+    "return_factor": 0.6,
+    "from_hour": 6,
+    "to_hour": 12
+   },
+   {
+    "rent_factor": 0.4,
+    "return_factor": 0.4,
+    "from_hour": 6,
+    "to_hour": 12
+   },
+   {
+    "rent_factor": 0.2,
+    "return_factor": 0.2,
+    "from_hour": 6,
+    "to_hour": 12
+   }
+  ],
+  "vague-15": [
+   {
+    "rent_factor": 0.6,
+    "return_factor": 0.6,
+    "from_hour": 12,
+    "to_hour": 22
+   },
+   {
+    "rent_factor": 0.4,
+    "return_factor": 0.4,
+    "from_hour": 12,
+    "to_hour": 22
+   },
+   {
+    "rent_factor": 0.2,
+    "return_factor": 0.2,
+    "from_hour": 12,
+    "to_hour": 22
+   }
+  ],
+  "vague-16": [
+   {
+    "return_factor": 2,
+    "from_hour": 7,
+    "to_hour": 10
+   },
+   {
+    "return_factor": 3,
+    "from_hour": 7,
+    "to_hour": 10
+   },
+   {
+    "return_factor": 4,
+    "from_hour": 7,
+    "to_hour": 10
+   }
+  ],
+  "vague-17": [
+   {
+    "rent_factor": 1.2,
+    "return_factor": 1.2
+   },
+   {
+    "rent_factor": 1.4,
+    "return_factor": 1.4
+   },
+   {
+    "rent_factor": 1.6,
+    "return_factor": 1.6
+   }
+  ],
+  "vague-18": [
+   {
+    "rent_factor": 0.8,
+    "return_factor": 0.8
+   },
+   {
+    "rent_factor": 0.6,
+    "return_factor": 0.6
+   },
+   {
+    "rent_factor": 0.4,
+    "return_factor": 0.4
+   }
+  ]
+ }
+}

@@ -18,6 +18,14 @@ versions follow [Semantic Versioning](https://semver.org/).
   runs four kinds of event on each, 4 dev and 9 held-out test events per twin, and scores a choice by the twin's
   what-if under reference conditions (`twins/*/results/advise_events.json`: a perfect reader, Qwen3.5-9B and
   gpt-oss-20b, each also with tool calls and with one reply only; gpt-oss-120b on a cluster GPU).
+- dtcore: `agent.advise(..., ranges=True)`: for a vague event the model gives a range, `{"low": a, "high": b}`, and
+  `agent.robust_best` takes, of the twin's best actions at the low, middle and high end of every range, the one whose
+  worst regret over those points is smallest; `advise` returns that `regret` (else None). It needs the new
+  `Twin.objective`, the number `best` optimizes and its direction (all four twins). The definitions of `no_effect`
+  and `cannot` in `ADVISE_PROMPT` are sharper. `tools/advise_events.py`: a second held-out set, `test2` (vague events
+  for the incubator and bike share in more states, `EXTRA_STATES`), registered before any model was run on it;
+  `--ranges`, `--max-tokens`. The runs on both test sets are a frozen study,
+  `tools/experiments/2026-11-22_event_reading/`.
 - bikeshare: rate models that forget. `DiscountedRates(half_life_days)` weights earlier days down exponentially;
   `SelectedRates(candidates)` uses the candidate whose day-ahead forecasts had the smallest recent error.
   `scripts/compare_forgetting.py` compares them with windows of 7–120 days over 2018
@@ -46,7 +54,9 @@ versions follow [Semantic Versioning](https://semver.org/).
   `export_web.py`): the event as told, the what-ifs the agent ran and its answer, and what every start would lose with
   the event as written. The what-if inputs the agent extracted from the event can be edited to see what the twin then
   chooses. Opened from this computer, the panel also sends an event typed in words to a model served there, which only
-  extracts the inputs (`EXTRACT_EVENT_PROMPT` in `twin.py`); the twin computes every start.
+  extracts the inputs (`agent.advise`'s prompt for the station, one number per input; an input the station does not
+  have is not read); the twin computes every start. `scripts/live_event.py` does the same in a terminal through
+  `agent.advise`. The earlier `EXTRACT_EVENT_PROMPT` is removed.
 - Prompts sent to a model are named `<PURPOSE>_PROMPT`: bikeshare `NIGHTLY` is now `NIGHTLY_PROMPT`,
   `new_conditions.py`'s `CHECK` is `CHECK_PROMPT`, and `dtcore.agent`'s `PROTOCOL` is `SYSTEM_PROMPT`. The shell shows this panel for any twin
   with `renderAgent`; `check_bikeshare.js` checks every cost the experiment saved.

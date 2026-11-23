@@ -101,6 +101,10 @@ are compared with the field's in [tools.md](tools.md).
 | Development events and held-out test events, a perfect reader as the ceiling, a twin that is not told as the floor | the prompt was shaped on the development events; without a ceiling and a floor a score has no scale | one set of events |
 | A reply the twin cannot run counts as no action, and the twin keeps its usual choice | averaging only over readable replies flatters the model | dropping unreadable replies |
 | Cap each reply's tokens, count failures as turns, save per model, run each setup on two machines | a reply once ran past 30,000 tokens; an unreadable one once lost 1.7 hours of results; two machines disagreed on about two thirds of choices | trusting one run |
+| A second held-out set for the range method, committed before any model ran on it, with its success criterion | the first test set had been seen while the method was designed; reporting on it would be tuning on the test set | reporting the range method on the first test set |
+| A vague event as a range, the twin choosing the action whose worst regret over the range is smallest, using only `best` and `whatif` | works for every twin without a list of actions; a wide range or a large regret is a reason to ask a person | a probability over the range: the model cannot state one that means anything |
+| Most configurations 3 to 5 times (one, which took 4.6 hours, once), one run per GPU, counted only if its summary is complete | runs differ at temperature 0; two runs sharing one model server crashed and left partial files | one run per configuration |
+| The page reads one number per input, which a person can edit before seeing the twin's choice | ranges did not help the bike station (`tools/experiments/2026-11-22_event_reading/`), and a person checks the reading there anyway | ranges on the page |
 
 ## 9. Adapting: forgetting old data
 
