@@ -91,8 +91,9 @@ On `test2`, mean extra over the vague cells (development: these numbers chose th
 ## Results
 60 runs, all complete: 45 on the cluster (11/23, 18:59 to 19:40 EST), 15 on the laptop. Full tables: `results.md` (from
 `runs.json` by `summarize.py`) and `sensitivity.md`. **The five runs of every configuration and arm came out the same**
-(cell by cell, except 2 of Qwen's 128 cells with `checked`), so each number below is one result, not a mean of five
-different ones: every run had its own model server, and at temperature 0 the replies repeated. The uncertainty left is
+(the score of every cell, except 2 of Qwen's 128 cells with `checked`; a few of Qwen's readings differed
+without changing the choice), so each number below is one result, not a mean of five different ones: every run had
+its own model server, and at temperature 0 the replies all but repeated. The uncertainty left is
 over events, which the intervals show.
 
 Mean extra over the vague cells (incubator: minutes of 60 outside the band; bike share: lost riders a day; lower is
@@ -102,24 +103,25 @@ better), with the share of cells harmed:
 |---|---|---|---|---|---|
 | gpt-oss-120b low | incubator | 8.5 | 4.7 (6 %) | 2.4 (6 %) | **1.6** (0 %) |
 | gpt-oss-120b low | bike share | 3.2 | 3.0 (18 %) | 5.0 (26 %) | **2.4** (12 %) |
-| gpt-oss-120b medium | incubator | 8.5 | 6.6 (9 %) | 3.3 (9 %) | **1.8** (3 %) |
+| gpt-oss-120b medium | incubator | 8.5 | 6.5 (9 %) | 3.3 (9 %) | **1.8** (3 %) |
 | gpt-oss-120b medium | bike share | 3.2 | 2.5 (17 %) | 2.4 (20 %) | **1.7** (2 %) |
 | gpt-oss-20b low | incubator | 8.5 | 10.3 (12 %) | **3.6** (3 %) | 4.4 (9 %) |
 | gpt-oss-20b low | bike share | 3.2 | **1.4** (3 %) | 2.8 (12 %) | 1.5 (5 %) |
-| Qwen3.5-9B none | incubator | 8.5 | 11.9 (16 %) | **4.2** (6 %) | 5.4 (0 %) |
+| Qwen3.5-9B none | incubator | 8.5 | 11.9 (16 %) | **4.1** (6 %) | 5.4 (0 %) |
 | Qwen3.5-9B none | bike share | 3.2 | 3.6 (14 %) | 7.2 (23 %) | 6.0 (18 %) |
 
-The perfect reader: 0.50 and 0.12.
+The perfect reader, from the registration (it is not in `runs.json`): 0.50 and 0.12.
 
 **The registered questions.** Each asked for every one of 8 comparisons (4 configurations, 2 twins); none got all 8.
 1. Does `checked` beat not telling the twin? **No: 7 of 8.** Yes for the three gpt-oss configurations at both twins.
    No for Qwen3.5-9B at the bike station (6.0 against 3.2).
 2. Does `checked` beat `range`? **No: 6 of 8.** Not on the incubator for gpt-oss-20b (4.4 against 3.6) and Qwen (5.4
-   against 4.2).
+   against 4.1).
 3. Does it harm fewer cells? **No: 7 of 8.** Not on the incubator for gpt-oss-20b (9 % against 3 %).
 4. Is one vague input easier than several, in the same situations? **No: 7 of 8.** With one exception (gpt-oss-20b
    with `checked`: 2.5 against 1.5), the events that state the hours and the side cost 0.2 to 4.3 riders and the same
-   situations in vague words 3.8 to 15.3.
+   situations in vague words 3.8 to 15.3 (not told 4.3). For the gpt-oss models the stated form costs 0.2 to 3.1.
+   Qwen's does not beat not telling the twin (4.3 and 4.2): with `range` it acted in 3 of those 24 cells.
 
 **Intervals** (95 %, over events) of the difference between `checked` and not told. Incubator: below zero in all four
 configurations (120b low −9.9 to −3.8, medium −9.6 to −3.7, 20b −7.9 to −0.4, Qwen −4.7 to −1.5). Bike share: below
@@ -143,13 +145,30 @@ zero for 120b medium (−3.4 to −0.3) and 20b (−3.6 to −0.4); they include
   10, 9; Qwen 10, 3, 9.
 
 ## Conclusion
-On events registered before the method was built, letting the twin weigh "nothing changes" along with the model's
-range was better than not telling the twin for all three gpt-oss configurations at both twins, firmly at the
-incubator and less firmly at the bike station. It did not meet any of the four registered criteria as written,
-because each asked for every configuration: the 9B model without reasoning read the bike station's vague events too
-badly for any choice rule, and on the incubator the two smaller models did slightly better with the earlier rule.
-The gain is in the twin's caution, not in a better reading. What the reading needs is shown by question 4: the same
-situations cost several times less once the words state the hours and which side changes.
+On events registered before the method was built, letting the twin weigh "nothing changes" along with the model's range
+was better than not telling the twin for all three gpt-oss configurations at both twins, firmly at the incubator and
+less firmly at the bike station. It did not meet any of the four registered criteria as written, because each asked for
+every configuration: the 9B model without reasoning read the bike station's vague events too badly for any choice rule,
+and on the incubator the two smaller models did better with the earlier rule (3.6 against 4.4 minutes, and 4.1 against
+5.4). `checked` is three changes at once, and this test does not separate them. In the development on `test2` the choice
+rule alone gave the incubator's gain, and the bike station improved further once its inputs said who rents and who
+returns, which is a change to the reading. Question 4 points the same way for the gpt-oss models: in 5 of their 6
+comparisons the same situations cost several times less once the words state the hours and which side changes.
+
+**Found in review after the runs.** When the model gives both the start and the end hour as ranges that meet (from
+7 to 9, to 9 to 11), the rule's last point has the same start and end hour, the twin refuses it, and the model is
+asked again. In this test no vague cell ended that way; at most 3 of the 198 gpt-oss bike-share cells of a run needed
+a second reply for any reason. The rule is left as tested, and `robust_best` says so.
+
+## Run
+On the cluster, from a run folder with `tasks.txt` and the two code folders (`run_array.sbatch`; its header says how);
+on a laptop, the same command per run with the same folder names. Then, from this folder and the repository root:
+```bash
+python collect.py RAW_DIR [RAW_DIR ...]      # -> runs.json
+python summarize.py > results.md             # seconds
+cd ../../.. && python tools/experiments/2026-11-23_checked_ranges/sensitivity.py \
+  > tools/experiments/2026-11-23_checked_ranges/sensitivity.md      # a few minutes
+```
 
 ## Files
 `collect.py` (run folders → `runs.json`), `summarize.py` → `results.md`, `sensitivity.py` → `sensitivity.md`,

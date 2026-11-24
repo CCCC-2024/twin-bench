@@ -79,6 +79,7 @@ def test_with_a_colder_room_the_twins_best_set_point_is_higher():
     assert twin.best() == dict(desired=37.25, minutes_outside=0.2, energy_Wh=8.5)
     assert twin.best(T_room=12) == dict(desired=37.75, minutes_outside=4.1, energy_Wh=14.7)
     assert twin.whatif(37.25, T_room=12)["minutes_outside"] == 20.6             # the usual set point in the cold room
+    assert twin.conditions["T_room"]["default"] == 22.0                         # the room now, for agent.robust_best
     for bad in (dict(desired=37.1), dict(desired=45.0), dict(desired=37.0, T_room=80)):
         with pytest.raises(ValueError):
             twin.whatif(**bad)

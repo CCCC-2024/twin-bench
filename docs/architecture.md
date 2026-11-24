@@ -72,7 +72,8 @@ gpt-oss-20b). With `ranges=True` the model gives a vague event's inputs as range
 the far end of its range, and takes, of the twin's best actions at those points, the one whose worst regret over them
 is smallest; regret is in the twin's `objective` (the number `best` optimizes and its direction), and `advise` returns
 it. Until 11/23 the points were the low end, middle and high end of every range in every combination, without the
-value now; the results below are that rule's, and `tools/experiments/2026-11-23_checked_ranges/` tests the new one. Results on held-out events (`tools/advise_events.py`; repeated runs in the frozen
+value now; the results on the first two test sets below are that rule's. Results on held-out events
+(`tools/advise_events.py`; repeated runs in the frozen
 study `tools/experiments/2026-11-22_event_reading/`): an event with its numbers is read right (27 to 30 of 30 on the
 first test set; 14 to 16 of 16 on the second, except 7 for Qwen3.5-9B asked for ranges, which named a call that does not
 exist); one that changes nothing is left alone (19 or 20 of 20); an event the what-if has no input for is called
@@ -81,8 +82,16 @@ high. A vague event is the open problem. On the second test set, acting on one g
 not knowing the event in every configuration tried, for both twins whose decision depends on it (incubator: 6.2 to 14.6
 minutes of 60 outside the band, against 6.0 for the twin not told; bike share: 2.4 to 5.2 lost riders a day, against
 2.30). A range with the robust choice helped the incubator on average in 5 of 7 configurations (down to 3.2) and never
-the bike station, whose readings of several inputs together (rentals, returns, hours) mostly missed the event. A reading
-from words should be confirmed by a person before a twin acts on it. Published agent-with-twin systems draw the same line: the
+the bike station, whose readings of several inputs together (rentals, returns, hours) mostly missed the event.
+With the present rule, on a third set registered before the rule was changed
+(`tools/experiments/2026-11-23_checked_ranges/`; 98 vague cells, not told 8.5 minutes and 3.2 riders), acting on the
+range was better than not telling the twin for the three gpt-oss configurations at both twins (1.6 to 4.4 minutes; 1.5
+to 2.4 riders) and worse for Qwen3.5-9B at the bike station (6.0); over the bike
+station's 11 events the 95 % interval includes zero for two of the four configurations. The registered criteria asked
+for every configuration and were not met. One guessed number was better than not told in 5 of 8 comparisons there and stayed so under shifted
+references in 3. A reading from a small model, or of an event that leaves the hours and the side unstated, should still
+be confirmed by a person before a twin acts on it.
+Published agent-with-twin systems draw the same line: the
 model selects and parameterizes tools and never computes numbers (Mylonas et al. 2026, arXiv 2609.22476, a control-room twin where
 only 39 % of answers had numbers supported by the backend once that layer was removed; Kleiman et al. 2025,
 arXiv 2505.13761: the model is "an interface and interpreter, not the source of truth"). All four twins write `brief`, `whatif` and `best`; `tools/advise_events.py` runs four

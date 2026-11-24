@@ -113,7 +113,9 @@ def robust_best(twin, conditions):
     rounded). The range is thus widened to now: the event may do less than the model thinks, down to nothing. A range
     that reaches past now starts at its other end instead, and now is a sixth point. Of the twin's best actions at
     these points, the one whose worst regret over them is smallest is chosen. Only best() and whatif() are used, so
-    the candidates are those best actions, not every action."""
+    the candidates are those best actions, not every action. Every condition needs its default. A point the twin cannot
+    run raises, as in best(): two hour ranges that meet, such as from 7-9 and to 9-11, end at the same hour, and advise
+    then tells the model."""
     fixed, paths = {}, {}
     for k, v in conditions.items():
         if not isinstance(v, dict):

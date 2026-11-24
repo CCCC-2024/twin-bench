@@ -23,8 +23,12 @@ versions follow [Semantic Versioning](https://semver.org/).
   has one unknown size, and it may do less than the model thinks, down to nothing. Each condition in
   `Twin.conditions` therefore carries `default`, its value now (all four twins; the incubator's is the room it last
   measured). `advise(ranges=True)` asks for a range the model is confident of, not the narrowest; the bike station's
-  factors say who rents and who returns. Developed on the first two test sets, where the earlier rule did harm
+  factors say who rents and who returns. Developed on the second test set, where the earlier rule did harm
   (`tools/experiments/2026-11-23_checked_ranges/`, which registers a third set, `test3`, to test it).
+- tools: the study `tools/experiments/2026-11-23_checked_ranges/`: 60 runs on `test3` (one number, the earlier range
+  rule, the present one; gpt-oss-120b at low and medium, gpt-oss-20b, Qwen3.5-9B), four registered questions with
+  bootstrap intervals over events, and the sensitivity check. The present rule beats not telling the twin in 7 of 8
+  comparisons (not Qwen at the bike station); no registered criterion is met as written.
 - dtcore: `agent.advise(..., ranges=True)`: for a vague event the model gives a range, `{"low": a, "high": b}`, and
   `agent.robust_best` takes, of the twin's best actions at the low, middle and high end of every range, the one whose
   worst regret over those points is smallest; `advise` returns that `regret` (else None). It needs the new

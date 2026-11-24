@@ -42,7 +42,7 @@ Steps 4–6 write the twin's parts: its estimator, forecaster and policy. Keep e
 implementation of it arrives, often a learned one. Then make that part an argument of the twin, keep the first as the
 default and baseline, and compare the two with `scripts/compare_<part>.py`
 ([conventions](conventions.md#parts-of-a-twin); bike share's `rates.py` and `RNNRates` are the example). For the LLM
-agent (`dtcore.agent`) to work with the twin, write `brief()` and `whatif(**scenario)` (and, for `agent.advise`, `actions`, `conditions` (each input of `best`: its JSON schema with a description, which the model is given), `objective` (the number `best` optimizes and its direction) and `best(**conditions)`: the twin's own comparison of every action under conditions an event gives), and put each prompt sent to a
+agent (`dtcore.agent`) to work with the twin, write `brief()` and `whatif(**scenario)` (and, for `agent.advise`, `actions`, `conditions` (each input of `best`: its JSON schema with a description and `default`, its value now, which the model is given and `agent.robust_best` starts from), `objective` (the number `best` optimizes and its direction) and `best(**conditions)`: the twin's own comparison of every action under conditions an event gives), and put each prompt sent to a
 model next to them, named `<PURPOSE>_PROMPT` (bike share's `twin.py`: `NIGHTLY_PROMPT`). Events in words need no prompt
 of the twin's own: `agent.advise` makes it from `brief` and `conditions`.
 

@@ -51,8 +51,17 @@ Building the twins, rather than reading about them, turned up these (details and
   not knowing in every configuration, at both the incubator and the bike station. Asking for a range, with the twin
   choosing the action whose worst regret is smallest (`advise(..., ranges=True)`), helped the incubator on average in 5
   of 7 configurations (3.2 minutes against 6.0 at best) and never the bike station, where several inputs must be read
-  together and the ranges mostly missed the event ([study](tools/experiments/2026-11-22_event_reading/README.md)). Words
-  without numbers still need a person.
+  together and the ranges mostly missed the event ([study](tools/experiments/2026-11-22_event_reading/README.md)).
+  The rule was then changed so that the twin also weighs "nothing changes" and moves the ranged inputs together, and
+  tested on a third set registered before the change (98 vague cells): better than not telling the twin for the three
+  gpt-oss configurations at both twins (incubator 1.6 to 4.4 minutes against 8.5; bike share 1.5 to 2.4 riders against
+  3.2), firmly at the incubator, and not for Qwen3.5-9B at the bike station (6.0), so the registered criteria, which
+  asked for every configuration, were not met ([study](tools/experiments/2026-11-23_checked_ranges/README.md)). At the
+  bike
+  station the 95 % interval over its 11 events includes zero for two of the four configurations. The new method is three
+  changes at once (the choice rule, a prompt that asks for a confident range, clearer bike-share inputs), which this
+  test does not separate. For the gpt-oss models the same situations mostly cost several times less once the words
+  state the hours and which side changes.
 
 | Twin | Domain | What it does | Source | Status |
 |---|---|---|---|---|

@@ -216,7 +216,7 @@ def test_ranged_inputs_move_together_from_their_value_now_to_the_far_end_of_the_
 
     tank = Tank()
     best, regret = agent.robust_best(tank, dict(level={"low": 20, "high": 30}, hour={"low": 4, "high": 8}))
-    assert tank.asked == [(10, 0), (15.0, 2), (20.0, 4), (25.0, 6), (30.0, 8)]      # now first, although outside the range
+    assert tank.asked == [(10, 0), (15.0, 2), (20.0, 4), (25.0, 6), (30.0, 8)]      # now first, outside the range
     assert best == {"n": 2} and regret == 1                                        # 1 off at now and at the far end
     tank.asked.clear()
     agent.robust_best(tank, dict(level={"low": 6, "high": 30}, hour=5))             # a range that reaches past now
@@ -232,6 +232,8 @@ def test_the_conditions_a_twin_declares_are_the_inputs_of_its_best():
     for twin in (Dial, BatteryTwin, StationTwin, IncubatorTwin, UAVTwin):
         assert list(twin.conditions) == list(inspect.signature(twin.best).parameters)[1:]      # after self
         assert not set(twin.actions) & set(twin.conditions) and twin.objective[1] in (1, -1)
+        if twin is not IncubatorTwin:               # its value now is the room it last measured (test_incubator.py)
+            assert all("default" in schema for schema in twin.conditions.values())
 
 
 def test_an_event_matters_where_the_decision_is_sensitive_to_it():
