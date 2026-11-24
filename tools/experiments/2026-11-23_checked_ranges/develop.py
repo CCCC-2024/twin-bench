@@ -1,4 +1,5 @@
-"""Development of `checked` on test2: saved range readings rescored with agent.robust_best as it is now; no model is run.
+"""Development of `checked` on test2: saved range readings rescored with agent.robust_best as it is now; no model
+is run.
 
 Readings: the range runs of ../2026-11-22_event_reading/runs.json, and any run folders given (a development run of
 tools/advise_events.py --ranges --split test2 with another prompt; its rows are read from
@@ -48,7 +49,7 @@ for states in STATES.values():
 
 
 def cells():
-    """(configuration, twin, state, event, the run's row, not told's extra) for every vague test2 cell with a range arm."""
+    """(configuration, twin, state, event, the run's row, not told's extra): every vague test2 cell of a range arm."""
     for run in json.loads((HERE.parent / "2026-11-22_event_reading" / "runs.json").read_text()):
         if run["experiment"] == 3 and run["arm"] == "range":
             for c in run["cells"]:
