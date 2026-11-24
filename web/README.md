@@ -1,6 +1,6 @@
 # Twin Bench page
 
-One page shell, one module per twin (incubator, battery, UAV, bike share). The simulation is the page: each module brings
+One page shell, one module per twin (incubator, battery, UAV, bike share, tumor). The simulation is the page: each module brings
 its 3D asset, with the controls pinned beside the objects they act on (the asset's by the asset, the twin's what-if by
 the twin; `data-pin` names an anchor of the scene) and two bubbles: what happened to the asset and how the twin reacted.
 The twin panel beside it has two readings and a chart. Everything runs in
@@ -28,6 +28,7 @@ Published by `.github/workflows/pages.yml` on every push to `main` that touches 
 | `battery_cells.js` | measured capacity and twin states of 3 cells, from `twins/battery/scripts/export_web.py` | no |
 | `uav_model.js` | strain table, transition model, planner reward (authors' data, BSD 3-Clause), from `twins/uav/scripts/export_web.py` | no |
 | `bikeshare_model.js` | the twin's learned totals per hour and day type and the Nov–Dec 2018 average demand (aggregates of Citi Bike data), from `twins/bikeshare/scripts/export_web.py` | no |
+| `tumor_run.js` | the tumor twin's run, visit by visit, and its forecasts after each visit under the planned and five other chemotherapy totals (model outputs, no image), from `twins/tumor/scripts/export_web.py`; the page replays it, since a solve takes 17 s | no |
 | `bikeshare_events.js` | for each night of the agent experiment on events (`twins/bikeshare/scripts/new_conditions.py`), the twin's forecast rates for the next day and the recorded agent runs, from `twins/bikeshare/scripts/export_web.py` | no |
 | `incubator_replay.js` | the real incubator experiment, from `twins/incubator/scripts/export_web.py`; loaded only when the page is opened locally | no (git-ignored, never published: the data have no license) |
 | `bikeshare_replay.js` | the recorded Citi Bike rentals and returns of Nov–Dec 2018 and, with the `rnn` extra, the VP-RNN twin's rates after each of those hours, from `twins/bikeshare/scripts/export_web.py`; loaded only when the page is opened locally | no (git-ignored, never published: no redistribution as a stand-alone dataset) |
@@ -40,6 +41,7 @@ node web/checks/check_incubator.js twins/incubator/results web           # INCUB
 node web/checks/check_battery.js twins/battery/results web               # BATTERY WEB CHECK OK
 node web/checks/check_uav.js twins/uav/results web                       # UAV WEB CHECK OK
 node web/checks/check_bikeshare.js twins/bikeshare/results web           # BIKESHARE WEB CHECK OK
+node web/checks/check_tumor.js twins/tumor/results web                   # TUMOR WEB CHECK OK
 ```
 To extract inputs from events live on the bike-share panel, serve the page from this computer and keep a model server running
 (Ollama allows requests from `127.0.0.1` by default):

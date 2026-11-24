@@ -113,8 +113,8 @@ each twin's page module.
 
 The tumor twin (`twins/tumor`) is on `dtcore` as update, predict and what-if: a replay of one patient's MRI visits,
 at each of which it calibrates again. It has no `decide`: there is no reward (a higher dose is always better), and no
-parameter uncertainty yet. One what-if takes seconds, so it is not on the page; CI does not install the authors'
-package, and its tests are skipped there.
+parameter uncertainty yet. One what-if takes seconds, so the page replays its saved run and forecasts; CI does not
+install the authors' package, and its Python tests are skipped there.
 
 ## Parts of a twin, and where AI attaches
 

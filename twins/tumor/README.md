@@ -3,7 +3,8 @@
 Reproduces TumorTwin: a patient-specific reaction–diffusion model of high-grade glioma is calibrated to MRI and then
 predicts the tumor under different chemotherapy doses. On dtcore as update, predict and what-if: the patient's MRI
 visits arrive one by one and the twin calibrates at each. It has no decision: without a toxicity cost a higher dose
-is always better. Not on the page: a what-if takes seconds, not milliseconds.
+is always better. On the page as a replay (`web/tumor_run.js`): a what-if takes seconds, so the forecasts are computed
+beforehand.
 
 ## Sources
 - Kapteyn, Chaudhuri, Lima, Pash, Bravo, Willcox, Yankeelov, Hormuth 2026, *BMC Medical Informatics and Decision
@@ -21,6 +22,8 @@ is always better. Not on the page: a what-if takes seconds, not milliseconds.
 - `model.py`, `sources.py`, `twin.py` — the twin on dtcore: `Glioma` (the authors' model of one patient: solve and
   calibrate), `PatientReplay` (the MRI visits in order), `TumorTwin` (`update`, `predict`, `whatif`).
 - `scripts/run_twin.py` — the twin through `dtcore.run` → `results/HGG_demo_001/twin_run_<visits>.json` and `.png`.
+- `scripts/export_web.py` — the page's data, `web/tumor_run.js`, from `twin_run_10.json` (about 17 minutes);
+  `web/checks/check_tumor.js` compares it with the saved runs.
 - `scripts/repro_hgg.py` — the upstream HGG demo tutorial as a script → `results/HGG_demo_001/repro.json`.
 - `scripts/sample_sims.py`, `merge_sims.py`, `surrogate_experiments.py` — training simulations and a Gaussian-process
   surrogate (in progress).
