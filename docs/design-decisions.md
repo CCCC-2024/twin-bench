@@ -37,7 +37,7 @@ are compared with the field's in [tools.md](tools.md).
 | Use the authors' published parameters for the incubator | with only the air temperature measured, the heater's parameters are not identifiable; a free fit is slightly closer (0.41 against 0.46 °C) and physically impossible | the free fit |
 | The UAV asset's damage grows with the maneuvers flown | in the authors' scripted asset the twin's decision has no consequence | the scripted asset |
 | A fourth twin, one bike-share station | one paragraph describes it; public real data; a decision with a trade-off; a different kind of model (random arrivals, people); a paper with code to check against | another thermal system; waiting for a system description |
-| The tumor twin stays a reproduction, off the skeleton | one calibration takes about half an hour, the license is academic-only, and it has no decision | forcing it into the loop |
+| The tumor twin is on the skeleton as update, predict and what-if, without a decision | it has no cost of a dose, so there is nothing to choose; a made-up toxicity cost would decide the result | adding a toxicity cost to get a decision; leaving it off the skeleton (until 11/23) |
 
 ## 3. Models and updates
 

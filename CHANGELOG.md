@@ -6,6 +6,10 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- tumor: on dtcore. `TumorTwin` (`update`: at each MRI visit, the count it expected and a new calibration from the
+  last parameters; `predict`; `whatif` over the total chemotherapy dose), `PatientReplay`, and `Glioma`, the authors'
+  model of one patient. `scripts/run_twin.py` runs it through `dtcore.run`; after 5 visits it forecasts the later
+  five within 0.01 % and its dose what-if is within 0.02 % of the reproduction's. No decision: the model has no cost of a dose.
 - docs: `tools.md` (the typical code and tools of a digital twin, what this repository uses and what the field uses,
   and what worked when adding a language model) and `design-decisions.md` (what was tried and why).
 - dtcore: `agent.advise(llm, twin, event)`: the model only extracts, from an event in words, the conditions for the

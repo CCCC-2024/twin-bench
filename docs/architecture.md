@@ -111,8 +111,10 @@ each twin's page module.
 - **bikeshare** replays the recorded demand but simulates the bikes: the nightly decision changes the inventory and so
   the shortages, while the demand stays as recorded. The twin never sees the demand it loses (censored demand).
 
-The tumor reproduction (`twins/tumor`) is not on `dtcore`: it has no reward (a higher dose is always better), no
-parameter uncertainty yet, and one calibration takes about half an hour.
+The tumor twin (`twins/tumor`) is on `dtcore` as update, predict and what-if: a replay of one patient's MRI visits,
+at each of which it calibrates again. It has no `decide`: there is no reward (a higher dose is always better), and no
+parameter uncertainty yet. One what-if takes seconds, so it is not on the page; CI does not install the authors'
+package, and its tests are skipped there.
 
 ## Parts of a twin, and where AI attaches
 

@@ -85,7 +85,8 @@ A twin's estimator, forecaster or policy is a part (`docs/architecture.md`). Whe
 - The implementations are compared by `scripts/compare_<part>.py`: same twin, same Source, only the part changes. The
   page lets a person choose the part where its module offers one (`web/README.md`, `renderParts`).
 - A dependency that only one part needs (PyTorch for the VP-RNN) is its own extra in `pyproject.toml`, imported only
-  where that part is built; its tests skip with the reason when it is missing, and CI installs it
+  where that part is built; its tests skip with the reason when it is missing, and CI installs it (not
+  the tumor twin's package, which is under an academic licence: those tests run only where it is installed)
   (`.github/workflows/checks.yml`).
 
 ### Upstream

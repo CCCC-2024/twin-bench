@@ -63,8 +63,8 @@ locally only: git-ignore everything derived from them and keep them out of the p
 
 Add what the twin needs to the `twins` extra in [pyproject.toml](../pyproject.toml). A heavy dependency that only one
 part needs gets its own extra (bike share's VP-RNN: `rnn`, PyTorch); see [conventions](conventions.md#parts-of-a-twin).
-If the twin cannot share that environment (the tumor twin needs Python 3.10–3.11 and the authors' TumorTwin
-package), document a separate setup in its README and leave it out of `run_checks.sh`.
+If the twin needs a package CI does not install (the tumor twin needs the authors' TumorTwin package), document the
+setup in its README and have its tests skip without it (`pytest.importorskip`, as `tests/test_tumor.py`).
 
 ## Checklist for the pull request
 

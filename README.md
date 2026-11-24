@@ -69,7 +69,7 @@ Building the twins, rather than reading about them, turned up these (details and
 | [battery](twins/battery/) | Prognostics | Particle filter on capacity fade, decides when to retire a cell | Reproduces Thelen et al. 2023 on the Severson et al. 2019 cells | dtcore + page + MQTT live demo |
 | [uav](twins/uav/) | Structural health | Bayesian filter over 25 damage states, picks 2g / 3g maneuvers | Reproduces Kapteyn, Pretorius & Willcox 2021 | dtcore + page |
 | [bikeshare](twins/bikeshare/) | Mobility operations | Learns hourly rental and return rates (Gamma–Poisson), forecasts an empty or full station, sets the overnight number of bikes; what-if on a daytime truck; the rate model can be the paper's trained RNN, the nightly decision an LLM agent | Reproduces Gammelli et al. 2022 (queueing model of Raviv & Kolka 2013) on Citi Bike station data | dtcore + page |
-| [tumor](twins/tumor/) | Oncology | Calibrates a glioma reaction–diffusion model to MRI, predicts chemo doses | Reproduces TumorTwin (Kapteyn et al. 2026) | reproduction only |
+| [tumor](twins/tumor/) | Oncology | Calibrates a glioma reaction–diffusion model to MRI, predicts chemo doses | Reproduces TumorTwin (Kapteyn et al. 2026) | dtcore (update, predict, what-if; no decision) |
 | [_template](twins/_template/) | — | A cooling mug with a heater: the smallest complete twin, copy it to start | — | dtcore |
 
 ## How it fits together
@@ -114,7 +114,7 @@ for t in incubator battery uav bikeshare; do twins/$t/fetch_upstream.sh; done   
 ```
 
 Open the page locally: `python web/build.py`, then open `web/index.html`. The web checks need Node.js 18+.
-The tumor twin needs PyTorch and its own environment; see [twins/tumor](twins/tumor/).
+The tumor twin needs PyTorch and the authors' package; see [twins/tumor](twins/tumor/). Its tests are skipped without them.
 
 The LLM agent (`dtcore.agent`) needs a language model served with the OpenAI chat API; nothing else, and no test needs
 one. With [Ollama](https://ollama.com) on macOS:
